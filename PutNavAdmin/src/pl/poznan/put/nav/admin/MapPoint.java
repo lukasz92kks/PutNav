@@ -39,4 +39,9 @@ public class MapPoint {
 	public void setType(int type) {
 		this.type = type;
 	}
+	
+	public void move(int x, int y) {
+		setX(x);
+		setY(y);
+	}
 }

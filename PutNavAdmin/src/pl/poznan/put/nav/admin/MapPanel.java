@@ -4,11 +4,12 @@ import java.awt.Graphics;
 import java.awt.Image;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.awt.event.MouseMotionListener;
 import java.util.ArrayList;
 import javax.swing.ImageIcon;
 import javax.swing.JPanel;
 
-public class MapPanel extends JPanel implements MouseListener {
+public class MapPanel extends JPanel implements MouseListener, MouseMotionListener {
 
 	private static final long serialVersionUID = -689713982784590342L;
 
@@ -18,12 +19,14 @@ public class MapPanel extends JPanel implements MouseListener {
 	private Image liftPoint = null;
 	private Image stairsPoint = null;
 	private ArrayList<MapPoint> mapPoints = null;
+	private MapPoint activeMapPoint = null;
 	private int activeMapPointType = 0;
 	private int imagePointWidth;
 	private PropertiesPanel propertiesPanel = AppFactory.getPropertiesPanel();
 	
 	public MapPanel() {
-		this.addMouseListener(this);
+		addMouseListener(this);
+		addMouseMotionListener(this);
 		
 		mapImage = new ImageIcon("images/map.jpg").getImage();
 		naviPoint = new ImageIcon("images/navi-point.png").getImage();
@@ -94,11 +97,29 @@ public class MapPanel extends JPanel implements MouseListener {
 
 	@Override
 	public void mousePressed(MouseEvent event) {
-		
+		if(activeMapPoint == null) {
+			activeMapPoint = getClickedMapPoint(event.getX(), event.getY());
+		}
 	}
 
 	@Override
 	public void mouseReleased(MouseEvent event) {
+		if(activeMapPoint != null) {
+			activeMapPoint = null;
+		}
+	}
+	
+	@Override
+	public void mouseDragged(MouseEvent event) {
+		if(activeMapPoint != null) {
+			activeMapPoint.move(event.getX(), event.getY());
+			propertiesPanel.setActiveMapPoint(activeMapPoint);
+			repaint();
+		}
+	}
+
+	@Override
+	public void mouseMoved(MouseEvent event) {
 		
 	}
 	

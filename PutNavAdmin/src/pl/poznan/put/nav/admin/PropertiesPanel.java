@@ -1,18 +1,12 @@
 package pl.poznan.put.nav.admin;
 
 import java.awt.Dimension;
-import java.awt.FlowLayout;
-import java.awt.GridLayout;
-
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
-
-import com.sun.javafx.css.Size;
-import com.sun.javafx.scene.layout.region.Margins.Converter;
 
 public class PropertiesPanel extends JPanel {
 
