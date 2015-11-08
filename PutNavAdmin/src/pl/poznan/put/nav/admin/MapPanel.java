@@ -19,6 +19,8 @@ public class MapPanel extends JPanel implements MouseListener {
 	private Image stairsPoint = null;
 	private ArrayList<MapPoint> mapPoints = null;
 	private int activeMapPointType = 0;
+	private int imagePointWidth;
+	private PropertiesPanel propertiesPanel = AppFactory.getPropertiesPanel();
 	
 	public MapPanel() {
 		this.addMouseListener(this);
@@ -30,12 +32,25 @@ public class MapPanel extends JPanel implements MouseListener {
 		stairsPoint = new ImageIcon("images/stairs-point.png").getImage();
 		
 		mapPoints = new ArrayList<MapPoint>();
+		imagePointWidth = naviPoint.getWidth(this);
 	}
 	
-	private void addMapPoint(int x, int y) {
+	private MapPoint addMapPoint(int x, int y) {
 		MapPoint point = new MapPoint(x, y, activeMapPointType);
 		mapPoints.add(point);
 		repaint();
+		
+		return point;
+	}
+	
+	private MapPoint getClickedMapPoint(int x, int y) {
+		for(MapPoint point : mapPoints) {
+			if( point.getX() <= x && (point.getX() + imagePointWidth) >= x &&
+				point.getY() <= y && (point.getY() + imagePointWidth) >= y )
+				return point;
+		}
+		
+		return null;
 	}
 	
 	@Override
@@ -59,8 +74,12 @@ public class MapPanel extends JPanel implements MouseListener {
 
 	@Override
 	public void mouseClicked(MouseEvent event) {
-		System.out.println("click");
-		this.addMapPoint(event.getX(), event.getY());
+		MapPoint clickedMapPoint = getClickedMapPoint(event.getX(), event.getY());
+		if(clickedMapPoint == null) {
+			clickedMapPoint = addMapPoint(event.getX(), event.getY());
+		}
+		System.out.println(clickedMapPoint.getType());
+		propertiesPanel.setActiveMapPoint(clickedMapPoint);
 	}
 
 	@Override
