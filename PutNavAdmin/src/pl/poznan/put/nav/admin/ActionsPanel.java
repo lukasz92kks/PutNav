@@ -17,18 +17,18 @@ public class ActionsPanel extends JPanel {
 	public ActionsPanel() {
 		this.setLayout(new FlowLayout());
 		
-		JButton addNaviPointButton = new JButton(new ImageIcon("images/navi-action.png"));
-		JButton addDoorPointButton = new JButton(new ImageIcon("images/door-action.png"));
-		JButton addLiftPointButton = new JButton(new ImageIcon("images/lift-action.png"));
-		JButton addStairsPointButton = new JButton(new ImageIcon("images/stairs-action.png"));
-		JButton deletePointButton = new JButton(new ImageIcon("images/delete-action.png"));
+		JButton addNaviPointButton = new JButton(new ImageIcon("images/navi.png"));
+		JButton addDoorPointButton = new JButton(new ImageIcon("images/door.png"));
+		JButton addLiftPointButton = new JButton(new ImageIcon("images/lift.png"));
+		JButton addStairsPointButton = new JButton(new ImageIcon("images/stairs.png"));
+		JButton deletePointButton = new JButton(new ImageIcon("images/delete.png"));
 		
 		addNaviPointButton.addActionListener(new ActionListener() {
 			
 			@Override
 			public void actionPerformed(ActionEvent event) {
 				System.out.println("navi");
-				mapPanel.setActiveMapPointType(MapPointTypes.NAVIGATION);
+				mapPanel.setActiveAddMapPointType(MapPointTypes.NAVIGATION);
 			}
 		});
 		addDoorPointButton.addActionListener(new ActionListener() {
@@ -36,7 +36,7 @@ public class ActionsPanel extends JPanel {
 			@Override
 			public void actionPerformed(ActionEvent event) {
 				System.out.println("door");
-				mapPanel.setActiveMapPointType(MapPointTypes.DOOR);
+				mapPanel.setActiveAddMapPointType(MapPointTypes.DOOR);
 			}
 		});
 		addLiftPointButton.addActionListener(new ActionListener() {
@@ -44,7 +44,7 @@ public class ActionsPanel extends JPanel {
 			@Override
 			public void actionPerformed(ActionEvent event) {
 				System.out.println("lift");
-				mapPanel.setActiveMapPointType(MapPointTypes.LIFT);
+				mapPanel.setActiveAddMapPointType(MapPointTypes.LIFT);
 			}
 		});
 		addStairsPointButton.addActionListener(new ActionListener() {
@@ -52,7 +52,7 @@ public class ActionsPanel extends JPanel {
 			@Override
 			public void actionPerformed(ActionEvent event) {
 				System.out.println("stairs");
-				mapPanel.setActiveMapPointType(MapPointTypes.STAIRS);
+				mapPanel.setActiveAddMapPointType(MapPointTypes.STAIRS);
 			}
 		});
 		deletePointButton.addActionListener(new ActionListener() {

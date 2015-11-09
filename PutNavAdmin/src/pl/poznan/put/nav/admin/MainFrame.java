@@ -13,7 +13,7 @@ public class MainFrame extends JFrame {
 	private ActionsPanel actionsPanel = AppFactory.getActionsPanel();
 	
 	public MainFrame() {
-		this.setSize(800, 600);
+		this.setExtendedState(MAXIMIZED_BOTH);
 		this.setLayout(new BorderLayout());
 		
 		this.add(mapPanel, BorderLayout.CENTER);
