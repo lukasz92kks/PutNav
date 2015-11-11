@@ -57,8 +57,10 @@ public class PropertiesPanel extends JPanel {
 	}
 	
 	public void setActiveMapPoint(MapPoint point) {
-		this.activeMapPoint = point;
-		loadMapPointProperties(activeMapPoint);
+		if(point != null) {
+			this.activeMapPoint = point;
+			loadMapPointProperties(activeMapPoint);
+		}
 	}
 	
 	private void loadMapPointProperties(MapPoint mapPoint) {

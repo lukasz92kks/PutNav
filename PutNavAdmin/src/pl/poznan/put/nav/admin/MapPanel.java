@@ -61,6 +61,14 @@ public class MapPanel extends JPanel implements MouseListener, MouseMotionListen
 		return null;
 	}
 	
+	public void deleteActiveMapPoint() {
+		if(activeMapPoint != null) {
+			mapPoints.remove(activeMapPoint);
+			propertiesPanel.setActiveMapPoint(activeMapPoint);
+			repaint();
+		}
+	}
+	
 	@Override
 	protected void paintComponent(Graphics g) {
 		if(drawArea == null)
@@ -72,29 +80,31 @@ public class MapPanel extends JPanel implements MouseListener, MouseMotionListen
 							  drawArea.getxEndSource(), drawArea.getyEndSource(), this);
 		
 		for(MapPoint p : mapPoints) {
+			int x = p.getX() - drawArea.getxStartSource();
+			int y = p.getY() - drawArea.getyStartSource();
 			int type = p.getType();
 			
 			if(type == MapPointTypes.NAVIGATION) 
-				g.drawImage(naviPoint, p.getX(), p.getY(), this);
+				g.drawImage(naviPoint, x, y, this);
 			else if(type == MapPointTypes.DOOR) 
-				g.drawImage(doorPoint, p.getX(), p.getY(), this);
+				g.drawImage(doorPoint, x, y, this);
 			else if(type == MapPointTypes.LIFT) 
-				g.drawImage(liftPoint, p.getX(), p.getY(), this);
+				g.drawImage(liftPoint, x, y, this);
 			else if(type == MapPointTypes.STAIRS) 
-				g.drawImage(stairsPoint, p.getX(), p.getY(), this);
+				g.drawImage(stairsPoint, x, y, this);
 			
 			if(p.equals(activeMapPoint)) {
 				g.setColor(Color.RED);
-				g.drawRect(p.getX(), p.getY(), imagePointWidth, imagePointWidth);
+				g.drawRect(p.getX()-drawArea.getxStartSource(), p.getY()-drawArea.getyStartSource(), imagePointWidth, imagePointWidth);
 			}
 		}
 	}
 
 	@Override
 	public void mouseClicked(MouseEvent event) {
-		activeMapPoint = getClickedMapPoint(event.getX(), event.getY());
+		activeMapPoint = getClickedMapPoint(event.getX()+drawArea.getxStartSource(), event.getY()+drawArea.getyStartSource());
 		if(activeMapPoint == null) {
-			activeMapPoint = addMapPoint(event.getX(), event.getY());
+			activeMapPoint = addMapPoint(event.getX()+drawArea.getxStartSource(), event.getY()+drawArea.getyStartSource());
 		}
 		System.out.println(activeMapPoint.getType());
 		propertiesPanel.setActiveMapPoint(activeMapPoint);
@@ -115,7 +125,7 @@ public class MapPanel extends JPanel implements MouseListener, MouseMotionListen
 	public void mousePressed(MouseEvent event) {
 		pressedPoint = new Point(event.getX(), event.getY());
 		if(movableMapPoint == null) {
-			movableMapPoint = getClickedMapPoint(event.getX(), event.getY());
+			movableMapPoint = getClickedMapPoint(event.getX()+drawArea.getxStartSource(), event.getY()+drawArea.getyStartSource());
 			activeMapPoint = movableMapPoint;
 		}
 	}
@@ -130,7 +140,7 @@ public class MapPanel extends JPanel implements MouseListener, MouseMotionListen
 	@Override
 	public void mouseDragged(MouseEvent event) {
 		if(movableMapPoint != null) {
-			movableMapPoint.move(event.getX(), event.getY());
+			movableMapPoint.move(event.getX()+drawArea.getxStartSource(), event.getY()+drawArea.getyStartSource());
 			propertiesPanel.setActiveMapPoint(movableMapPoint);
 			repaint();
 			
@@ -164,16 +174,10 @@ public class MapPanel extends JPanel implements MouseListener, MouseMotionListen
 		if(newxStart >= 0 && newxEnd <= mapImage.getWidth(this)) {
 			drawArea.setxStartSource(newxStart);
 			drawArea.setxEndSource(newxEnd);
-			for(MapPoint p : mapPoints) {
-				p.setX(p.getX() - (int)(0.1*diffrentX));
-			}
 		}
 		if(newyStart >= 0 && newyEnd <= mapImage.getHeight(this)) {
 			drawArea.setyStartSource(newyStart);
 			drawArea.setyEndSource(newyEnd);
-			for(MapPoint p : mapPoints) {
-				p.setY(p.getY() - (int)(0.1*diffrentY));
-			}
 		}
 	}
 }

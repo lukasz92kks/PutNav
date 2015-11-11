@@ -60,6 +60,7 @@ public class ActionsPanel extends JPanel {
 			@Override
 			public void actionPerformed(ActionEvent event) {
 				System.out.println("delete");
+				mapPanel.deleteActiveMapPoint();
 			}
 		});
 		
