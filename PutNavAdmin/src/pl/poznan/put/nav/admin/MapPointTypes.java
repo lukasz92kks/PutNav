@@ -6,6 +6,7 @@ public class MapPointTypes {
 	public static int DOOR = 2;
 	public static int STAIRS = 3;
 	public static int LIFT = 4;
+	public static int BUILDING = 5;
 	
-	public static String[] nameList = {"Nawigacyjny", "Drzwi", "Schody", "Winda"};
+	public static String[] nameList = {"Nawigacyjny", "Drzwi", "Schody", "Winda", "Budynek"};
 }
