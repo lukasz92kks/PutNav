@@ -47,6 +47,7 @@ public class MapPanel extends JPanel implements MouseListener, MouseMotionListen
 		stairsPoint = new ImageIcon("images/stairs.png").getImage();
 		
 		imagePointWidth = naviPoint.getWidth(this);
+		ArchiveFileManager archiveFileManager = new ArchiveFileManager();
 	}
 	
 	private MapPoint addMapPoint(int x, int y) {
@@ -70,7 +71,7 @@ public class MapPanel extends JPanel implements MouseListener, MouseMotionListen
 	public void deleteActiveMapPoint() {
 		if(activeMapPoint != null) {
 			getMap().removeMapPoint(activeMapPoint);
-			propertiesPanel.setActiveMapPoint(activeMapPoint);
+			propertiesPanel.setActiveMapPoint(null);
 			repaint();
 		}
 	}
@@ -117,6 +118,7 @@ public class MapPanel extends JPanel implements MouseListener, MouseMotionListen
 		if (isAlreadyOneClick) {
 			if(activeMapPoint != null) {
 				map = map.equals(campusMap) ? btMap : campusMap;
+				drawArea = null;
 		        isAlreadyOneClick = false;
 			}
 	    } else {
@@ -132,11 +134,8 @@ public class MapPanel extends JPanel implements MouseListener, MouseMotionListen
 	        			activeMapPoint = getClickedMapPoint(eventClick.getX()+drawArea.getxStartSource(), eventClick.getY()+drawArea.getyStartSource());
 	        			if(activeMapPoint == null) {
 	        				activeMapPoint = addMapPoint(eventClick.getX()+drawArea.getxStartSource(), eventClick.getY()+drawArea.getyStartSource());
-	        			} else {
-	        				System.out.println(activeMapPoint.getType());
-	        				propertiesPanel.setActiveMapPoint(activeMapPoint);
-	        				//actionsPanel.setActiveMap(map);
 	        			}
+	        			propertiesPanel.setActiveMapPoint(activeMapPoint);
 	            	}
 	            }
 	        }, 500);

@@ -60,13 +60,20 @@ public class PropertiesPanel extends JPanel {
 		if(point != null) {
 			this.activeMapPoint = point;
 			loadMapPointProperties(activeMapPoint);
+		} else {
+			clearMapPointProperties();
 		}
 	}
 	
 	private void loadMapPointProperties(MapPoint mapPoint) {
-		
 		xTextField.setText(String.valueOf(mapPoint.getX()));
 		yTextField.setText(String.valueOf(mapPoint.getY()));
 		mapPointTypesComboBox.setSelectedIndex(mapPoint.getType()-1);
+	}
+	
+	private void clearMapPointProperties() {
+		xTextField.setText("");
+		yTextField.setText("");
+		mapPointTypesComboBox.setSelectedIndex(0);
 	}
 }

@@ -5,6 +5,7 @@ public class AppFactory {
 	private static MapPanel mapPanel;
 	private static PropertiesPanel propertiesPanel;
 	private static ActionsPanel actionsPanel;
+	private static ArchiveFileManager archiveFileManager;
 	
 	public static MapPanel getMapPanel() {
 		if(mapPanel == null)
@@ -22,5 +23,11 @@ public class AppFactory {
 		if(actionsPanel == null)
 			actionsPanel = new ActionsPanel();
 		return actionsPanel;
+	}
+	
+	public static ArchiveFileManager getArchiveFileManager() {
+		if(archiveFileManager == null)
+			archiveFileManager = new ArchiveFileManager();
+		return archiveFileManager;
 	}
 }
