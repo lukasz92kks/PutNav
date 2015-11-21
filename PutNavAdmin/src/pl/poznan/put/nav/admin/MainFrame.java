@@ -1,11 +1,15 @@
 package pl.poznan.put.nav.admin;
 
 import java.awt.BorderLayout;
-
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.File;
+import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
+import javax.swing.filechooser.FileNameExtensionFilter;
 
 public class MainFrame extends JFrame {
 
@@ -14,6 +18,7 @@ public class MainFrame extends JFrame {
 	private MapPanel mapPanel = AppFactory.getMapPanel();
 	private PropertiesPanel propertiesPanel = AppFactory.getPropertiesPanel();
 	private ActionsPanel actionsPanel = AppFactory.getActionsPanel();
+	private ArchiveFileManager archiveFileManager = AppFactory.getArchiveFileManager();
 	
 	public MainFrame() {
 		this.setExtendedState(MAXIMIZED_BOTH);
@@ -33,6 +38,12 @@ public class MainFrame extends JFrame {
 		JMenuItem addMapMenuItem = new JMenuItem("Mape");
 		JMenuItem addImageMenuItem = new JMenuItem("Zdjecie");
 		JMenuItem openMenuItem = new JMenuItem("Otwórz...");
+		openMenuItem.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				openMenuItemAction();
+			}
+		});
 		JMenuItem saveMenuItem = new JMenuItem("Zapisz");
 		JMenuItem saveAsMenuItem = new JMenuItem("Zapisz jako...");
 		JMenuItem exitMenuItem =  new JMenuItem("Zakoncz");
@@ -57,5 +68,20 @@ public class MainFrame extends JFrame {
 		menuBar.add(fileMenu);
 		menuBar.add(editMenu);
 		setJMenuBar(menuBar);
+	}
+	
+	private void openMenuItemAction() {
+		JFileChooser fileChooser = new JFileChooser();
+		fileChooser.setCurrentDirectory(new File(System.getProperty("user.dir")));
+		fileChooser.setFileFilter(new FileNameExtensionFilter("PNA Put Nav Archive file", "pna"));
+		
+		int result = fileChooser.showOpenDialog(this);
+		if(result == JFileChooser.APPROVE_OPTION) {
+			File selectedFile = fileChooser.getSelectedFile();
+			System.out.println("Selected file: " + selectedFile.getAbsolutePath());
+			
+			archiveFileManager.openArchiveFile(selectedFile.getAbsolutePath());
+			archiveFileManager.extractArchiveFile();
+		}
 	}
 }

@@ -47,7 +47,6 @@ public class MapPanel extends JPanel implements MouseListener, MouseMotionListen
 		stairsPoint = new ImageIcon("images/stairs.png").getImage();
 		
 		imagePointWidth = naviPoint.getWidth(this);
-		ArchiveFileManager archiveFileManager = new ArchiveFileManager();
 	}
 	
 	private MapPoint addMapPoint(int x, int y) {

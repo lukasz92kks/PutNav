@@ -1,17 +1,20 @@
 package pl.poznan.put.nav.admin;
 
+import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
 
 public class ArchiveFileManager {
 
 	private String archiveFile;
 	private String archiveExtension = ".pna";	// PutNavArchive
+	private String destDirectory = "temp";
 	private String imageDirectory = "images";
 	private String mapDirectory = "maps";
 	private String databaseFileName = "database.db";
@@ -35,25 +38,25 @@ public class ArchiveFileManager {
 	
 	private void addFile(String fileName) {
 		FileOutputStream fos;
-		ZipOutputStream zipOutputStream;
+		ZipOutputStream zip;
 		try {
 			fos = new FileOutputStream(archiveFile);
-			zipOutputStream = new ZipOutputStream(fos);
+			zip = new ZipOutputStream(fos);
 			
 			File file = new File(fileName);
 			FileInputStream fis = new FileInputStream(file);
 			ZipEntry zipEntry = new ZipEntry(file.getName());
-			zipOutputStream.putNextEntry(zipEntry);
+			zip.putNextEntry(zipEntry);
 			
 			byte[] bytes = new byte[1024];
 			int length;
 			while( (length = fis.read(bytes)) >= 0) {
-				zipOutputStream.write(bytes, 0, length);
+				zip.write(bytes, 0, length);
 			}
 			
 			fis.close();
-			zipOutputStream.closeEntry();
-			zipOutputStream.close();
+			zip.closeEntry();
+			zip.close();
 			fos.close();
 			
 			System.out.println(fileName + " added to archive file");
@@ -62,6 +65,46 @@ public class ArchiveFileManager {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+	}
+	
+	public void extractArchiveFile() {
+		File destDir = new File(destDirectory);
+		if(!destDir.exists()) {
+			destDir.mkdir();
+		}
+		try {
+			ZipInputStream zip = new ZipInputStream(new FileInputStream(archiveFile));
+			ZipEntry zipEntry = zip.getNextEntry();
+			while(zipEntry != null) {
+				String filePath = destDirectory + File.separator + zipEntry.getName();
+				if(!zipEntry.isDirectory()) {
+					extractFile(zip, filePath);
+				} else {
+					File dir = new File(filePath);
+					dir.mkdir();
+				}
+				zip.closeEntry();
+				zipEntry = zip.getNextEntry();
+			}
+			zip.close();
+			System.out.println(archiveFile + " extracted in " + destDirectory + " directory.");
+			
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
+	}
+	
+	private void extractFile(ZipInputStream zip, String file) throws IOException {
+		BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(file));
+		byte[] bytes = new byte[1024];
+		int length = 0;
+		while( (length = zip.read(bytes)) != -1) {
+			bos.write(bytes, 0, length);
+		}
+		bos.close();
 	}
 	
 	/**
