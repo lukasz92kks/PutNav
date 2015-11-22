@@ -16,9 +16,7 @@ public class DrawArea {
 	private int yEndDestination;
 	
 	
-	public DrawArea() {
-		
-	}
+	public DrawArea() {}
 	
 	public DrawArea(int xss, int yss, int xes, int yes, int xsd, int ysd, int xed, int yed) {
 		setArea(xss, yss, xes, yes, xsd, ysd, xed, yed);

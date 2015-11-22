@@ -37,8 +37,8 @@ public class MapPanel extends JPanel implements MouseListener, MouseMotionListen
 		addMouseListener(this);
 		addMouseMotionListener(this);
 		
-		btMap = new Map((new ImageIcon("images/bt_1_pietro.png")).getImage());
-		campusMap = new Map((new ImageIcon("images/kampus.png")).getImage());
+		btMap = new Map(1, 1, (new ImageIcon("images/bt_1_pietro.png")).getImage());
+		campusMap = new Map(2, 2, (new ImageIcon("images/kampus.png")).getImage());
 		setMap(btMap);
 		buildingPoint = new ImageIcon("images/building.png").getImage(); 
 		naviPoint = new ImageIcon("images/navi.png").getImage();
@@ -50,7 +50,7 @@ public class MapPanel extends JPanel implements MouseListener, MouseMotionListen
 	}
 	
 	private MapPoint addMapPoint(int x, int y) {
-		MapPoint point = new MapPoint(x, y, activeAddMapPointType);
+		MapPoint point = new MapPoint(1, x, y, activeAddMapPointType);
 		getMap().addMapPoint(point);
 		repaint();
 		

@@ -5,20 +5,22 @@ import java.util.ArrayList;
 
 public class Map {
 
+	private int id;
+	private int floor;
 	private Image mapImage = null;
-	private ArrayList<MapPoint> mapPoints = null;
+	private Building buildings;
+	private ArrayList<MapPoint> mapPoints = new ArrayList<MapPoint>();
 	
-	public Map() {
-		setMapPoints(new ArrayList<MapPoint>());
-	}
+	public Map() {}
 	
-	public Map(Image mapImage) {
+	public Map(int id, int floor, Image mapImage) {
+		this.id = id;
+		this.floor = floor;
 		this.mapImage = mapImage;
-		setMapPoints(new ArrayList<MapPoint>());
 	}
 	
 	public MapPoint addMapPoint(MapPoint point) {
-		getMapPoints().add(point);
+		mapPoints.add(point);
 		return point;
 	}
 	
@@ -40,5 +42,29 @@ public class Map {
 
 	public void setMapPoints(ArrayList<MapPoint> mapPoints) {
 		this.mapPoints = mapPoints;
+	}
+	
+	public int getId() {
+		return id;
+	}
+
+	public void setId(int id) {
+		this.id = id;
+	}
+
+	public int getFloor() {
+		return floor;
+	}
+
+	public void setFloor(int floor) {
+		this.floor = floor;
+	}
+
+	public Building getBuildings() {
+		return buildings;
+	}
+
+	public void setBuildings(Building buildings) {
+		this.buildings = buildings;
 	}
 }
