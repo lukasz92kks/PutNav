@@ -82,6 +82,9 @@ public class MainFrame extends JFrame {
 			
 			archiveFileManager.openArchiveFile(selectedFile.getAbsolutePath());
 			archiveFileManager.extractArchiveFile();
+			
+			DatabaseManager databaseManager = AppFactory.getDatabaseManager();
+			databaseManager.getAllMapPoints();
 		}
 	}
 }
