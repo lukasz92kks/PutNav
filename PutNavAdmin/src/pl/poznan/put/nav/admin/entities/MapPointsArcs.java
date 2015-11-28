@@ -1,4 +1,4 @@
-package pl.poznan.put.nav.admin;
+package pl.poznan.put.nav.admin.entities;
 
 public class MapPointsArcs {
 

@@ -1,4 +1,8 @@
-package pl.poznan.put.nav.admin;
+package pl.poznan.put.nav.admin.managers;
+
+import pl.poznan.put.nav.admin.gui.ActionsPanel;
+import pl.poznan.put.nav.admin.gui.MapPanel;
+import pl.poznan.put.nav.admin.gui.PropertiesPanel;
 
 public class AppFactory {
 

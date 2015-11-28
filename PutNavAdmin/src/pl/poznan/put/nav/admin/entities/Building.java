@@ -1,4 +1,4 @@
-package pl.poznan.put.nav.admin;
+package pl.poznan.put.nav.admin.entities;
 
 import java.io.File;
 import java.util.ArrayList;

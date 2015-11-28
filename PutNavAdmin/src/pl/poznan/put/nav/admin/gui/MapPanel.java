@@ -1,4 +1,4 @@
-package pl.poznan.put.nav.admin;
+package pl.poznan.put.nav.admin.gui;
 
 import java.awt.Color;
 import java.awt.Graphics;
@@ -13,6 +13,11 @@ import java.util.TimerTask;
 
 import javax.swing.ImageIcon;
 import javax.swing.JPanel;
+
+import pl.poznan.put.nav.admin.entities.Map;
+import pl.poznan.put.nav.admin.entities.MapPoint;
+import pl.poznan.put.nav.admin.entities.MapPointTypes;
+import pl.poznan.put.nav.admin.managers.AppFactory;
 
 public class MapPanel extends JPanel implements MouseListener, MouseMotionListener {
 

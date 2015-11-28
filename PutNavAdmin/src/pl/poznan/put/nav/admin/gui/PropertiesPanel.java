@@ -1,4 +1,4 @@
-package pl.poznan.put.nav.admin;
+package pl.poznan.put.nav.admin.gui;
 
 import java.awt.Dimension;
 import javax.swing.BoxLayout;
@@ -7,6 +7,9 @@ import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
+
+import pl.poznan.put.nav.admin.entities.MapPoint;
+import pl.poznan.put.nav.admin.entities.MapPointTypes;
 
 public class PropertiesPanel extends JPanel {
 

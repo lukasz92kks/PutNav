@@ -1,4 +1,4 @@
-package pl.poznan.put.nav.admin;
+package pl.poznan.put.nav.admin.gui;
 
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
@@ -13,6 +13,13 @@ import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.filechooser.FileNameExtensionFilter;
+
+import pl.poznan.put.nav.admin.entities.Building;
+import pl.poznan.put.nav.admin.entities.Map;
+import pl.poznan.put.nav.admin.entities.MapPoint;
+import pl.poznan.put.nav.admin.managers.AppFactory;
+import pl.poznan.put.nav.admin.managers.ArchiveFileManager;
+import pl.poznan.put.nav.admin.managers.DatabaseManager;
 
 public class MainFrame extends JFrame {
 

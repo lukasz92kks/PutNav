@@ -1,4 +1,4 @@
-package pl.poznan.put.nav.admin;
+package pl.poznan.put.nav.admin.gui;
 
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
@@ -7,6 +7,10 @@ import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.JSeparator;
+
+import pl.poznan.put.nav.admin.entities.Map;
+import pl.poznan.put.nav.admin.entities.MapPointTypes;
+import pl.poznan.put.nav.admin.managers.AppFactory;
 
 public class ActionsPanel extends JPanel {
 

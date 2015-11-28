@@ -1,8 +1,14 @@
-package pl.poznan.put.nav.admin;
+package pl.poznan.put.nav.admin.managers;
 
 import java.io.File;
 import java.sql.*;
 import java.util.ArrayList;
+
+import pl.poznan.put.nav.admin.entities.Building;
+import pl.poznan.put.nav.admin.entities.Department;
+import pl.poznan.put.nav.admin.entities.Map;
+import pl.poznan.put.nav.admin.entities.MapPoint;
+import pl.poznan.put.nav.admin.entities.Room;
 
 public class DatabaseManager implements DatabaseInterface {
 
