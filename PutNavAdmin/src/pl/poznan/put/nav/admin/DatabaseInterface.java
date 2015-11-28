@@ -1,6 +1,6 @@
 package pl.poznan.put.nav.admin;
 
-import java.awt.Image;
+import java.io.File;
 import java.util.ArrayList;
 
 public interface DatabaseInterface {
@@ -11,15 +11,11 @@ public interface DatabaseInterface {
 	
 	public Building getBuildingByMapPoint(MapPoint mapPoint);
 	
-	public Building getBuildingByMapPoint(int x, int y);
-	
 	public Building getBuildingByName(String name);
 	
-	public ArrayList<Image> getImagesByBuilding(Building building);
+	public ArrayList<File> getImagesByBuilding(Building building);
 	
-	public Image getImageById(int id);
-	
-	public Image getImageByName(String name);
+	public File getImageById(int id);
 	
 	public ArrayList<Department> getAllDepartments();
 	

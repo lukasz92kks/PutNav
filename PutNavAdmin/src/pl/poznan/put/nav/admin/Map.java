@@ -1,22 +1,22 @@
 package pl.poznan.put.nav.admin;
 
-import java.awt.Image;
+import java.io.File;
 import java.util.ArrayList;
 
 public class Map {
 
 	private int id;
 	private int floor;
-	private Image mapImage = null;
-	private Building buildings;
+	private File mapPath = null;
+	private Building building;
 	private ArrayList<MapPoint> mapPoints = new ArrayList<MapPoint>();
 	
 	public Map() {}
 	
-	public Map(int id, int floor, Image mapImage) {
+	public Map(int id, int floor, File mapPath) {
 		this.id = id;
 		this.floor = floor;
-		this.mapImage = mapImage;
+		this.mapPath = mapPath;
 	}
 	
 	public MapPoint addMapPoint(MapPoint point) {
@@ -28,12 +28,12 @@ public class Map {
 		mapPoints.remove(point);
 	}
 
-	public Image getMapImage() {
-		return mapImage;
+	public File getMapFile() {
+		return mapPath;
 	}
 
-	public void setMapImage(Image mapImage) {
-		this.mapImage = mapImage;
+	public void setMapFile(File mapPath) {
+		this.mapPath = mapPath;
 	}
 
 	public ArrayList<MapPoint> getMapPoints() {
@@ -60,11 +60,11 @@ public class Map {
 		this.floor = floor;
 	}
 
-	public Building getBuildings() {
-		return buildings;
+	public Building getBuilding() {
+		return building;
 	}
 
-	public void setBuildings(Building buildings) {
-		this.buildings = buildings;
+	public void setBuilding(Building building) {
+		this.building = building;
 	}
 }

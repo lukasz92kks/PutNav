@@ -95,7 +95,7 @@ public class ActionsPanel extends JPanel {
 
 	public void setActiveMap(Map activeMap) {
 		this.activeMap = activeMap;
-		if(activeMap.getMapImage().toString().equals("images/building.png")) {
+		if(activeMap.getMapFile().toString().equals("images/building.png")) {
 			addBuildingPointButton.setEnabled(true);
 			addDoorPointButton.setEnabled(false);
 			addLiftPointButton.setEnabled(false);

@@ -7,6 +7,7 @@ import java.awt.Point;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
+import java.io.File;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -37,8 +38,8 @@ public class MapPanel extends JPanel implements MouseListener, MouseMotionListen
 		addMouseListener(this);
 		addMouseMotionListener(this);
 		
-		btMap = new Map(1, 1, (new ImageIcon("images/bt_1_pietro.png")).getImage());
-		campusMap = new Map(2, 2, (new ImageIcon("images/kampus.png")).getImage());
+		btMap = new Map(1, 1, (new File("images/bt_1_pietro.png")));
+		campusMap = new Map(2, 2, (new File("images/kampus.png")));
 		setMap(btMap);
 		buildingPoint = new ImageIcon("images/building.png").getImage(); 
 		naviPoint = new ImageIcon("images/navi.png").getImage();
@@ -80,7 +81,7 @@ public class MapPanel extends JPanel implements MouseListener, MouseMotionListen
 		if(drawArea == null)
 			drawArea = new DrawArea(0, 0, this.getWidth(), this.getHeight(), 0, 0, this.getWidth(), this.getHeight());
 		g.clearRect(0, 0, this.getWidth(), this.getHeight());
-		g.drawImage(getMap().getMapImage(), drawArea.getxStartDestination(), drawArea.getyStartDestination(),
+		g.drawImage(new ImageIcon(getMap().getMapFile().getAbsolutePath()).getImage(), drawArea.getxStartDestination(), drawArea.getyStartDestination(),
 							  drawArea.getxEndDestination(), drawArea.getyEndDestination(), 
 							  drawArea.getxStartSource(), drawArea.getyStartSource(),
 							  drawArea.getxEndSource(), drawArea.getyEndSource(), this);
@@ -203,11 +204,12 @@ public class MapPanel extends JPanel implements MouseListener, MouseMotionListen
 		int newxEnd = drawArea.getxEndSource() + (int)(0.1*diffrentX);
 		int newyEnd = drawArea.getyEndSource() + (int)(0.1*diffrentY);
 		
-		if(newxStart >= 0 && newxEnd <= getMap().getMapImage().getWidth(this)) {
+		Image mapImage = new ImageIcon(getMap().getMapFile().getAbsolutePath()).getImage();
+		if(newxStart >= 0 && newxEnd <= mapImage.getWidth(this)) {
 			drawArea.setxStartSource(newxStart);
 			drawArea.setxEndSource(newxEnd);
 		}
-		if(newyStart >= 0 && newyEnd <= getMap().getMapImage().getHeight(this)) {
+		if(newyStart >= 0 && newyEnd <= mapImage.getHeight(this)) {
 			drawArea.setyStartSource(newyStart);
 			drawArea.setyEndSource(newyEnd);
 		}
@@ -219,6 +221,8 @@ public class MapPanel extends JPanel implements MouseListener, MouseMotionListen
 
 	public void setMap(Map map) {
 		this.map = map;
+		drawArea = null;
+		repaint();
 		//ActionsPanel actionsPanel = AppFactory.getActionsPanel();
 		//actionsPanel.setActiveMap(map);
 	}

@@ -4,6 +4,9 @@ import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
+import java.util.ArrayList;
+
+import javax.swing.ImageIcon;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JMenu;
@@ -84,7 +87,32 @@ public class MainFrame extends JFrame {
 			archiveFileManager.extractArchiveFile();
 			
 			DatabaseManager databaseManager = AppFactory.getDatabaseManager();
-			databaseManager.getAllMapPoints();
+			databaseManager.getAllBuildings();
+			databaseManager.getAllDepartments();
+			databaseManager.getAllMaps();
+			databaseManager.getBuildingById(1);
+			databaseManager.getBuildingByMapPoint(new MapPoint(1, 44, 55, 1));
+			databaseManager.getBuildingByName("asfsd");
+			databaseManager.getDepartmentById(1);
+			databaseManager.getDepartmentByName("asf");
+			databaseManager.getDepartmentsByBuilding(new Building());
+			databaseManager.getImageById(1);
+			databaseManager.getImagesByBuilding(new Building());
+			databaseManager.getMapByFileName("asf");
+			databaseManager.getMapPointsByMap(new Map());
+			databaseManager.getMapsByBuilding(new Building());
+			databaseManager.getRoomByName("015");
+			databaseManager.getRoomsByBuilding(new Building());
+			databaseManager.getRoomsByMap(new Map());
+			
+			/*ArrayList<Map> maps = databaseManager.getAllMaps();
+			for(Map map : maps) {
+				System.out.println(map.getId() + " : " + map.getMapFile());
+				for(MapPoint p : map.getMapPoints()) {
+					System.out.println("\t" + p.getType());
+				}
+			}
+			mapPanel.setMap(maps.get(0));*/
 		}
 	}
 }

@@ -1,6 +1,6 @@
 package pl.poznan.put.nav.admin;
 
-import java.awt.Image;
+import java.io.File;
 import java.util.ArrayList;
 
 public class Building {
@@ -13,7 +13,7 @@ public class Building {
     private ArrayList<Map> maps = new ArrayList<Map>();
     private ArrayList<Room> rooms = new ArrayList<Room>();
     private ArrayList<MapPoint> mapPoints = new ArrayList<MapPoint>();
-    private ArrayList<Image> images = new ArrayList<Image>();
+    private ArrayList<File> images = new ArrayList<File>();
     
     public Building() {}
     
@@ -60,12 +60,12 @@ public class Building {
     	mapPoints.remove(mapPoint);
     }
     
-    public Image addImage(Image image) {
+    public File addImage(File image) {
     	images.add(image);
     	return image;
     }
     
-    public void removeImage(Image image) {
+    public void removeImage(File image) {
     	images.remove(image);
     }
 
@@ -125,11 +125,11 @@ public class Building {
         this.mapPoints = mapPoints;
     }
 
-	public ArrayList<Image> getImages() {
+	public ArrayList<File> getImages() {
 		return images;
 	}
 
-	public void setImages(ArrayList<Image> images) {
+	public void setImages(ArrayList<File> images) {
 		this.images = images;
 	}
 
