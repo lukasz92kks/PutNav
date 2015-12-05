@@ -77,6 +77,11 @@ public class MapPanel extends JPanel implements MouseListener, MouseMotionListen
 	
 	public void deleteActiveMapPoint() {
 		if(activeMapPoint != null) {
+			for(MapPoint p : map.getMapPoints()) {
+				if(p.getSuccessors().contains(activeMapPoint)) {
+					p.removeSuccessor(activeMapPoint);
+				}
+			}
 			getMap().removeMapPoint(activeMapPoint);
 			propertiesPanel.setActiveMapPoint(null);
 			repaint();
@@ -120,20 +125,32 @@ public class MapPanel extends JPanel implements MouseListener, MouseMotionListen
 						g.drawRect(p.getX()-drawArea.getxStartSource(), p.getY()-drawArea.getyStartSource(), imagePointWidth, imagePointWidth);
 					}
 				}
+				for(MapPoint successor : p.getSuccessors()) {
+					drawArrow(g, p, successor);
+				}
 			}
 			// draw connection arrow
 			if(startArrow != null && endArrow != null) {
-				Graphics2D g2 = (Graphics2D)g;
-				g2.setColor(Color.BLACK);
-				g2.setStroke(new BasicStroke(3));
-				
-				int startx = startArrow.getX() + imagePointWidth/2 - drawArea.getxStartSource();
-				int starty = startArrow.getY() + imagePointWidth/2 - drawArea.getyStartSource();
-				int endx = endArrow.x - drawArea.getxStartSource();
-				int endy = endArrow.y - drawArea.getyStartSource();
-				g2.drawLine(startx, starty, endx, endy);
+				drawArrow(g, startArrow, endArrow);
 			}
 		}
+	}
+	
+	private void drawArrow(Graphics g, MapPoint start, MapPoint end) {
+		drawArrow(g, start, new Point(end.getX() + imagePointWidth/2, end.getY() + imagePointWidth/2));
+	}
+	
+	private void drawArrow(Graphics g, MapPoint start, Point end) {
+		Graphics2D g2 = (Graphics2D)g;
+		g2.setColor(Color.BLACK);
+		g2.setStroke(new BasicStroke(3));
+		
+		int startx = start.getX() + imagePointWidth/2 - drawArea.getxStartSource();
+		int starty = start.getY() + imagePointWidth/2 - drawArea.getyStartSource();
+		int endx = end.x - drawArea.getxStartSource();
+		int endy = end.y - drawArea.getyStartSource();
+		g2.drawLine(startx, starty, endx, endy);
+		g2.setStroke(new BasicStroke(1));
 	}
 
 	private boolean isAlreadyOneClick = false;
@@ -143,7 +160,6 @@ public class MapPanel extends JPanel implements MouseListener, MouseMotionListen
 		if(map != null) {
 			if (isAlreadyOneClick) {
 				if(activeMapPoint != null) {
-					//map = map.equals(campusMap) ? btMap : campusMap;
 					drawArea = null;
 			        isAlreadyOneClick = false;
 				}
@@ -199,6 +215,17 @@ public class MapPanel extends JPanel implements MouseListener, MouseMotionListen
 	public void mouseReleased(MouseEvent event) {
 		if(map != null) {
 			if(movableMapPoint != null) {
+				if(mode == MapPanelModes.EDIT_POINTS_CONNECTIONS) {
+					MapPoint endPoint = getClickedMapPoint(event.getX()+drawArea.getxStartSource(), event.getY()+drawArea.getyStartSource());
+					if(endPoint != null && !movableMapPoint.equals(endPoint) && !movableMapPoint.getSuccessors().contains(endPoint)) {
+						movableMapPoint.addSuccessor(endPoint);
+						endPoint.addSuccessor(movableMapPoint);
+						repaint();
+					}
+					endArrow = null;
+					startArrow = null;
+					repaint();
+				}
 				movableMapPoint = null;
 			}
 		}
@@ -215,7 +242,7 @@ public class MapPanel extends JPanel implements MouseListener, MouseMotionListen
 					propertiesPanel.setActiveMapPoint(movableMapPoint);
 				} else {
 					startArrow = movableMapPoint;
-					endArrow = new Point(event.getX(), event.getY());
+					endArrow = new Point(event.getX()+drawArea.getxStartSource(), event.getY()+drawArea.getyStartSource());
 				}
 				repaint();
 				
