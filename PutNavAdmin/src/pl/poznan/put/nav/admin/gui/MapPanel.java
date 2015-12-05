@@ -1,7 +1,9 @@
 package pl.poznan.put.nav.admin.gui;
 
+import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.Point;
 import java.awt.event.MouseEvent;
@@ -25,30 +27,30 @@ public class MapPanel extends JPanel implements MouseListener, MouseMotionListen
 
 	private PropertiesPanel propertiesPanel = AppFactory.getPropertiesPanel();
 	private Image buildingPoint = null;
+	private Image roomPoint = null;
 	private Image naviPoint = null;
 	private Image doorPoint = null;
+	private Image outdoorPoint = null;
 	private Image liftPoint = null;
 	private Image stairsPoint = null;
 	private Map map;
-	private Map campusMap;
-	private Map btMap;
 	private MapPoint movableMapPoint = null;	// for drag and drop
 	private MapPoint activeMapPoint = null;		// selected map point
 	private int activeAddMapPointType = 0;		// for adding new point
 	private int imagePointWidth;				// image point size - 1 dimension
 	private Point pressedPoint;
 	private DrawArea drawArea;
+	private int mode = MapPanelModes.EDIT_POINTS;
 	
 	public MapPanel() {
 		addMouseListener(this);
 		addMouseMotionListener(this);
 		
-		btMap = new Map(1, 1, (new File("images/bt_1_pietro.png")));
-		campusMap = new Map(2, 2, (new File("images/kampus.png")));
-		setMap(btMap);
-		buildingPoint = new ImageIcon("images/building.png").getImage(); 
+		buildingPoint = new ImageIcon("images/building.png").getImage();
+		roomPoint = new ImageIcon("images/room.png").getImage();
 		naviPoint = new ImageIcon("images/navi.png").getImage();
 		doorPoint = new ImageIcon("images/door.png").getImage();
+		outdoorPoint = new ImageIcon("images/outdoor.png").getImage();
 		liftPoint = new ImageIcon("images/lift.png").getImage();
 		stairsPoint = new ImageIcon("images/stairs.png").getImage();
 		
@@ -83,35 +85,53 @@ public class MapPanel extends JPanel implements MouseListener, MouseMotionListen
 	
 	@Override
 	protected void paintComponent(Graphics g) {
-		if(drawArea == null)
-			drawArea = new DrawArea(0, 0, this.getWidth(), this.getHeight(), 0, 0, this.getWidth(), this.getHeight());
-		g.clearRect(0, 0, this.getWidth(), this.getHeight());
-		g.drawImage(new ImageIcon(getMap().getMapFile().getAbsolutePath()).getImage(), drawArea.getxStartDestination(), drawArea.getyStartDestination(),
-							  drawArea.getxEndDestination(), drawArea.getyEndDestination(), 
-							  drawArea.getxStartSource(), drawArea.getyStartSource(),
-							  drawArea.getxEndSource(), drawArea.getyEndSource(), this);
-		
-		for(MapPoint p : getMap().getMapPoints()) {
-			int x = p.getX() - drawArea.getxStartSource();
-			int y = p.getY() - drawArea.getyStartSource();
-			int type = p.getType();
+		if(map != null) {
+			if(drawArea == null)
+				drawArea = new DrawArea(0, 0, this.getWidth(), this.getHeight(), 0, 0, this.getWidth(), this.getHeight());
+			g.clearRect(0, 0, this.getWidth(), this.getHeight());
+			g.drawImage(new ImageIcon(getMap().getMapFile().getAbsolutePath()).getImage(), drawArea.getxStartDestination(), drawArea.getyStartDestination(),
+								  drawArea.getxEndDestination(), drawArea.getyEndDestination(), 
+								  drawArea.getxStartSource(), drawArea.getyStartSource(),
+								  drawArea.getxEndSource(), drawArea.getyEndSource(), this);
 			
-			if(type > 0) {
-				if(type == MapPointTypes.NAVIGATION) 
-					g.drawImage(naviPoint, x, y, this);
-				else if(type == MapPointTypes.DOOR) 
-					g.drawImage(doorPoint, x, y, this);
-				else if(type == MapPointTypes.LIFT) 
-					g.drawImage(liftPoint, x, y, this);
-				else if(type == MapPointTypes.STAIRS) 
-					g.drawImage(stairsPoint, x, y, this);
-				else if(type == MapPointTypes.BUILDING)
-					g.drawImage(buildingPoint, x, y, this);
+			for(MapPoint p : getMap().getMapPoints()) {
+				int x = p.getX() - drawArea.getxStartSource();
+				int y = p.getY() - drawArea.getyStartSource();
+				int type = p.getType();
 				
-				if(p.equals(activeMapPoint)) {
-					g.setColor(Color.RED);
-					g.drawRect(p.getX()-drawArea.getxStartSource(), p.getY()-drawArea.getyStartSource(), imagePointWidth, imagePointWidth);
+				if(type > 0) {
+					if(type == MapPointTypes.NAVIGATION)
+						g.drawImage(naviPoint, x, y, this);
+					else if(type == MapPointTypes.DOOR)
+						g.drawImage(doorPoint, x, y, this);
+					else if(type == MapPointTypes.OUTDOOR)
+						g.drawImage(outdoorPoint, x, y, this);
+					else if(type == MapPointTypes.LIFT)
+						g.drawImage(liftPoint, x, y, this);
+					else if(type == MapPointTypes.STAIRS)
+						g.drawImage(stairsPoint, x, y, this);
+					else if(type == MapPointTypes.BUILDING)
+						g.drawImage(buildingPoint, x, y, this);
+					else if(type == MapPointTypes.ROOM)
+						g.drawImage(roomPoint, x, y, this);
+					
+					if(p.equals(activeMapPoint)) {
+						g.setColor(Color.RED);
+						g.drawRect(p.getX()-drawArea.getxStartSource(), p.getY()-drawArea.getyStartSource(), imagePointWidth, imagePointWidth);
+					}
 				}
+			}
+			// draw connection arrow
+			if(startArrow != null && endArrow != null) {
+				Graphics2D g2 = (Graphics2D)g;
+				g2.setColor(Color.BLACK);
+				g2.setStroke(new BasicStroke(3));
+				
+				int startx = startArrow.getX() + imagePointWidth/2 - drawArea.getxStartSource();
+				int starty = startArrow.getY() + imagePointWidth/2 - drawArea.getyStartSource();
+				int endx = endArrow.x - drawArea.getxStartSource();
+				int endy = endArrow.y - drawArea.getyStartSource();
+				g2.drawLine(startx, starty, endx, endy);
 			}
 		}
 	}
@@ -120,33 +140,38 @@ public class MapPanel extends JPanel implements MouseListener, MouseMotionListen
 	private MouseEvent eventClick;
 	@Override
 	public void mouseClicked(MouseEvent event) {
-		if (isAlreadyOneClick) {
-			if(activeMapPoint != null) {
-				map = map.equals(campusMap) ? btMap : campusMap;
-				drawArea = null;
-		        isAlreadyOneClick = false;
-			}
-	    } else {
-	        isAlreadyOneClick = true;
-	        eventClick = event;
-	        Timer t = new Timer("doubleclickTimer", false);
-	        t.schedule(new TimerTask() {
-
-	            @Override
-	            public void run() {
-	            	if (isAlreadyOneClick) {
-	            		isAlreadyOneClick = false;
-	        			activeMapPoint = getClickedMapPoint(eventClick.getX()+drawArea.getxStartSource(), eventClick.getY()+drawArea.getyStartSource());
-	        			if(activeMapPoint == null) {
-	        				activeMapPoint = addMapPoint(eventClick.getX()+drawArea.getxStartSource(), eventClick.getY()+drawArea.getyStartSource());
-	        			}
-	        			propertiesPanel.setActiveMapPoint(activeMapPoint);
-	            	}
-	            }
-	        }, 500);
-	    }
-		
-		repaint();
+		if(map != null) {
+			if (isAlreadyOneClick) {
+				if(activeMapPoint != null) {
+					//map = map.equals(campusMap) ? btMap : campusMap;
+					drawArea = null;
+			        isAlreadyOneClick = false;
+				}
+		    } else {
+		        isAlreadyOneClick = true;
+		        eventClick = event;
+		        Timer t = new Timer("doubleclickTimer", false);
+		        t.schedule(new TimerTask() {
+	
+		            @Override
+		            public void run() {
+		            	if (isAlreadyOneClick) {
+		            		isAlreadyOneClick = false;
+		        			
+		            		if(mode == MapPanelModes.EDIT_POINTS) {
+		        				activeMapPoint = getClickedMapPoint(eventClick.getX()+drawArea.getxStartSource(), eventClick.getY()+drawArea.getyStartSource());
+		        				if(activeMapPoint == null) {
+		        					activeMapPoint = addMapPoint(eventClick.getX()+drawArea.getxStartSource(), eventClick.getY()+drawArea.getyStartSource());
+		        				}
+		        				propertiesPanel.setActiveMapPoint(activeMapPoint);
+		        			}
+		            	}
+		            }
+		        }, 500);
+		    }
+			
+			repaint();
+		}
 	}
 
 	@Override
@@ -161,30 +186,43 @@ public class MapPanel extends JPanel implements MouseListener, MouseMotionListen
 
 	@Override
 	public void mousePressed(MouseEvent event) {
-		pressedPoint = new Point(event.getX(), event.getY());
-		if(movableMapPoint == null) {
-			movableMapPoint = getClickedMapPoint(event.getX()+drawArea.getxStartSource(), event.getY()+drawArea.getyStartSource());
-			activeMapPoint = movableMapPoint;
+		if(map != null) {
+			pressedPoint = new Point(event.getX(), event.getY());
+			if(movableMapPoint == null) {
+				movableMapPoint = getClickedMapPoint(event.getX()+drawArea.getxStartSource(), event.getY()+drawArea.getyStartSource());
+				activeMapPoint = movableMapPoint;
+			}
 		}
 	}
 
 	@Override
 	public void mouseReleased(MouseEvent event) {
-		if(movableMapPoint != null) {
-			movableMapPoint = null;
+		if(map != null) {
+			if(movableMapPoint != null) {
+				movableMapPoint = null;
+			}
 		}
 	}
 	
+	private MapPoint startArrow;
+	private Point endArrow;
 	@Override
 	public void mouseDragged(MouseEvent event) {
-		if(movableMapPoint != null) {
-			movableMapPoint.move(event.getX()+drawArea.getxStartSource(), event.getY()+drawArea.getyStartSource());
-			propertiesPanel.setActiveMapPoint(movableMapPoint);
-			repaint();
-			
-		} else {
-			recalculateDrawArea(event.getX(), event.getY());
-			repaint();
+		if(map != null) {
+			if(movableMapPoint != null) {
+				if(mode == MapPanelModes.EDIT_POINTS) {
+					movableMapPoint.move(event.getX()+drawArea.getxStartSource(), event.getY()+drawArea.getyStartSource());
+					propertiesPanel.setActiveMapPoint(movableMapPoint);
+				} else {
+					startArrow = movableMapPoint;
+					endArrow = new Point(event.getX(), event.getY());
+				}
+				repaint();
+				
+			} else {
+				recalculateDrawArea(event.getX(), event.getY());
+				repaint();
+			}
 		}
 	}
 
@@ -199,6 +237,14 @@ public class MapPanel extends JPanel implements MouseListener, MouseMotionListen
 
 	public void setActiveAddMapPointType(int activeAddMapPointType) {
 		this.activeAddMapPointType = activeAddMapPointType;
+	}
+	
+	public int getMode() {
+		return mode;
+	}
+
+	public void setMode(int mode) {
+		this.mode = mode;
 	}
 	
 	private void recalculateDrawArea(int cursorX, int cursorY) {
@@ -228,7 +274,5 @@ public class MapPanel extends JPanel implements MouseListener, MouseMotionListen
 		this.map = map;
 		drawArea = null;
 		repaint();
-		//ActionsPanel actionsPanel = AppFactory.getActionsPanel();
-		//actionsPanel.setActiveMap(map);
 	}
 }

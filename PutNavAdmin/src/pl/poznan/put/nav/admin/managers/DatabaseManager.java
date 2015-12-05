@@ -13,7 +13,7 @@ import pl.poznan.put.nav.admin.entities.Room;
 public class DatabaseManager implements DatabaseInterface {
 
 	private Connection connection = null;
-	private String dbName = "temp\\database.db";
+	private String dbName = "temp/database.db";
 	private String dbDriver = "jdbc:sqlite";
 	
 	public DatabaseManager() {

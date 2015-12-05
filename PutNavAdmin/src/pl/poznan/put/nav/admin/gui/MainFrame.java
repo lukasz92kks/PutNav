@@ -112,14 +112,19 @@ public class MainFrame extends JFrame {
 			databaseManager.getRoomsByBuilding(new Building());
 			databaseManager.getRoomsByMap(new Map());
 			
-			/*ArrayList<Map> maps = databaseManager.getAllMaps();
+			ArrayList<Map> maps = databaseManager.getAllMaps();
+			ArrayList<String> mapsFiles = new ArrayList<String>();
 			for(Map map : maps) {
 				System.out.println(map.getId() + " : " + map.getMapFile());
 				for(MapPoint p : map.getMapPoints()) {
 					System.out.println("\t" + p.getType());
 				}
+				mapsFiles.add(map.getMapFile().getName());
 			}
-			mapPanel.setMap(maps.get(0));*/
+			mapPanel.setMap(maps.get(0));
+			propertiesPanel.setMaps(maps);
+			propertiesPanel.setMapsComboBoxList(mapsFiles);
+			
 		}
 	}
 }
