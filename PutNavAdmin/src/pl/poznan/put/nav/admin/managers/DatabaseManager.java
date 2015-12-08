@@ -8,6 +8,7 @@ import pl.poznan.put.nav.admin.entities.Building;
 import pl.poznan.put.nav.admin.entities.Department;
 import pl.poznan.put.nav.admin.entities.Map;
 import pl.poznan.put.nav.admin.entities.MapPoint;
+import pl.poznan.put.nav.admin.entities.MapPointsArcs;
 import pl.poznan.put.nav.admin.entities.Room;
 
 public class DatabaseManager implements DatabaseInterface {
@@ -369,6 +370,30 @@ public class DatabaseManager implements DatabaseInterface {
 		}
 		return map;
 	}
+	
+	public MapPoint getMapPointById(int id, Map map) {
+		MapPoint mapPoint = null;
+		try {
+			connect();
+			PreparedStatement pstmt = connection.prepareStatement("select * from MapPoints where Id = ?");
+			pstmt.setInt(1, id);
+			ResultSet rs = pstmt.executeQuery();
+			if(rs.next()) {
+				mapPoint = new MapPoint(rs.getInt("Id"), rs.getInt("x"), rs.getInt("y"), 
+												 rs.getInt("Type"));
+				mapPoint.setMap(map);
+				//mapPoint.setBuilding(building);
+				//mapPoint.setRoom(room);
+				//mapPoint.setSuccessors(getMapPointsSuccessors(mapPoint));
+			}
+			pstmt.close();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			disconnect();
+		}
+		return mapPoint;
+	}
 
 	@Override
 	public ArrayList<MapPoint> getMapPointsByMap(Map map) {
@@ -384,8 +409,31 @@ public class DatabaseManager implements DatabaseInterface {
 				mapPoint.setMap(map);
 				//mapPoint.setBuilding(building);
 				//mapPoint.setRoom(room);
-				//mapPoint.setSuccessors(successors);
+				mapPoint.setSuccessors(getMapPointsSuccessors(mapPoint));
 				mapPoints.add(mapPoint);
+				System.out.println(mapPoint.getId() + " -> " + mapPoint.getSuccessors().get(0).getId());
+			}
+			pstmt.close();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			disconnect();
+		}
+		return mapPoints;
+	}
+	
+	public ArrayList<MapPoint> getMapPointsSuccessors(MapPoint mapPoint) {
+		ArrayList<MapPoint> mapPoints = new ArrayList<MapPoint>();
+		try {
+			connect();
+			PreparedStatement pstmt = connection.prepareStatement("select MapPoints.*, MapPointsArcs.ToId " +
+					"from MapPoints left join MapPointsArcs on MapPoints.Id = MapPointsArcs.FromId " +
+					"where MapPointsArcs.FromId = ?");
+			pstmt.setInt(1, mapPoint.getId());
+			ResultSet rs = pstmt.executeQuery();
+			while(rs.next()) {
+				MapPoint successor = getMapPointById(rs.getInt("ToId"), mapPoint.getMap());
+				mapPoints.add(successor);
 			}
 			pstmt.close();
 		} catch (SQLException e) {
@@ -477,5 +525,58 @@ public class DatabaseManager implements DatabaseInterface {
 			disconnect();
 		}
 		return room;
+	}
+	
+	public void saveMap(Map map) {
+		try {
+			connect();
+			PreparedStatement pstmt = connection.prepareStatement("update Maps set Building = ?, Floor = ?, FileName = ? " +
+																  "where Id = ?");
+			pstmt.setInt(1, 1/*map.getBuilding().getId()*/);
+			pstmt.setInt(2, map.getFloor());
+			pstmt.setString(1, map.getMapFile().getName());
+			pstmt.setInt(3, map.getId());
+			pstmt.executeUpdate();
+			
+			for(MapPoint p : map.getMapPoints()) {
+				System.out.println("Point id: " + p.getId() + " " + p.getX() + " " + p.getY() + " " + p.getType());
+				if(p.getId() < 0) {
+					pstmt = connection.prepareStatement("insert into MapPoints(X, Y, Map, Type) values(?,?,?,?)");
+					pstmt.setInt(1, p.getX());
+					pstmt.setInt(2, p.getY());
+					pstmt.setInt(3, 1/*p.getMap().getId()*/);
+					pstmt.setInt(4, p.getType());
+					
+					pstmt.executeUpdate();
+				} else {
+					pstmt = connection.prepareStatement("update MapPoints set X = ?, Y = ?, Type = ? " +
+							  "where Id = ?");
+					
+					pstmt.setInt(1, p.getX());
+					pstmt.setInt(2, p.getY());
+					pstmt.setInt(3, p.getType());
+					pstmt.setInt(4, p.getId());
+					
+					pstmt.executeUpdate();
+				}
+				
+				// save successors
+				for(MapPoint s : p.getSuccessors()) {
+					System.out.println("insert " + p.getId() + " - " + s.getId());
+					pstmt = connection.prepareStatement("insert or replace into MapPointsArcs(FromId, ToId) " +
+														"values(?,?)");
+					pstmt.setInt(1, p.getId());
+					pstmt.setInt(2, s.getId());
+					
+					pstmt.executeUpdate();
+				}
+			}
+			
+			pstmt.close();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			disconnect();
+		}
 	}
 }

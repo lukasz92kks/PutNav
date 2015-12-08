@@ -23,17 +23,41 @@ public class ArchiveFileManager {
 		if(isArchiveFileFormatCorrect(fileName))
 			archiveFile = fileName;
 	}
+	
+	public String getArchiveFile() {
+		return archiveFile;
+	}
+	
+	public String getArchiveExtension() {
+		return archiveExtension;
+	}
+
+	public String getDestDirectory() {
+		return destDirectory;
+	}
+
+	public String getImageDirectory() {
+		return imageDirectory;
+	}
+
+	public String getMapDirectory() {
+		return mapDirectory;
+	}
+
+	public String getDatabaseFileName() {
+		return databaseFileName;
+	}
 
 	public void addImageFile(String fileName) {
-		addFile(imageDirectory + File.separator + fileName);
+		addFile(destDirectory + File.separator + imageDirectory + File.separator + fileName);
 	}
 	
 	public void addMapFile(String fileName) {
-		addFile(mapDirectory + File.separator + fileName);
+		addFile(destDirectory + File.separator + mapDirectory + File.separator + fileName);
 	}
 	
 	public void addDatabase(String fileName) {
-		addFile(fileName);
+		addFile(destDirectory + File.separator + fileName);
 	}
 	
 	private void addFile(String fileName) {
@@ -66,7 +90,7 @@ public class ArchiveFileManager {
 			e.printStackTrace();
 		}
 	}
-	
+
 	public void extractArchiveFile() {
 		File destDir = new File(destDirectory);
 		if(!destDir.exists()) {

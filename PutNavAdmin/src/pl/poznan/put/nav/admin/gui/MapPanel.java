@@ -19,6 +19,7 @@ import javax.swing.JPanel;
 import pl.poznan.put.nav.admin.entities.Map;
 import pl.poznan.put.nav.admin.entities.MapPoint;
 import pl.poznan.put.nav.admin.entities.MapPointTypes;
+import pl.poznan.put.nav.admin.entities.MapPointsArcs;
 import pl.poznan.put.nav.admin.managers.AppFactory;
 
 public class MapPanel extends JPanel implements MouseListener, MouseMotionListener {
@@ -58,7 +59,7 @@ public class MapPanel extends JPanel implements MouseListener, MouseMotionListen
 	}
 	
 	private MapPoint addMapPoint(int x, int y) {
-		MapPoint point = new MapPoint(1, x, y, activeAddMapPointType);
+		MapPoint point = new MapPoint(-1, x, y, activeAddMapPointType);
 		getMap().addMapPoint(point);
 		repaint();
 		
@@ -72,6 +73,35 @@ public class MapPanel extends JPanel implements MouseListener, MouseMotionListen
 				return point;
 		}
 		
+		return null;
+	}
+	
+	private MapPointsArcs getClickedMapPointsArc(int x, int y) {
+		double wrongTouch = 0.03;
+		for(MapPoint p : map.getMapPoints()) {
+			for(MapPoint s : p.getSuccessors()) {
+				Point A = new Point(p.getX() + imagePointWidth / 2, p.getY() + imagePointWidth / 2);
+				Point B = new Point(s.getX() + imagePointWidth / 2, s.getY() + imagePointWidth / 2);
+				Point C = new Point(x, y);
+				
+				// wspolczynniki
+				double wspAB = (double)(B.y - A.y) / (double)(B.x - A.x);
+				double wspAC = (double)(C.y - A.y) / (double)(C.x - A.x);
+				
+				System.out.println("A(" + A.x + "," + A.y + ") " +
+						" B(" + B.x + "," + B.y + ") " +
+						" C(" + C.x + "," + C.y + ") ");
+				System.out.println("a: " + wspAB + "   b: " + wspAC);
+				
+				wrongTouch = wrongTouch * wspAB;
+				// czy punkt lezy na prostej
+				if( (wspAB >= wspAC-wrongTouch && wspAB <= wspAC+wrongTouch) ||
+					(wspAC >= wspAB-wrongTouch && wspAC <= wspAB+wrongTouch) ){
+					MapPointsArcs arc = new MapPointsArcs(0, p, s);
+					return arc;
+				}
+			}
+		}
 		return null;
 	}
 	
@@ -126,21 +156,21 @@ public class MapPanel extends JPanel implements MouseListener, MouseMotionListen
 					}
 				}
 				for(MapPoint successor : p.getSuccessors()) {
-					drawArrow(g, p, successor);
+					drawArc(g, p, successor);
 				}
 			}
 			// draw connection arrow
-			if(startArrow != null && endArrow != null) {
-				drawArrow(g, startArrow, endArrow);
+			if(startArc != null && endArc != null) {
+				drawArc(g, startArc, endArc);
 			}
 		}
 	}
 	
-	private void drawArrow(Graphics g, MapPoint start, MapPoint end) {
-		drawArrow(g, start, new Point(end.getX() + imagePointWidth/2, end.getY() + imagePointWidth/2));
+	private void drawArc(Graphics g, MapPoint start, MapPoint end) {
+		drawArc(g, start, new Point(end.getX() + imagePointWidth/2, end.getY() + imagePointWidth/2));
 	}
 	
-	private void drawArrow(Graphics g, MapPoint start, Point end) {
+	private void drawArc(Graphics g, MapPoint start, Point end) {
 		Graphics2D g2 = (Graphics2D)g;
 		g2.setColor(Color.BLACK);
 		g2.setStroke(new BasicStroke(3));
@@ -177,7 +207,12 @@ public class MapPanel extends JPanel implements MouseListener, MouseMotionListen
 		            		if(mode == MapPanelModes.EDIT_POINTS) {
 		        				activeMapPoint = getClickedMapPoint(eventClick.getX()+drawArea.getxStartSource(), eventClick.getY()+drawArea.getyStartSource());
 		        				if(activeMapPoint == null) {
-		        					activeMapPoint = addMapPoint(eventClick.getX()+drawArea.getxStartSource(), eventClick.getY()+drawArea.getyStartSource());
+		        					MapPointsArcs arc = getClickedMapPointsArc(eventClick.getX()+drawArea.getxStartSource(), eventClick.getY()+drawArea.getyStartSource());
+		        					if(arc != null) {
+		        						System.out.println("Klikniete polaczenie");
+		        					} else {
+		        						activeMapPoint = addMapPoint(eventClick.getX()+drawArea.getxStartSource(), eventClick.getY()+drawArea.getyStartSource());
+		        					}
 		        				}
 		        				propertiesPanel.setActiveMapPoint(activeMapPoint);
 		        			}
@@ -222,8 +257,8 @@ public class MapPanel extends JPanel implements MouseListener, MouseMotionListen
 						endPoint.addSuccessor(movableMapPoint);
 						repaint();
 					}
-					endArrow = null;
-					startArrow = null;
+					endArc = null;
+					startArc = null;
 					repaint();
 				}
 				movableMapPoint = null;
@@ -231,8 +266,8 @@ public class MapPanel extends JPanel implements MouseListener, MouseMotionListen
 		}
 	}
 	
-	private MapPoint startArrow;
-	private Point endArrow;
+	private MapPoint startArc;
+	private Point endArc;
 	@Override
 	public void mouseDragged(MouseEvent event) {
 		if(map != null) {
@@ -241,8 +276,8 @@ public class MapPanel extends JPanel implements MouseListener, MouseMotionListen
 					movableMapPoint.move(event.getX()+drawArea.getxStartSource(), event.getY()+drawArea.getyStartSource());
 					propertiesPanel.setActiveMapPoint(movableMapPoint);
 				} else {
-					startArrow = movableMapPoint;
-					endArrow = new Point(event.getX()+drawArea.getxStartSource(), event.getY()+drawArea.getyStartSource());
+					startArc = movableMapPoint;
+					endArc = new Point(event.getX()+drawArea.getxStartSource(), event.getY()+drawArea.getyStartSource());
 				}
 				repaint();
 				

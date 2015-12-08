@@ -55,6 +55,12 @@ public class MainFrame extends JFrame {
 			}
 		});
 		JMenuItem saveMenuItem = new JMenuItem("Zapisz");
+		saveMenuItem.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				saveMenuItemAction();
+			}
+		});
 		JMenuItem saveAsMenuItem = new JMenuItem("Zapisz jako...");
 		JMenuItem exitMenuItem =  new JMenuItem("Zakoncz");
 		addMenuItem.add(addBuildingMenuItem);
@@ -126,5 +132,14 @@ public class MainFrame extends JFrame {
 			propertiesPanel.setMapsComboBoxList(mapsFiles);
 			
 		}
+	}
+	
+	private void saveMenuItemAction() {
+		System.out.println("Saving changes");
+		
+		DatabaseManager databaseManager = AppFactory.getDatabaseManager();
+		databaseManager.saveMap(mapPanel.getMap());
+		
+		archiveFileManager.addDatabase(archiveFileManager.getDatabaseFileName());
 	}
 }
