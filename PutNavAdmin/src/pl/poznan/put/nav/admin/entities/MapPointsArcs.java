@@ -1,7 +1,10 @@
 package pl.poznan.put.nav.admin.entities;
 
+//@Entity
 public class MapPointsArcs {
 
+	//@Id
+	//@GeneratedValue(strategy = GenerationType.TABLE)
 	private int id;
 	private MapPoint from;
 	private MapPoint to;

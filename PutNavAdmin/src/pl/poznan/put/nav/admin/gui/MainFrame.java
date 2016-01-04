@@ -5,8 +5,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.util.ArrayList;
+import java.util.List;
 
-import javax.swing.ImageIcon;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JMenu;
@@ -14,9 +14,7 @@ import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
-import pl.poznan.put.nav.admin.entities.Building;
 import pl.poznan.put.nav.admin.entities.Map;
-import pl.poznan.put.nav.admin.entities.MapPoint;
 import pl.poznan.put.nav.admin.managers.AppFactory;
 import pl.poznan.put.nav.admin.managers.ArchiveFileManager;
 import pl.poznan.put.nav.admin.managers.DatabaseManager;
@@ -100,34 +98,15 @@ public class MainFrame extends JFrame {
 			archiveFileManager.extractArchiveFile();
 			
 			DatabaseManager databaseManager = AppFactory.getDatabaseManager();
-			databaseManager.getAllBuildings();
-			databaseManager.getAllDepartments();
-			databaseManager.getAllMaps();
-			databaseManager.getBuildingById(1);
-			databaseManager.getBuildingByMapPoint(new MapPoint(1, 44, 55, 1));
-			databaseManager.getBuildingByName("asfsd");
-			databaseManager.getDepartmentById(1);
-			databaseManager.getDepartmentByName("asf");
-			databaseManager.getDepartmentsByBuilding(new Building());
-			databaseManager.getImageById(1);
-			databaseManager.getImagesByBuilding(new Building());
-			databaseManager.getMapByFileName("asf");
-			databaseManager.getMapPointsByMap(new Map());
-			databaseManager.getMapsByBuilding(new Building());
-			databaseManager.getRoomByName("015");
-			databaseManager.getRoomsByBuilding(new Building());
-			databaseManager.getRoomsByMap(new Map());
+			List<Map> maps = databaseManager.getMaps();
 			
-			ArrayList<Map> maps = databaseManager.getAllMaps();
 			ArrayList<String> mapsFiles = new ArrayList<String>();
 			for(Map map : maps) {
-				System.out.println(map.getId() + " : " + map.getMapFile());
-				for(MapPoint p : map.getMapPoints()) {
-					System.out.println("\t" + p.getType());
-				}
-				mapsFiles.add(map.getMapFile().getName());
+				mapsFiles.add(map.getMapFile());
 			}
-			mapPanel.setMap(maps.get(0));
+			
+			if(maps.size() > 0)
+				mapPanel.setMap(maps.get(0));
 			propertiesPanel.setMaps(maps);
 			propertiesPanel.setMapsComboBoxList(mapsFiles);
 			
@@ -138,7 +117,7 @@ public class MainFrame extends JFrame {
 		System.out.println("Saving changes");
 		
 		DatabaseManager databaseManager = AppFactory.getDatabaseManager();
-		databaseManager.saveMap(mapPanel.getMap());
+		databaseManager.commit();
 		
 		archiveFileManager.addDatabase(archiveFileManager.getDatabaseFileName());
 	}

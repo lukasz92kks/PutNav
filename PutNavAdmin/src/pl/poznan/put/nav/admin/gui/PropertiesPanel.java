@@ -4,13 +4,13 @@ import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
+import java.util.List;
 
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JSeparator;
 import javax.swing.JTextField;
 
 import pl.poznan.put.nav.admin.entities.Map;
@@ -27,9 +27,9 @@ public class PropertiesPanel extends JPanel {
 	private JTextField yTextField;
 	private JComboBox<String> mapPointTypesComboBox;
 	private JComboBox<String> mapsComboBox;
-	private ArrayList<Map> maps;
+	private List<Map> maps;
 
-	public ArrayList<Map> getMaps() {
+	public List<Map> getMaps() {
 		return maps;
 	}
 
@@ -41,7 +41,7 @@ public class PropertiesPanel extends JPanel {
 		this.mapsComboBox = mapsComboBox;
 	}
 
-	public void setMaps(ArrayList<Map> maps) {
+	public void setMaps(List<Map> maps) {
 		this.maps = maps;
 	}
 
@@ -55,10 +55,10 @@ public class PropertiesPanel extends JPanel {
 			@Override
 			public void actionPerformed(ActionEvent event) {
 				MapPanel panel = AppFactory.getMapPanel();
-				JComboBox comboBox = (JComboBox) event.getSource();
+				JComboBox<?> comboBox = (JComboBox<?>) event.getSource();
 				for(Map map : maps) {
-					if(((String)comboBox.getSelectedItem()).equals(map.getMapFile().getName()))
-					panel.setMap(map);
+					if(((String)comboBox.getSelectedItem()).equals(map.getMapFile()))
+						panel.setMap(map);
 				}
 			}
 		});
