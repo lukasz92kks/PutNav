@@ -58,17 +58,36 @@ public class MapPanel extends JPanel implements MouseListener, MouseMotionListen
 		imagePointWidth = naviPoint.getWidth(this);
 	}
 	
+	private boolean addBuilding() {
+		return true;
+	}
+	
+	private boolean addRoom() {
+		return true;
+	}
+	
 	private MapPoint addMapPoint(int x, int y) {
-		MapPoint point = new MapPoint();
-		//point.setId(100);
-		point.setX(x);
-		point.setY(y);
-		point.setType(activeAddMapPointType);
-		point.setMap(map);
-		getMap().addMapPoint(point);
-		repaint();
+		boolean accepted = false;
 		
-		return point;
+		if (activeAddMapPointType == MapPointTypes.BUILDING) {
+			accepted = addBuilding();
+		} else if (activeAddMapPointType == MapPointTypes.ROOM) {
+			accepted = addRoom();
+		} else {
+			accepted = true;
+		}
+		if(accepted) {
+			MapPoint point = new MapPoint();
+			point.setX(x);
+			point.setY(y);
+			point.setType(activeAddMapPointType);
+			point.setMap(map);
+			getMap().addMapPoint(point);
+			repaint();
+			
+			return point;
+		}
+		return null;
 	}
 	
 	private MapPoint getClickedMapPoint(int x, int y) {
@@ -217,7 +236,7 @@ public class MapPanel extends JPanel implements MouseListener, MouseMotionListen
 		            		if(mode == MapPanelModes.EDIT_POINTS) {
 		        				activeMapPoint = getClickedMapPoint(eventClick.getX()+drawArea.getxStartSource(), eventClick.getY()+drawArea.getyStartSource());
 		        				if(activeMapPoint == null) {
-		        					MapPointsArcs arc = getClickedMapPointsArc(eventClick.getX()+drawArea.getxStartSource(), eventClick.getY()+drawArea.getyStartSource());
+		        					MapPointsArcs arc = null;//getClickedMapPointsArc(eventClick.getX()+drawArea.getxStartSource(), eventClick.getY()+drawArea.getyStartSource());
 		        					if(arc != null) {
 		        						System.out.println("Klikniete polaczenie");
 		        					} else {

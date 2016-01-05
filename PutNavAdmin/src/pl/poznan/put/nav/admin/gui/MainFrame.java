@@ -14,6 +14,7 @@ import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
+import pl.poznan.put.nav.admin.entities.Building;
 import pl.poznan.put.nav.admin.entities.Map;
 import pl.poznan.put.nav.admin.managers.AppFactory;
 import pl.poznan.put.nav.admin.managers.ArchiveFileManager;
@@ -110,6 +111,14 @@ public class MainFrame extends JFrame {
 			propertiesPanel.setMaps(maps);
 			propertiesPanel.setMapsComboBoxList(mapsFiles);
 			
+			List<Building> buildings = databaseManager.getBuildings();
+			
+			ArrayList<String> buildingsName = new ArrayList<String>();
+			for(Building b : buildings) {
+				buildingsName.add(b.getName());
+			}
+			propertiesPanel.setBuildings(buildings);
+			propertiesPanel.setBuildingsComboBoxList(buildingsName);
 		}
 	}
 	
