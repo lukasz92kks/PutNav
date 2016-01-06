@@ -37,8 +37,7 @@ public class Map {
 	
 	public Map() {}
 	
-	public Map(int id, int floor, String mapPath) {
-		this.id = id;
+	public Map(int floor, String mapPath) {
 		this.floor = floor;
 		this.mapPath = mapPath;
 	}

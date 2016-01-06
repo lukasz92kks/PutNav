@@ -141,16 +141,20 @@ public class ActionsPanel extends JPanel {
 
 	public void setActiveMap(Map activeMap) {
 		this.activeMap = activeMap;
-		if(activeMap.getMapFile().toString().equals("images/building.png")) {
+		if(activeMap.getBuilding() == null) {
 			addBuildingPointButton.setEnabled(true);
 			addDoorPointButton.setEnabled(false);
 			addLiftPointButton.setEnabled(false);
 			addStairsPointButton.setEnabled(false);
+			addOutdoorPointButton.setEnabled(false);
+			addRoomPointButton.setEnabled(false);
 		} else {
 			addBuildingPointButton.setEnabled(false);
 			addDoorPointButton.setEnabled(true);
 			addLiftPointButton.setEnabled(true);
 			addStairsPointButton.setEnabled(true);
+			addOutdoorPointButton.setEnabled(true);
+			addRoomPointButton.setEnabled(true);
 		}
 	}
 }

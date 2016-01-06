@@ -40,8 +40,7 @@ public class Room {
     
     public Room() {}
     
-    public Room(int id, String name, String function, int floor) {
-    	this.id = id;
+    public Room(String name, String function, int floor) {
     	this.name = name;
     	this.function = function;
     	this.floor = floor;

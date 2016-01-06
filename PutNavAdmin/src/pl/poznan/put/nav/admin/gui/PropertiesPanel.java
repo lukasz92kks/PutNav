@@ -29,6 +29,7 @@ public class PropertiesPanel extends JPanel {
 	private static final long serialVersionUID = -128116218890100985L;
 	
 	private MapPoint activeMapPoint = null;
+	private Map activeMap = null;
 	private JTextField floorTextField;
 	private JTextField xTextField;
 	private JTextField yTextField;
@@ -61,9 +62,12 @@ public class PropertiesPanel extends JPanel {
 				if(maps != null)
 					for(Map map : maps) {
 						if(map.getBuilding() == null) {
+							ActionsPanel actionsPanel = AppFactory.getActionsPanel();
+							actionsPanel.setActiveMap(map);
 							MapPanel mapPanel = AppFactory.getMapPanel();
 							mapPanel.setMap(map);
 							clearBuildingProperties();
+							setEmptyComboBoxes();
 						}
 				}
 			}
@@ -105,7 +109,10 @@ public class PropertiesPanel extends JPanel {
 				JComboBox<?> comboBox = (JComboBox<?>) event.getSource();
 				for(Map map : maps) {
 					if(((String)comboBox.getSelectedItem()).equals(map.getMapFile())) {
+						ActionsPanel actionsPanel = AppFactory.getActionsPanel();
+						actionsPanel.setActiveMap(map);
 						mapPanel.setMap(map);
+						
 						floorTextField.setText(Integer.toString(map.getFloor()));
 					
 						if(map.getBuilding() != null) {
@@ -143,7 +150,7 @@ public class PropertiesPanel extends JPanel {
 		return mapBox;
 	}
 	
-	private JPanel createBuildingBox() {
+	public JPanel createBuildingBox() {
 		JLabel nameLabel = new JLabel("Nazwa: ");
 		buildingNameTextField = new JTextField(12);
 		JPanel namePanel = new JPanel();
@@ -202,7 +209,7 @@ public class PropertiesPanel extends JPanel {
 		return buildingBox;
 	}
 	
-	private JPanel createRoomBox() {
+	public JPanel createRoomBox() {
 		JLabel nameLabel = new JLabel("Nazwa: ");
 		roomNameTextField = new JTextField(14);
 		JPanel namePanel = new JPanel();
@@ -229,7 +236,7 @@ public class PropertiesPanel extends JPanel {
 		
 		return roomBox;
 	}
-	
+
 	private JPanel createPointBox() {
 		JLabel xLabel = new JLabel("X: ");
 		xTextField = new JTextField();
@@ -269,7 +276,6 @@ public class PropertiesPanel extends JPanel {
 		if(point != null) {
 			this.activeMapPoint = point;
 			loadMapPointProperties(activeMapPoint);
-			
 			if(point.getType() == MapPointTypes.ROOM) {
 				loadRoomProperties(point.getRoom());
 			} else {
@@ -282,19 +288,21 @@ public class PropertiesPanel extends JPanel {
 	}
 	
 	public void setBuildingsComboBoxList(ArrayList<String> list) {
-		if(buildingsComboBox.getItemCount() > 0)
-			buildingsComboBox.setModel(new DefaultComboBoxModel<String>());
+		clearBuildingsComboBox();
+		
 		for(String item : list) {
 			buildingsComboBox.addItem(item);
 		}
+		buildingsComboBox.addItem("");
 	}
 	
 	public void setMapsComboBoxList(ArrayList<String> list) {
-		if(mapsComboBox.getItemCount() > 0)
-			mapsComboBox.setModel(new DefaultComboBoxModel<String>());
+		clearMapsComboBox();
+		
 		for(String item : list) {
 			mapsComboBox.addItem(item);
 		}
+		mapsComboBox.addItem("");
 	}
 	
 	private void loadMapPointProperties(MapPoint mapPoint) {
@@ -356,6 +364,11 @@ public class PropertiesPanel extends JPanel {
 	public void setBuildingsComboBox(JComboBox<String> buildingsComboBox) {
 		this.buildingsComboBox = buildingsComboBox;
 	}
+	
+	private void clearBuildingsComboBox() {
+		if(buildingsComboBox.getItemCount() > 0)
+			buildingsComboBox.setModel(new DefaultComboBoxModel<String>());
+	}
 
 	public JComboBox<String> getMapsComboBox() {
 		return mapsComboBox;
@@ -364,8 +377,42 @@ public class PropertiesPanel extends JPanel {
 	public void setMapsComboBox(JComboBox<String> mapsComboBox) {
 		this.mapsComboBox = mapsComboBox;
 	}
+	
+	private void clearMapsComboBox() {
+		if(mapsComboBox.getItemCount() > 0)
+			mapsComboBox.setModel(new DefaultComboBoxModel<String>());
+	}
+	
+	private void setEmptyComboBoxes() {
+		buildingsComboBox.setSelectedIndex(buildingsComboBox.getItemCount()-1);
+		mapsComboBox.setSelectedIndex(mapsComboBox.getItemCount()-1);
+	}
 
 	public void setMaps(List<Map> maps) {
 		this.maps = maps;
+	}
+	
+	public JTextField getFloorTextField() {
+		return floorTextField;
+	}
+
+	public JTextField getBuildingNameTextField() {
+		return buildingNameTextField;
+	}
+
+	public JTextField getAddressTextField() {
+		return addressTextField;
+	}
+
+	public JTextField getNumOfFloorsTextField() {
+		return numOfFloorsTextField;
+	}
+
+	public JTextField getRoomNameTextField() {
+		return roomNameTextField;
+	}
+
+	public JTextField getFunctionTextField() {
+		return functionTextField;
 	}
 }

@@ -13,12 +13,15 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 import javax.swing.ImageIcon;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
+import pl.poznan.put.nav.admin.entities.Building;
 import pl.poznan.put.nav.admin.entities.Map;
 import pl.poznan.put.nav.admin.entities.MapPoint;
 import pl.poznan.put.nav.admin.entities.MapPointTypes;
 import pl.poznan.put.nav.admin.entities.MapPointsArcs;
+import pl.poznan.put.nav.admin.entities.Room;
 import pl.poznan.put.nav.admin.managers.AppFactory;
 
 public class MapPanel extends JPanel implements MouseListener, MouseMotionListener {
@@ -58,30 +61,64 @@ public class MapPanel extends JPanel implements MouseListener, MouseMotionListen
 		imagePointWidth = naviPoint.getWidth(this);
 	}
 	
-	private boolean addBuilding() {
-		return true;
+	private Building addBuilding() {
+		PropertiesPanel panel = new PropertiesPanel();
+		int result = JOptionPane.showConfirmDialog(null, panel.createBuildingBox(), 
+	               "Dodaj budynek", JOptionPane.OK_CANCEL_OPTION, 1, new ImageIcon("images/building.png"));
+		
+		if(result == JOptionPane.YES_OPTION) {
+			Building building = new Building(panel.getBuildingNameTextField().getText(),
+											 panel.getAddressTextField().getText(),
+											 Integer.parseInt(panel.getNumOfFloorsTextField().getText()));
+			propertiesPanel.getBuildings().add(building);
+			return building;
+		}
+		else
+			return null;
 	}
 	
-	private boolean addRoom() {
-		return true;
+	private Room addRoom() {
+		PropertiesPanel panel = new PropertiesPanel();
+		int result = JOptionPane.showConfirmDialog(null, panel.createRoomBox(), 
+	               "Dodaj pomieszczenie", JOptionPane.OK_CANCEL_OPTION, 1, new ImageIcon("images/room.png"));
+		
+		if(result == JOptionPane.YES_OPTION) {
+			MapPanel mapPanel = AppFactory.getMapPanel();
+			
+			Room room = new Room(panel.getRoomNameTextField().getText(),
+								 panel.getFunctionTextField().getText(),
+								 mapPanel.getMap().getFloor());
+			
+			mapPanel.getMap().getBuilding().getRooms().add(room);
+			return room;
+		}
+		else
+			return null;
 	}
 	
 	private MapPoint addMapPoint(int x, int y) {
-		boolean accepted = false;
+		boolean addPoint = false;
+		Building building = null;
+		Room room = null;
 		
 		if (activeAddMapPointType == MapPointTypes.BUILDING) {
-			accepted = addBuilding();
+			building = addBuilding();
 		} else if (activeAddMapPointType == MapPointTypes.ROOM) {
-			accepted = addRoom();
+			room = addRoom();
 		} else {
-			accepted = true;
+			addPoint = true;
 		}
-		if(accepted) {
+		
+		if(addPoint || building != null || room != null) {
 			MapPoint point = new MapPoint();
 			point.setX(x);
 			point.setY(y);
 			point.setType(activeAddMapPointType);
 			point.setMap(map);
+			if(building != null)
+				point.setBuilding(building);
+			if(room != null)
+				point.setRoom(room);
 			getMap().addMapPoint(point);
 			repaint();
 			
@@ -121,7 +158,7 @@ public class MapPanel extends JPanel implements MouseListener, MouseMotionListen
 				// czy punkt lezy na prostej
 				if( (wspAB >= wspAC-wrongTouch && wspAB <= wspAC+wrongTouch) ||
 					(wspAC >= wspAB-wrongTouch && wspAC <= wspAB+wrongTouch) ){
-					MapPointsArcs arc = new MapPointsArcs(0, p, s);
+					MapPointsArcs arc = new MapPointsArcs(p, s);
 					return arc;
 				}
 			}
@@ -184,7 +221,7 @@ public class MapPanel extends JPanel implements MouseListener, MouseMotionListen
 					drawArc(g, p, successor);
 				}
 			}
-			// draw connection arrow
+			// draw connection arc
 			if(startArc != null && endArc != null) {
 				drawArc(g, startArc, endArc);
 			}

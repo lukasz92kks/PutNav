@@ -54,8 +54,7 @@ public class Building {
     
     public Building() {}
     
-    public Building(int id, String name, String address, int numberOfFloors) {
-    	this.id  = id;
+    public Building(String name, String address, int numberOfFloors) {
     	this.name = name;
     	this.address = address;
     	this.numberOfFloors = numberOfFloors;

@@ -46,8 +46,7 @@ public class MapPoint {
 	
 	public MapPoint() {}
 
-	public MapPoint(int id, int x, int y, int type) {
-		this.id = id;
+	public MapPoint(int x, int y, int type) {
 		this.x = x;
 		this.y = y;
 		this.type = type;

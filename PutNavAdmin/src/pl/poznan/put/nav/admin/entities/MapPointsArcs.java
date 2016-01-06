@@ -11,8 +11,7 @@ public class MapPointsArcs {
 	
 	public MapPointsArcs() {}
 	
-	public MapPointsArcs(int id, MapPoint from, MapPoint to) {
-		this.id = id;
+	public MapPointsArcs(MapPoint from, MapPoint to) {
 		this.from = from;
 		this.to = to;
 	}
