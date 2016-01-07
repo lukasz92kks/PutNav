@@ -9,15 +9,18 @@ import java.util.List;
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
 import javax.swing.DefaultComboBoxModel;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.border.CompoundBorder;
 import javax.swing.border.EmptyBorder;
 
 import pl.poznan.put.nav.admin.entities.Building;
+import pl.poznan.put.nav.admin.entities.Department;
 import pl.poznan.put.nav.admin.entities.Map;
 import pl.poznan.put.nav.admin.entities.MapPoint;
 import pl.poznan.put.nav.admin.entities.MapPointTypes;
@@ -42,6 +45,8 @@ public class PropertiesPanel extends JPanel {
 	private JComboBox<String> mapPointTypesComboBox;
 	private JComboBox<String> mapsComboBox;
 	private List<Building> buildings;
+	private List<Department> departments;
+
 	private List<Map> maps;
 
 	public PropertiesPanel() {
@@ -180,7 +185,13 @@ public class PropertiesPanel extends JPanel {
 		departmentsButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent event) {
-				
+				MapPanel mapPanel = AppFactory.getMapPanel();
+				if(mapPanel.getMap() != null && mapPanel.getMap().getBuilding() != null) {
+					BuildingDepartmentsPanel panel = new BuildingDepartmentsPanel(
+							mapPanel.getMap().getBuilding(), departments);
+					int result = JOptionPane.showConfirmDialog(null, panel, 
+				       "Wydzialy", JOptionPane.OK_CANCEL_OPTION, 1, new ImageIcon("images/building.png"));
+				}
 			}
 		});
 		JButton photosButton = new JButton("Zdjecia...");
@@ -188,7 +199,12 @@ public class PropertiesPanel extends JPanel {
 		photosButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent event) {
-				
+				MapPanel mapPanel = AppFactory.getMapPanel();
+				if(mapPanel.getMap() != null && mapPanel.getMap().getBuilding() != null) {
+					BuildingPhotosPanel panel = new BuildingPhotosPanel(mapPanel.getMap().getBuilding());
+					int result = JOptionPane.showConfirmDialog(null, panel, 
+				       "Zdjecia", JOptionPane.OK_CANCEL_OPTION, 1, new ImageIcon("images/building.png"));
+				}
 			}
 		});
 		JPanel buttonsPanel = new JPanel();
@@ -414,5 +430,13 @@ public class PropertiesPanel extends JPanel {
 
 	public JTextField getFunctionTextField() {
 		return functionTextField;
+	}
+	
+	public List<Department> getDepartments() {
+		return departments;
+	}
+
+	public void setDepartments(List<Department> departments) {
+		this.departments = departments;
 	}
 }

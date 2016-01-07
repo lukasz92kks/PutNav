@@ -58,6 +58,14 @@ public class DatabaseManager implements DatabaseInterface {
 		return buildings;
 	}
 	
+	@Override
+	public List<Department> getDepartments() {
+		Query q = em.createQuery("select d from Departments d");
+		List<Department> departments = q.getResultList();
+		
+		return departments;
+	}
+	
 	@SuppressWarnings("unchecked")
 	public List<Map> getMaps() {
 		Query q = em.createQuery("select m from Maps m");

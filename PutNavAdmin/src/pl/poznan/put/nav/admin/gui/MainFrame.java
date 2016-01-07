@@ -15,6 +15,7 @@ import javax.swing.JMenuItem;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
 import pl.poznan.put.nav.admin.entities.Building;
+import pl.poznan.put.nav.admin.entities.Department;
 import pl.poznan.put.nav.admin.entities.Map;
 import pl.poznan.put.nav.admin.managers.AppFactory;
 import pl.poznan.put.nav.admin.managers.ArchiveFileManager;
@@ -119,6 +120,9 @@ public class MainFrame extends JFrame {
 			}
 			propertiesPanel.setBuildings(buildings);
 			propertiesPanel.setBuildingsComboBoxList(buildingsName);
+			
+			List<Department> departments = databaseManager.getDepartments();
+			propertiesPanel.setDepartments(departments);
 		}
 	}
 	
