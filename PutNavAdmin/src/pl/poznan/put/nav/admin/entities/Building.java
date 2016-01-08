@@ -3,22 +3,58 @@ package pl.poznan.put.nav.admin.entities;
 import java.io.File;
 import java.util.ArrayList;
 
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
+import javax.persistence.TableGenerator;
+
+@Entity(name = "Buildings")
+@Table(name = "Buildings")
+@TableGenerator(name="generator", initialValue=100, allocationSize=1)
 public class Building {
 
+	@Id
+	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator="generator")
+	@Column(name = "Id", columnDefinition="INTEGER")
 	private int id;
+	
+	@Column(name = "Name")
 	private String name;
+	
+	@Column(name = "Address")
     private String address;
+	
+	@Column(name = "NumberOfFloors")
     private int numberOfFloors;
+    
+	@ManyToMany(cascade = CascadeType.ALL)
+    @JoinTable(name = "BuildingsDepartments")
+	@JoinColumn(name = "Departments")
     private ArrayList<Department> departments = new ArrayList<Department>();
+    
+	@OneToMany(mappedBy = "building", cascade = CascadeType.ALL, orphanRemoval=true)
     private ArrayList<Map> maps = new ArrayList<Map>();
+    
+	@OneToMany(mappedBy = "building", cascade = CascadeType.ALL, orphanRemoval=true)
     private ArrayList<Room> rooms = new ArrayList<Room>();
+    
+	@OneToMany(mappedBy = "building", cascade = CascadeType.ALL, orphanRemoval=true)
     private ArrayList<MapPoint> mapPoints = new ArrayList<MapPoint>();
-    private ArrayList<File> images = new ArrayList<File>();
+    
+	@OneToMany(mappedBy = "building", cascade = CascadeType.ALL, orphanRemoval=true)
+    private ArrayList<Photo> photos = new ArrayList<Photo>();
     
     public Building() {}
     
-    public Building(int id, String name, String address, int numberOfFloors) {
-    	this.id  = id;
+    public Building(String name, String address, int numberOfFloors) {
     	this.name = name;
     	this.address = address;
     	this.numberOfFloors = numberOfFloors;
@@ -60,13 +96,15 @@ public class Building {
     	mapPoints.remove(mapPoint);
     }
     
-    public File addImage(File image) {
-    	images.add(image);
-    	return image;
+    public File addPhoto(File file) {
+    	Photo p = new Photo();
+    	p.setFile(file.getAbsolutePath());
+    	photos.add(p);
+    	return file;
     }
     
-    public void removeImage(File image) {
-    	images.remove(image);
+    public void removePhoto(Photo photo) {
+    	photos.remove(photo);
     }
 
     public int getId() {
@@ -125,12 +163,12 @@ public class Building {
         this.mapPoints = mapPoints;
     }
 
-	public ArrayList<File> getImages() {
-		return images;
+	public ArrayList<Photo> getPhotos() {
+		return photos;
 	}
 
-	public void setImages(ArrayList<File> images) {
-		this.images = images;
+	public void setPhotos(ArrayList<Photo> photos) {
+		this.photos = photos;
 	}
 
 	public ArrayList<Department> getDepartments() {

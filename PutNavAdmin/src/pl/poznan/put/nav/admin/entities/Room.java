@@ -2,19 +2,45 @@ package pl.poznan.put.nav.admin.entities;
 
 import java.util.ArrayList;
 
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
+import javax.persistence.TableGenerator;
+
+@Entity(name = "Rooms")
+@Table(name = "Rooms")
+@TableGenerator(name="generator", initialValue=100, allocationSize=1)
 public class Room {
 
+	@Id
+	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator="generator")
+	@Column(name = "Id", columnDefinition="INTEGER")
 	private int id;
+	
+	@Column(name = "Name")
 	private String name;
+	
+	@Column(name = "Function")
     private String function;
+	
+	@Column(name = "Floor")
     private int floor;
+	
+	@JoinColumn(name = "Building")
     private Building building;
+    
+	@OneToMany(mappedBy = "room", cascade = CascadeType.ALL, orphanRemoval=true)
     private ArrayList<MapPoint> mapPoints = new ArrayList<MapPoint>();
     
     public Room() {}
     
-    public Room(int id, String name, String function, int floor) {
-    	this.id = id;
+    public Room(String name, String function, int floor) {
     	this.name = name;
     	this.function = function;
     	this.floor = floor;

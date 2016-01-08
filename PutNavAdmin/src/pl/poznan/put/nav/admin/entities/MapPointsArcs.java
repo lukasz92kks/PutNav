@@ -1,15 +1,17 @@
 package pl.poznan.put.nav.admin.entities;
 
+//@Entity
 public class MapPointsArcs {
 
+	//@Id
+	//@GeneratedValue(strategy = GenerationType.TABLE)
 	private int id;
 	private MapPoint from;
 	private MapPoint to;
 	
 	public MapPointsArcs() {}
 	
-	public MapPointsArcs(int id, MapPoint from, MapPoint to) {
-		this.id = id;
+	public MapPointsArcs(MapPoint from, MapPoint to) {
 		this.from = from;
 		this.to = to;
 	}

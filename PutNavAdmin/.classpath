@@ -3,5 +3,7 @@
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="lib" path="lib/sqlite-jdbc-3.8.11.2.jar"/>
+	<classpathentry kind="lib" path="D:/Lukasz/Programowanie/Java/Programy/PutNav/PutNavAdmin/lib/eclipselink.jar"/>
+	<classpathentry kind="lib" path="D:/Lukasz/Programowanie/Java/Programy/PutNav/PutNavAdmin/lib/javax.persistence_2.1.1.v201509150925.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

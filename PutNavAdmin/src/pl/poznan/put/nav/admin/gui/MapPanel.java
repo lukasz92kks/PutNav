@@ -9,22 +9,25 @@ import java.awt.Point;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
-import java.io.File;
 import java.util.Timer;
 import java.util.TimerTask;
 
 import javax.swing.ImageIcon;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
+import pl.poznan.put.nav.admin.entities.Building;
 import pl.poznan.put.nav.admin.entities.Map;
 import pl.poznan.put.nav.admin.entities.MapPoint;
 import pl.poznan.put.nav.admin.entities.MapPointTypes;
 import pl.poznan.put.nav.admin.entities.MapPointsArcs;
+import pl.poznan.put.nav.admin.entities.Room;
 import pl.poznan.put.nav.admin.managers.AppFactory;
 
 public class MapPanel extends JPanel implements MouseListener, MouseMotionListener {
 
 	private static final long serialVersionUID = -689713982784590342L;
+	private static final String mapsPath = "temp/maps/";
 
 	private PropertiesPanel propertiesPanel = AppFactory.getPropertiesPanel();
 	private Image buildingPoint = null;
@@ -58,12 +61,70 @@ public class MapPanel extends JPanel implements MouseListener, MouseMotionListen
 		imagePointWidth = naviPoint.getWidth(this);
 	}
 	
-	private MapPoint addMapPoint(int x, int y) {
-		MapPoint point = new MapPoint(-1, x, y, activeAddMapPointType);
-		getMap().addMapPoint(point);
-		repaint();
+	private Building addBuilding() {
+		PropertiesPanel panel = new PropertiesPanel();
+		int result = JOptionPane.showConfirmDialog(null, panel.createBuildingBox(), 
+	               "Dodaj budynek", JOptionPane.OK_CANCEL_OPTION, 1, new ImageIcon("images/building.png"));
 		
-		return point;
+		if(result == JOptionPane.YES_OPTION) {
+			Building building = new Building(panel.getBuildingNameTextField().getText(),
+											 panel.getAddressTextField().getText(),
+											 Integer.parseInt(panel.getNumOfFloorsTextField().getText()));
+			propertiesPanel.getBuildings().add(building);
+			return building;
+		}
+		else
+			return null;
+	}
+	
+	private Room addRoom() {
+		PropertiesPanel panel = new PropertiesPanel();
+		int result = JOptionPane.showConfirmDialog(null, panel.createRoomBox(), 
+	               "Dodaj pomieszczenie", JOptionPane.OK_CANCEL_OPTION, 1, new ImageIcon("images/room.png"));
+		
+		if(result == JOptionPane.YES_OPTION) {
+			MapPanel mapPanel = AppFactory.getMapPanel();
+			
+			Room room = new Room(panel.getRoomNameTextField().getText(),
+								 panel.getFunctionTextField().getText(),
+								 mapPanel.getMap().getFloor());
+			
+			mapPanel.getMap().getBuilding().getRooms().add(room);
+			return room;
+		}
+		else
+			return null;
+	}
+	
+	private MapPoint addMapPoint(int x, int y) {
+		boolean addPoint = false;
+		Building building = null;
+		Room room = null;
+		
+		if (activeAddMapPointType == MapPointTypes.BUILDING) {
+			building = addBuilding();
+		} else if (activeAddMapPointType == MapPointTypes.ROOM) {
+			room = addRoom();
+		} else {
+			addPoint = true;
+		}
+		
+		if(addPoint || building != null || room != null) {
+			MapPoint point = new MapPoint();
+			point.setX(x);
+			point.setY(y);
+			point.setType(activeAddMapPointType);
+			point.setMap(map);
+			if(building != null)
+				point.setBuilding(building);
+			if(room != null)
+				point.setRoom(room);
+			getMap().addMapPoint(point);
+			repaint();
+			
+			return point;
+		}
+		return null;
 	}
 	
 	private MapPoint getClickedMapPoint(int x, int y) {
@@ -97,7 +158,7 @@ public class MapPanel extends JPanel implements MouseListener, MouseMotionListen
 				// czy punkt lezy na prostej
 				if( (wspAB >= wspAC-wrongTouch && wspAB <= wspAC+wrongTouch) ||
 					(wspAC >= wspAB-wrongTouch && wspAC <= wspAB+wrongTouch) ){
-					MapPointsArcs arc = new MapPointsArcs(0, p, s);
+					MapPointsArcs arc = new MapPointsArcs(p, s);
 					return arc;
 				}
 			}
@@ -124,7 +185,7 @@ public class MapPanel extends JPanel implements MouseListener, MouseMotionListen
 			if(drawArea == null)
 				drawArea = new DrawArea(0, 0, this.getWidth(), this.getHeight(), 0, 0, this.getWidth(), this.getHeight());
 			g.clearRect(0, 0, this.getWidth(), this.getHeight());
-			g.drawImage(new ImageIcon(getMap().getMapFile().getAbsolutePath()).getImage(), drawArea.getxStartDestination(), drawArea.getyStartDestination(),
+			g.drawImage(new ImageIcon(mapsPath + getMap().getMapFile()).getImage(), drawArea.getxStartDestination(), drawArea.getyStartDestination(),
 								  drawArea.getxEndDestination(), drawArea.getyEndDestination(), 
 								  drawArea.getxStartSource(), drawArea.getyStartSource(),
 								  drawArea.getxEndSource(), drawArea.getyEndSource(), this);
@@ -155,11 +216,12 @@ public class MapPanel extends JPanel implements MouseListener, MouseMotionListen
 						g.drawRect(p.getX()-drawArea.getxStartSource(), p.getY()-drawArea.getyStartSource(), imagePointWidth, imagePointWidth);
 					}
 				}
+				if(p.getSuccessors() != null)
 				for(MapPoint successor : p.getSuccessors()) {
 					drawArc(g, p, successor);
 				}
 			}
-			// draw connection arrow
+			// draw connection arc
 			if(startArc != null && endArc != null) {
 				drawArc(g, startArc, endArc);
 			}
@@ -167,20 +229,24 @@ public class MapPanel extends JPanel implements MouseListener, MouseMotionListen
 	}
 	
 	private void drawArc(Graphics g, MapPoint start, MapPoint end) {
-		drawArc(g, start, new Point(end.getX() + imagePointWidth/2, end.getY() + imagePointWidth/2));
+		if(start != null && end != null) 
+			drawArc(g, start, new Point(end.getX() + imagePointWidth/2, end.getY() + imagePointWidth/2));
 	}
 	
 	private void drawArc(Graphics g, MapPoint start, Point end) {
-		Graphics2D g2 = (Graphics2D)g;
-		g2.setColor(Color.BLACK);
-		g2.setStroke(new BasicStroke(3));
-		
-		int startx = start.getX() + imagePointWidth/2 - drawArea.getxStartSource();
-		int starty = start.getY() + imagePointWidth/2 - drawArea.getyStartSource();
-		int endx = end.x - drawArea.getxStartSource();
-		int endy = end.y - drawArea.getyStartSource();
-		g2.drawLine(startx, starty, endx, endy);
-		g2.setStroke(new BasicStroke(1));
+		if(start != null && end != null) {
+			Graphics2D g2 = (Graphics2D)g;
+			g2.setColor(Color.BLACK);
+			g2.setStroke(new BasicStroke(3));
+			
+			int startx = start.getX() + imagePointWidth/2 - drawArea.getxStartSource();
+			int starty = start.getY() + imagePointWidth/2 - drawArea.getyStartSource();
+			int endx = end.x - drawArea.getxStartSource();
+			int endy = end.y - drawArea.getyStartSource();
+			
+			g2.drawLine(startx, starty, endx, endy);
+			g2.setStroke(new BasicStroke(1));
+		}
 	}
 
 	private boolean isAlreadyOneClick = false;
@@ -207,7 +273,7 @@ public class MapPanel extends JPanel implements MouseListener, MouseMotionListen
 		            		if(mode == MapPanelModes.EDIT_POINTS) {
 		        				activeMapPoint = getClickedMapPoint(eventClick.getX()+drawArea.getxStartSource(), eventClick.getY()+drawArea.getyStartSource());
 		        				if(activeMapPoint == null) {
-		        					MapPointsArcs arc = getClickedMapPointsArc(eventClick.getX()+drawArea.getxStartSource(), eventClick.getY()+drawArea.getyStartSource());
+		        					MapPointsArcs arc = null;//getClickedMapPointsArc(eventClick.getX()+drawArea.getxStartSource(), eventClick.getY()+drawArea.getyStartSource());
 		        					if(arc != null) {
 		        						System.out.println("Klikniete polaczenie");
 		        					} else {
@@ -317,7 +383,7 @@ public class MapPanel extends JPanel implements MouseListener, MouseMotionListen
 		int newxEnd = drawArea.getxEndSource() + (int)(0.1*diffrentX);
 		int newyEnd = drawArea.getyEndSource() + (int)(0.1*diffrentY);
 		
-		Image mapImage = new ImageIcon(getMap().getMapFile().getAbsolutePath()).getImage();
+		Image mapImage = new ImageIcon(mapsPath + getMap().getMapFile()).getImage();
 		if(newxStart >= 0 && newxEnd <= mapImage.getWidth(this)) {
 			drawArea.setxStartSource(newxStart);
 			drawArea.setxEndSource(newxEnd);

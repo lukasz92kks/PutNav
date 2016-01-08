@@ -45,7 +45,6 @@ public class ActionsPanel extends JPanel {
 			
 			@Override
 			public void actionPerformed(ActionEvent event) {
-				System.out.println("connection");
 				mapPanel.setMode(MapPanelModes.EDIT_POINTS_CONNECTIONS);
 			}
 		});
@@ -53,7 +52,6 @@ public class ActionsPanel extends JPanel {
 			
 			@Override
 			public void actionPerformed(ActionEvent event) {
-				System.out.println("building");
 				mapPanel.setMode(MapPanelModes.EDIT_POINTS);
 				mapPanel.setActiveAddMapPointType(MapPointTypes.BUILDING);
 			}
@@ -62,7 +60,6 @@ public class ActionsPanel extends JPanel {
 			
 			@Override
 			public void actionPerformed(ActionEvent event) {
-				System.out.println("room");
 				mapPanel.setMode(MapPanelModes.EDIT_POINTS);
 				mapPanel.setActiveAddMapPointType(MapPointTypes.ROOM);
 			}
@@ -71,7 +68,6 @@ public class ActionsPanel extends JPanel {
 			
 			@Override
 			public void actionPerformed(ActionEvent event) {
-				System.out.println("navi");
 				mapPanel.setMode(MapPanelModes.EDIT_POINTS);
 				mapPanel.setActiveAddMapPointType(MapPointTypes.NAVIGATION);
 			}
@@ -80,7 +76,6 @@ public class ActionsPanel extends JPanel {
 			
 			@Override
 			public void actionPerformed(ActionEvent event) {
-				System.out.println("door");
 				mapPanel.setMode(MapPanelModes.EDIT_POINTS);
 				mapPanel.setActiveAddMapPointType(MapPointTypes.DOOR);
 			}
@@ -89,7 +84,6 @@ public class ActionsPanel extends JPanel {
 			
 			@Override
 			public void actionPerformed(ActionEvent event) {
-				System.out.println("outdoor");
 				mapPanel.setMode(MapPanelModes.EDIT_POINTS);
 				mapPanel.setActiveAddMapPointType(MapPointTypes.OUTDOOR);
 			}
@@ -98,7 +92,6 @@ public class ActionsPanel extends JPanel {
 			
 			@Override
 			public void actionPerformed(ActionEvent event) {
-				System.out.println("lift");
 				mapPanel.setMode(MapPanelModes.EDIT_POINTS);
 				mapPanel.setActiveAddMapPointType(MapPointTypes.LIFT);
 			}
@@ -107,7 +100,6 @@ public class ActionsPanel extends JPanel {
 			
 			@Override
 			public void actionPerformed(ActionEvent event) {
-				System.out.println("stairs");
 				mapPanel.setMode(MapPanelModes.EDIT_POINTS);
 				mapPanel.setActiveAddMapPointType(MapPointTypes.STAIRS);
 			}
@@ -116,7 +108,6 @@ public class ActionsPanel extends JPanel {
 			
 			@Override
 			public void actionPerformed(ActionEvent event) {
-				System.out.println("delete");
 				mapPanel.setMode(MapPanelModes.EDIT_POINTS);
 				mapPanel.deleteActiveMapPoint();
 			}
@@ -141,16 +132,20 @@ public class ActionsPanel extends JPanel {
 
 	public void setActiveMap(Map activeMap) {
 		this.activeMap = activeMap;
-		if(activeMap.getMapFile().toString().equals("images/building.png")) {
+		if(activeMap.getBuilding() == null) {
 			addBuildingPointButton.setEnabled(true);
 			addDoorPointButton.setEnabled(false);
 			addLiftPointButton.setEnabled(false);
 			addStairsPointButton.setEnabled(false);
+			addOutdoorPointButton.setEnabled(false);
+			addRoomPointButton.setEnabled(false);
 		} else {
 			addBuildingPointButton.setEnabled(false);
 			addDoorPointButton.setEnabled(true);
 			addLiftPointButton.setEnabled(true);
 			addStairsPointButton.setEnabled(true);
+			addOutdoorPointButton.setEnabled(true);
+			addRoomPointButton.setEnabled(true);
 		}
 	}
 }
