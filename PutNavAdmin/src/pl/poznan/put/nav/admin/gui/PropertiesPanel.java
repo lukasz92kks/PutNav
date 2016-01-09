@@ -181,39 +181,69 @@ public class PropertiesPanel extends JPanel {
 		floorsPanel.add(numOfFloorsTextField);
 		
 		JButton departmentsButton = new JButton("Wydzia³y...");
-		departmentsButton.setPreferredSize(new Dimension(94, 24));
+		departmentsButton.setPreferredSize(new Dimension(200, 25));
 		departmentsButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent event) {
 				MapPanel mapPanel = AppFactory.getMapPanel();
 				if(mapPanel.getMap() != null && mapPanel.getMap().getBuilding() != null) {
-					BuildingDepartmentsPanel panel = new BuildingDepartmentsPanel(
-							mapPanel.getMap().getBuilding(), departments);
+					Building building = mapPanel.getMap().getBuilding();
+					BuildingDepartmentsPanel panel = new BuildingDepartmentsPanel(building, departments);
 					int result = JOptionPane.showConfirmDialog(null, panel, 
 				       "Wydzialy", JOptionPane.OK_CANCEL_OPTION, 1, new ImageIcon("images/building.png"));
+					
+					if(result == JOptionPane.YES_OPTION) {
+						building.setDepartments(panel.getIncludedDepartments());
+					}
 				}
 			}
 		});
 		JButton photosButton = new JButton("Zdjecia...");
-		photosButton.setPreferredSize(new Dimension(94, 24));
+		photosButton.setPreferredSize(new Dimension(200, 25));
 		photosButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent event) {
 				MapPanel mapPanel = AppFactory.getMapPanel();
 				if(mapPanel.getMap() != null && mapPanel.getMap().getBuilding() != null) {
-					BuildingPhotosPanel panel = new BuildingPhotosPanel(mapPanel.getMap().getBuilding());
+					Building building = mapPanel.getMap().getBuilding();
+					BuildingPhotosPanel panel = new BuildingPhotosPanel(building);
 					int result = JOptionPane.showConfirmDialog(null, panel, 
 				       "Zdjecia", JOptionPane.OK_CANCEL_OPTION, 1, new ImageIcon("images/building.png"));
+					
+					if(result == JOptionPane.YES_OPTION) {
+						building.setPhotos(panel.getPhotos());
+					}
+				}
+			}
+		});
+		JButton mapsButton = new JButton("Mapy...");
+		mapsButton.setPreferredSize(new Dimension(200, 25));
+		mapsButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent event) {
+				MapPanel mapPanel = AppFactory.getMapPanel();
+				if(mapPanel.getMap() != null && mapPanel.getMap().getBuilding() != null) {
+					Building building = mapPanel.getMap().getBuilding();
+					BuildingMapsPanel panel = new BuildingMapsPanel(building, maps);
+					int result = JOptionPane.showConfirmDialog(null, panel, 
+				       "Mapy", JOptionPane.OK_CANCEL_OPTION, 1, new ImageIcon("images/building.png"));
+					
+					if(result == JOptionPane.YES_OPTION) {
+						building.setMaps(panel.getIncludedMaps());
+					}
 				}
 			}
 		});
 		JPanel buttonsPanel = new JPanel();
+		buttonsPanel.setPreferredSize(new Dimension(220, 110));
+		//buttonsPanel.setLayout(new BoxLayout(buttonsPanel, BoxLayout.Y_AXIS));
 		buttonsPanel.setBorder(new EmptyBorder(2, 2, 2, 2));
 		buttonsPanel.add(departmentsButton);
 		buttonsPanel.add(photosButton);
+		buttonsPanel.add(mapsButton);
 		
 		JPanel buildingBox = new JPanel();
-		buildingBox.setPreferredSize(new Dimension(220, 150));
+		buildingBox.setPreferredSize(new Dimension(220, 205));
 		buildingBox.setLayout(new BoxLayout(buildingBox, BoxLayout.Y_AXIS));
 		buildingBox.setBorder(new CompoundBorder(new EmptyBorder(10,0,0,0), 
 				BorderFactory.createTitledBorder("Parametry budynku")));
