@@ -5,6 +5,7 @@ public class MapPointsArcs {
     private int id;
     private MapPoint from;
     private MapPoint to;
+    private double weight;
 
     public MapPointsArcs() {}
 
@@ -36,5 +37,13 @@ public class MapPointsArcs {
 
     public void setTo(MapPoint to) {
         this.to = to;
+    }
+
+    public double getWeight() {
+        return this.weight;
+    }
+
+    public void setWeight(double weight) {
+        this.weight = weight;
     }
 }
