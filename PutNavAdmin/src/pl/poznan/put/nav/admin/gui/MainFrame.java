@@ -12,6 +12,7 @@ import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
+import javax.swing.JSeparator;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
 import pl.poznan.put.nav.admin.entities.Building;
@@ -43,10 +44,6 @@ public class MainFrame extends JFrame {
 	
 	public void createMenu() {
 		JMenu fileMenu = new JMenu("Plik");
-		JMenu addMenuItem = new JMenu("Dodaj");
-		JMenuItem addBuildingMenuItem = new JMenuItem("Budynek");
-		JMenuItem addMapMenuItem = new JMenuItem("Mape");
-		JMenuItem addImageMenuItem = new JMenuItem("Zdjecie");
 		JMenuItem openMenuItem = new JMenuItem("Otwórz...");
 		openMenuItem.addActionListener(new ActionListener() {
 			@Override
@@ -63,10 +60,6 @@ public class MainFrame extends JFrame {
 		});
 		JMenuItem saveAsMenuItem = new JMenuItem("Zapisz jako...");
 		JMenuItem exitMenuItem =  new JMenuItem("Zakoncz");
-		addMenuItem.add(addBuildingMenuItem);
-		addMenuItem.add(addMapMenuItem);
-		addMenuItem.add(addImageMenuItem);
-		fileMenu.add(addMenuItem);
 		fileMenu.add(openMenuItem);
 		fileMenu.add(saveMenuItem);
 		fileMenu.add(saveAsMenuItem);
@@ -76,9 +69,36 @@ public class MainFrame extends JFrame {
 		JMenuItem undoMenuItem = new JMenuItem("Cofnij");
 		JMenuItem redoMenuItem = new JMenuItem("Ponow");
 		JMenuItem deleteAllPoints = new JMenuItem("Usun wszystkie punkty");
+		JMenu manageMenuItem = new JMenu("Zarzadzaj");
+		JMenuItem manageBuildingsMenuItem = new JMenuItem("Zarzadzaj budynkami");
+		manageBuildingsMenuItem.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				manageBuildingsItemAction();
+			}
+		});
+		JMenuItem manageMapsMenuItem = new JMenuItem("Zarzadzaj mapami");
+		manageMapsMenuItem.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				manageMapsItemAction();
+			}
+		});
+		JMenuItem manageDepartmentsMenuItem = new JMenuItem("Zarzadzaj wydzialami");
+		manageDepartmentsMenuItem.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				manageDepartmentsItemAction();
+			}
+		});
 		editMenu.add(undoMenuItem);
 		editMenu.add(redoMenuItem);
 		editMenu.add(deleteAllPoints);
+		editMenu.add(new JSeparator());
+		editMenu.add(manageMenuItem);
+		manageMenuItem.add(manageBuildingsMenuItem);
+		manageMenuItem.add(manageMapsMenuItem);
+		manageMenuItem.add(manageDepartmentsMenuItem);
 		
 		JMenuBar menuBar = new JMenuBar();
 		menuBar.add(fileMenu);
@@ -133,5 +153,20 @@ public class MainFrame extends JFrame {
 		databaseManager.commit();
 		
 		archiveFileManager.addDatabase(archiveFileManager.getDatabaseFileName());
+	}
+	
+	private void manageBuildingsItemAction() {
+		BuildingsManagerFrame manager = new BuildingsManagerFrame();
+		manager.setVisible(true);
+	}
+
+	private void manageMapsItemAction() {
+		MapsManagerFrame manager = new MapsManagerFrame();
+		manager.setVisible(true);
+	}
+
+	private void manageDepartmentsItemAction() {
+		DepartmentsManagerFrame manager = new DepartmentsManagerFrame();
+		manager.setVisible(true);
 	}
 }
