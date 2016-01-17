@@ -1,10 +1,21 @@
 package pl.poznan.put.putnav;
 
+import com.j256.ormlite.field.DatabaseField;
+import com.j256.ormlite.table.DatabaseTable;
+
+@DatabaseTable(tableName = "MapPointsArcs")
 public class MapPointsArcs {
 
+    @DatabaseField(id = true)
     private int id;
+
+    @DatabaseField
     private MapPoint from;
+
+    @DatabaseField
     private MapPoint to;
+
+
     private double weight;
 
     public MapPointsArcs() {}
@@ -45,5 +56,13 @@ public class MapPointsArcs {
 
     public void setWeight(double weight) {
         this.weight = weight;
+    }
+
+    public void calculateWeight() {
+        int x1 = this.getFrom().getX();
+        int y1 = this.getFrom().getY();
+        int x2 = this.getTo().getX();
+        int y2 = this.getTo().getY();
+        weight = Math.sqrt((double) ((x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2)));
     }
 }

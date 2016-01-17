@@ -1,18 +1,33 @@
 package pl.poznan.put.putnav;
 
+import com.j256.ormlite.field.DatabaseField;
+import com.j256.ormlite.table.DatabaseTable;
+
 import java.util.ArrayList;
+
+@DatabaseTable(tableName = "MapPoint")
 
 public class MapPoint implements Comparable<MapPoint> {
 
+    @DatabaseField(id = true)
     private int id;
+    @DatabaseField
     private int x;
+    @DatabaseField
     private int y;
+
+    @DatabaseField
+    private int type;
+    @DatabaseField
+    private Map map;
+    @DatabaseField
+    private Building building;
+    @DatabaseField
+    private Room room;
+
     private double distance;
     private MapPoint previous;
-    private int type;
-    private Map map;
-    private Building building;
-    private Room room;
+
     private ArrayList<MapPoint> successors = new ArrayList<MapPoint>();	  // lista nastepnikow
     private ArrayList<MapPointsArcs> edges = new ArrayList<MapPointsArcs>(); //lista krawedzi wychodzacych z danego wierzcholka
 
