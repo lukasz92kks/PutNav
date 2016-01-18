@@ -10,9 +10,12 @@ public class MapPointsArcs {
     private int id;
 
     @DatabaseField
-    private MapPoint from;
+    private int fromId; // inna nazwa?
 
     @DatabaseField
+    private int toId;
+
+    private MapPoint from; // inna nazwa?
     private MapPoint to;
 
 

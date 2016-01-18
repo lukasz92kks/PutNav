@@ -6,7 +6,18 @@ import java.util.PriorityQueue;
 
 public class RouteFinder {
 
+    private DatabaseHandler db;
+
+    private ArrayList<MapPoint> mapPoints;
+    private ArrayList<MapPointsArcs> mapPointsArcs;
+
+    RouteFinder() {
+        mapPoints = db.getMapPoints();
+        mapPointsArcs = db.getMapPointsArcs();
+    }
+
     ArrayList<MapPoint> findPath(MapPoint start, MapPoint goal) {
+
 
         ArrayList<MapPoint> path = new ArrayList<MapPoint>();
         start.setDistance(0);

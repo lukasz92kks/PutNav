@@ -155,4 +155,8 @@ public class MapPoint implements Comparable<MapPoint> {
     public void setEdges(ArrayList<MapPointsArcs> edges) {
         this.edges = edges;
     }
+
+    public void addSimpleEdge(MapPointsArcs arc) {
+        edges.add(arc);
+    }
 }
