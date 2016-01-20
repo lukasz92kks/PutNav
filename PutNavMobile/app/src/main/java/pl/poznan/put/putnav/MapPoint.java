@@ -45,6 +45,16 @@ public class MapPoint implements Comparable<MapPoint> {
         this.distance = Double.longBitsToDouble(0x7ff0000000000000L);
     }
 
+    ArrayList<MapPointsArcs> searchEdges(int pointId, ArrayList<MapPointsArcs> allEdges) {
+        ArrayList<MapPointsArcs> edges = new ArrayList<>();
+        for (MapPointsArcs current : allEdges) {
+            if (current.getPoint1().getId() == this.getId() || current.getPoint2().getId() == this.getId())
+                edges.add(current);
+        }
+
+        return edges;
+    }
+
     //po co zwracamy?
     public MapPoint addSuccessor(MapPoint mapPoint) {
         successors.add(mapPoint);

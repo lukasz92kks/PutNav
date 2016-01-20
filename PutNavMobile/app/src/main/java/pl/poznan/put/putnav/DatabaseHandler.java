@@ -2,10 +2,13 @@ package pl.poznan.put.putnav;
 
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
+import android.util.Log;
 
 import com.j256.ormlite.android.apptools.OrmLiteSqliteOpenHelper;
 import com.j256.ormlite.dao.Dao;
+import com.j256.ormlite.dao.RuntimeExceptionDao;
 import com.j256.ormlite.support.ConnectionSource;
+import com.j256.ormlite.table.TableUtils;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -13,11 +16,28 @@ import java.util.List;
 
 public class DatabaseHandler extends OrmLiteSqliteOpenHelper {
 
-    private static String DATABASE_NAME = "database.db";
+    private static final String DATABASE_NAME = "database.db";
     private static int DATABASE_VERSION = 1;
 
     ArrayList<MapPoint> mapPoints;
     ArrayList<MapPointsArcs> mapPointsArcs;
+
+    public RuntimeExceptionDao<MapPoint, Integer> getMapPointIntegerRuntimeExceptionDao() {
+        if (mapPointIntegerRuntimeExceptionDao == null) {
+            getMapPointsArcsIntegerRuntimeExceptionDao();
+        }
+        return mapPointIntegerRuntimeExceptionDao;
+    }
+
+    public RuntimeExceptionDao<MapPointsArcs, Integer> getMapPointsArcsIntegerRuntimeExceptionDao() {
+        if (mapPointsArcsIntegerRuntimeExceptionDao == null) {
+            getMapPointsArcsIntegerRuntimeExceptionDao();
+        }
+        return mapPointsArcsIntegerRuntimeExceptionDao;
+    }
+
+    private RuntimeExceptionDao<MapPoint, Integer> mapPointIntegerRuntimeExceptionDao = null;
+    private RuntimeExceptionDao<MapPointsArcs, Integer> mapPointsArcsIntegerRuntimeExceptionDao = null;
 
     private Dao<MapPoint, Integer> mapPointIntegerDao = null;
     private Dao<MapPointsArcs, Integer> mapPointsArcsDao = null;
@@ -27,22 +47,32 @@ public class DatabaseHandler extends OrmLiteSqliteOpenHelper {
     private Dao<Map, Integer> mapIntegerDao = null;
 
 
-    public DatabaseHandler(Context context, String databaseName, SQLiteDatabase.CursorFactory factory, int databaseVersion) throws SQLException {
-        super(context, databaseName, factory, databaseVersion);
-        this.mapPoints = new ArrayList<MapPoint>();
-        this.mapPoints = (ArrayList<MapPoint>) getMapPointIntegerDao().queryForAll();
-        this.mapPointsArcs = new ArrayList<MapPointsArcs>();
-        this.mapPointsArcs = (ArrayList<MapPointsArcs>) getMapPointsArcsDao().queryForAll();
+    public DatabaseHandler(Context context) throws SQLException {
+        super(context, DATABASE_NAME, null, DATABASE_VERSION);
     }
 
     @Override
     public void onCreate(SQLiteDatabase database, ConnectionSource connectionSource) {
-
+        Log.i(DatabaseHandler.class.getSimpleName(), "created");
+        try {
+            TableUtils.createTable(connectionSource, MapPointsArcs.class);
+            TableUtils.createTable(connectionSource, MapPoint.class);
+        } catch (SQLException ex) {
+            Log.e(DatabaseHandler.class.getSimpleName(), "unable to create", ex);
+            throw new RuntimeException(ex);
+        }
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase database, ConnectionSource connectionSource, int oldVersion, int newVersion) {
-
+        Log.i(DatabaseHandler.class.getSimpleName(), "upgraded");
+        try {
+            TableUtils.dropTable(connectionSource, MapPointsArcs.class, true);
+            TableUtils.dropTable(connectionSource, MapPoint.class, true);
+        } catch (SQLException e) {
+            Log.e(DatabaseHandler.class.getSimpleName(), "error", e);
+            throw new RuntimeException(e);
+        }
     }
 
     public Dao<Building, Integer> getBuildingIntegerDao() throws SQLException {
@@ -74,14 +104,4 @@ public class DatabaseHandler extends OrmLiteSqliteOpenHelper {
         return mapPointsArcs;
     }
 
-    public void setupArcsInMapPoints() {
-        for (MapPointsArcs arcs : mapPointsArcs) {
-            //id to reference
-        }
-        // point.add edge1
-        //mapPoints.get()
-        // point.add edge2
-
-
-    }
 }

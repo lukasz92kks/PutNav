@@ -3,6 +3,8 @@ package pl.poznan.put.putnav;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 
+import java.util.ArrayList;
+
 @DatabaseTable(tableName = "MapPointsArcs")
 public class MapPointsArcs {
 
@@ -10,23 +12,36 @@ public class MapPointsArcs {
     private int id;
 
     @DatabaseField
-    private int fromId; // inna nazwa?
+    private int fromId;
 
     @DatabaseField
     private int toId;
 
-    private MapPoint from; // inna nazwa?
-    private MapPoint to;
-
+    private MapPoint point1; // inna nazwa?
+    private MapPoint point2;
 
     private double weight;
 
     public MapPointsArcs() {}
 
-    public MapPointsArcs(int id, MapPoint from, MapPoint to) {
+    public MapPointsArcs(int id, int fromId, int toId, ArrayList<MapPoint> edges) {
         this.id = id;
-        this.from = from;
-        this.to = to;
+        this.fromId = fromId;
+        this.toId = toId;
+        this.point1 = getPoint(fromId, edges);
+        this.point2 = getPoint(toId, edges);
+        calculateWeight();
+    }
+
+    MapPoint getPoint(int pointId, ArrayList<MapPoint> vertices) {
+        MapPoint x = null;
+        for (MapPoint m : vertices) {
+            if (m.getId() == pointId) {
+                x = m;
+                //break;
+            }
+        }
+        return x;
     }
 
     public int getId() {
@@ -37,20 +52,20 @@ public class MapPointsArcs {
         this.id = id;
     }
 
-    public MapPoint getFrom() {
-        return from;
+    public MapPoint getPoint1() {
+        return point1;
     }
 
-    public void setFrom(MapPoint from) {
-        this.from = from;
+    public void setPoint1(MapPoint point1) {
+        this.point1 = point1;
     }
 
-    public MapPoint getTo() {
-        return to;
+    public MapPoint getPoint2() {
+        return point2;
     }
 
-    public void setTo(MapPoint to) {
-        this.to = to;
+    public void setPoint2(MapPoint point2) {
+        this.point2 = point2;
     }
 
     public double getWeight() {
@@ -62,10 +77,10 @@ public class MapPointsArcs {
     }
 
     public void calculateWeight() {
-        int x1 = this.getFrom().getX();
-        int y1 = this.getFrom().getY();
-        int x2 = this.getTo().getX();
-        int y2 = this.getTo().getY();
+        int x1 = this.getPoint1().getX();
+        int y1 = this.getPoint1().getY();
+        int x2 = this.getPoint2().getX();
+        int y2 = this.getPoint2().getY();
         weight = Math.sqrt((double) ((x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2)));
     }
 }

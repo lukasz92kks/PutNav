@@ -28,8 +28,8 @@ public class RouteFinder {
             MapPoint p = toVisit.poll();
             for (MapPointsArcs currentEdge : p.getEdges()) {
                 double newDistance = p.getDistance() + currentEdge.getWeight();
-                if (newDistance < currentEdge.getTo().getDistance()) {
-                    MapPoint m = currentEdge.getTo();
+                if (newDistance < currentEdge.getPoint2().getDistance()) {
+                    MapPoint m = currentEdge.getPoint2();
                     toVisit.remove(m);
                     m.setDistance(newDistance);
                     m.setPrevious(p);
