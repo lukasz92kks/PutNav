@@ -10,13 +10,13 @@ import java.util.ArrayList;
 public class MapPoint implements Comparable<MapPoint> {
 
     @DatabaseField(id = true)
-    private int id;
+    private int Id;
     @DatabaseField
-    private int x;
+    private int X;
     @DatabaseField
-    private int y;
+    private int Y;
     @DatabaseField
-    private int type;
+    private int Type;
     //@DatabaseField (foreign = true)
     private Map map;
     //@DatabaseField (foreign = true)
@@ -38,9 +38,9 @@ public class MapPoint implements Comparable<MapPoint> {
     public MapPoint() {}
 
     public MapPoint(int id, int x, int y, int type) {
-        this.x = x;
-        this.y = y;
-        this.type = type;
+        this.X = x;
+        this.Y = y;
+        this.Type = type;
         this.distance = Double.longBitsToDouble(0x7ff0000000000000L);
     }
 
@@ -73,27 +73,27 @@ public class MapPoint implements Comparable<MapPoint> {
     }
 
     public int getX() {
-        return x;
+        return X;
     }
 
     public void setX(int x) {
-        this.x = x;
+        this.X = x;
     }
 
     public int getY() {
-        return y;
+        return Y;
     }
 
     public void setY(int y) {
-        this.y = y;
+        this.Y = y;
     }
 
     public int getType() {
-        return type;
+        return Type;
     }
 
     public void setType(int type) {
-        this.type = type;
+        this.Type = type;
     }
 
     public double getDistance() {
@@ -118,11 +118,11 @@ public class MapPoint implements Comparable<MapPoint> {
     }
 
     public int getId() {
-        return id;
+        return Id;
     }
 
     public void setId(int id) {
-        this.id = id;
+        this.Id = id;
     }
 
     public Map getMap() {
