@@ -2,6 +2,8 @@ package pl.poznan.put.putnav;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -22,6 +24,7 @@ import java.util.List;
 public class MainActivity extends Activity {
 
     DatabaseHandler db;
+    SQLiteDatabase DB;
     List<MapPoint> nn;
 
     @Override

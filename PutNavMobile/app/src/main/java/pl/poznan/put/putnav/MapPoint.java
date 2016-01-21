@@ -17,11 +17,11 @@ public class MapPoint implements Comparable<MapPoint> {
     private int y;
     @DatabaseField
     private int type;
-    //@DatabaseField (foreign = true)
+    @DatabaseField(foreign = true)
     private Map map;
-    //@DatabaseField (foreign = true)
+    @DatabaseField(foreign = true)
     private Building building;
-    //@DatabaseField (foreign = true)
+    @DatabaseField(foreign = true)
     private Room room;
 
     private double distance;

@@ -3,6 +3,8 @@ package pl.poznan.put.putnav;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
+import android.database.sqlite.SQLiteOpenHelper;
+import android.provider.ContactsContract;
 import android.util.Log;
 
 import com.j256.ormlite.android.apptools.OrmLiteSqliteOpenHelper;
@@ -21,9 +23,8 @@ public class DatabaseHandler extends OrmLiteSqliteOpenHelper {
     private static final String DATABASE_NAME = "database.db";
 
     // private static final String DATABASE_PATH =  "/data/data/pl.poznan.put.putnav/databases/";
-    private static int DATABASE_VERSION = 1;
+    private static int DATABASE_VERSION = 100;
     private final Context context;
-    private final String DATABASE_PATH;
 
     private Dao<MapPoint, Integer> mapPointIntegerDao = null;
     private Dao<MapPointsArcs, Integer> mapPointsArcsDao = null;
@@ -34,21 +35,19 @@ public class DatabaseHandler extends OrmLiteSqliteOpenHelper {
 
 
     public DatabaseHandler(Context context) throws SQLException {
-        super(context, DATABASE_NAME, null, DATABASE_VERSION);
 
+        super(context, DATABASE_NAME, null, DATABASE_VERSION, R.raw.ormlite_config);
         this.context = context;
-        DATABASE_PATH = context.getDatabasePath(DATABASE_NAME).getPath();
     }
 
     @Override
     public void onCreate(SQLiteDatabase database, ConnectionSource connectionSource) {
         Log.i(DatabaseHandler.class.getSimpleName(), "wchodze");
+        //SQLiteDatabase db_Read = null;
+        //db_Read = this.getReadableDatabase();
+        //db_Read.close();
 
-        File mFile = context.getDatabasePath(DATABASE_NAME);
-        if (mFile.exists())
-            mFile.delete(); //to dodałem z PoliGdzie, ale nie pomogło
-
-        String fileName = DATABASE_PATH;
+        String fileName = context.getDatabasePath(DATABASE_NAME).getPath();
         Log.i(DatabaseHandler.class.getSimpleName(), fileName);
         InputStream in = null;
         try {
@@ -73,6 +72,7 @@ public class DatabaseHandler extends OrmLiteSqliteOpenHelper {
         }
         try {
             in.close();
+            out.flush();
             out.close();
         } catch (IOException e) {
             e.printStackTrace();
@@ -108,6 +108,5 @@ public class DatabaseHandler extends OrmLiteSqliteOpenHelper {
         }
         return mapPointsArcsDao;
     }
-
 
 }
