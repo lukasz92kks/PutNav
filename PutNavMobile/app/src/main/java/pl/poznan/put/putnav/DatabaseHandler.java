@@ -2,42 +2,28 @@ package pl.poznan.put.putnav;
 
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteException;
 import android.util.Log;
 
 import com.j256.ormlite.android.apptools.OrmLiteSqliteOpenHelper;
 import com.j256.ormlite.dao.Dao;
-import com.j256.ormlite.dao.RuntimeExceptionDao;
 import com.j256.ormlite.support.ConnectionSource;
-import com.j256.ormlite.table.TableUtils;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
 
 public class DatabaseHandler extends OrmLiteSqliteOpenHelper {
 
     private static final String DATABASE_NAME = "database.db";
+
+    // private static final String DATABASE_PATH =  "/data/data/pl.poznan.put.putnav/databases/";
     private static int DATABASE_VERSION = 1;
-
-    ArrayList<MapPoint> mapPoints;
-    ArrayList<MapPointsArcs> mapPointsArcs;
-
-    public RuntimeExceptionDao<MapPoint, Integer> getMapPointIntegerRuntimeExceptionDao() {
-        if (mapPointIntegerRuntimeExceptionDao == null) {
-            getMapPointsArcsIntegerRuntimeExceptionDao();
-        }
-        return mapPointIntegerRuntimeExceptionDao;
-    }
-
-    public RuntimeExceptionDao<MapPointsArcs, Integer> getMapPointsArcsIntegerRuntimeExceptionDao() {
-        if (mapPointsArcsIntegerRuntimeExceptionDao == null) {
-            getMapPointsArcsIntegerRuntimeExceptionDao();
-        }
-        return mapPointsArcsIntegerRuntimeExceptionDao;
-    }
-
-    private RuntimeExceptionDao<MapPoint, Integer> mapPointIntegerRuntimeExceptionDao = null;
-    private RuntimeExceptionDao<MapPointsArcs, Integer> mapPointsArcsIntegerRuntimeExceptionDao = null;
+    private final Context context;
+    private final String DATABASE_PATH;
 
     private Dao<MapPoint, Integer> mapPointIntegerDao = null;
     private Dao<MapPointsArcs, Integer> mapPointsArcsDao = null;
@@ -49,30 +35,57 @@ public class DatabaseHandler extends OrmLiteSqliteOpenHelper {
 
     public DatabaseHandler(Context context) throws SQLException {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
+
+        this.context = context;
+        DATABASE_PATH = context.getDatabasePath(DATABASE_NAME).getPath();
     }
 
     @Override
     public void onCreate(SQLiteDatabase database, ConnectionSource connectionSource) {
-        Log.i(DatabaseHandler.class.getSimpleName(), "created");
+        Log.i(DatabaseHandler.class.getSimpleName(), "wchodze");
+
+        File mFile = context.getDatabasePath(DATABASE_NAME);
+        if (mFile.exists())
+            mFile.delete(); //to dodałem z PoliGdzie, ale nie pomogło
+
+        String fileName = DATABASE_PATH;
+        Log.i(DatabaseHandler.class.getSimpleName(), fileName);
+        InputStream in = null;
         try {
-            TableUtils.createTable(connectionSource, MapPointsArcs.class);
-            TableUtils.createTable(connectionSource, MapPoint.class);
-        } catch (SQLException ex) {
-            Log.e(DatabaseHandler.class.getSimpleName(), "unable to create", ex);
-            throw new RuntimeException(ex);
+            in = context.getAssets().open(DATABASE_NAME);
+        } catch (IOException e) {
+            e.printStackTrace();
         }
+        FileOutputStream out = null;
+        try {
+            out = new FileOutputStream(fileName);
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+        byte[] buffer = new byte[1024];
+        int length = 0;
+        try {
+            while ((length = in.read(buffer)) > 0) {
+                out.write(buffer);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        try {
+            in.close();
+            out.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase database, ConnectionSource connectionSource, int oldVersion, int newVersion) {
         Log.i(DatabaseHandler.class.getSimpleName(), "upgraded");
-        try {
-            TableUtils.dropTable(connectionSource, MapPointsArcs.class, true);
-            TableUtils.dropTable(connectionSource, MapPoint.class, true);
-        } catch (SQLException e) {
-            Log.e(DatabaseHandler.class.getSimpleName(), "error", e);
-            throw new RuntimeException(e);
-        }
+
+
     }
 
     public Dao<Building, Integer> getBuildingIntegerDao() throws SQLException {
@@ -96,12 +109,5 @@ public class DatabaseHandler extends OrmLiteSqliteOpenHelper {
         return mapPointsArcsDao;
     }
 
-    public ArrayList<MapPoint> getMapPoints() {
-        return mapPoints;
-    }
-
-    public ArrayList<MapPointsArcs> getMapPointsArcs() {
-        return mapPointsArcs;
-    }
 
 }

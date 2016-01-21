@@ -1,13 +1,20 @@
 package pl.poznan.put.putnav;
 
 import android.widget.ImageView;
+
+import com.j256.ormlite.field.DatabaseField;
+
 import java.util.ArrayList;
 
 public class Building {
 
+    @DatabaseField(id = true)
     private int id;
+    @DatabaseField
     private String name;
+    @DatabaseField
     private String address;
+    @DatabaseField
     private int numberOfFloors;
     private ArrayList<Department> departments = new ArrayList<Department>();
     private ArrayList<Map> maps = new ArrayList<Map>();

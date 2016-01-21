@@ -5,7 +5,7 @@ import com.j256.ormlite.table.DatabaseTable;
 
 import java.util.ArrayList;
 
-@DatabaseTable(tableName = "MapPoint")
+@DatabaseTable(tableName = "MapPoints")
 
 public class MapPoint implements Comparable<MapPoint> {
 
@@ -15,14 +15,13 @@ public class MapPoint implements Comparable<MapPoint> {
     private int x;
     @DatabaseField
     private int y;
-
     @DatabaseField
     private int type;
-    @DatabaseField
+    //@DatabaseField (foreign = true)
     private Map map;
-    @DatabaseField
+    //@DatabaseField (foreign = true)
     private Building building;
-    @DatabaseField
+    //@DatabaseField (foreign = true)
     private Room room;
 
     private double distance;

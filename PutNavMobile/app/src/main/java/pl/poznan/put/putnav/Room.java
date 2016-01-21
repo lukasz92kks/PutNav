@@ -1,13 +1,20 @@
 package pl.poznan.put.putnav;
 
+import com.j256.ormlite.field.DatabaseField;
+
 import java.util.ArrayList;
 
 public class Room {
 
+    @DatabaseField(id = true)
     private int id;
+    @DatabaseField
     private String name;
+    @DatabaseField
     private String function;
+    @DatabaseField
     private int floor;
+    @DatabaseField(foreign = true)
     private Building building;
     private ArrayList<MapPoint> mapPoints = new ArrayList<MapPoint>();
 
