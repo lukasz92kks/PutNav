@@ -35,7 +35,9 @@ public class MapPoint implements Comparable<MapPoint> {
         return Double.compare(distance, another.distance);
     }
 
-    public MapPoint() {}
+    public MapPoint() {
+        this.distance = Double.longBitsToDouble(0x7ff0000000000000L);
+    }
 
     public MapPoint(int id, int x, int y, int type) {
         this.X = x;
@@ -44,14 +46,14 @@ public class MapPoint implements Comparable<MapPoint> {
         this.distance = Double.longBitsToDouble(0x7ff0000000000000L);
     }
 
-    ArrayList<MapPointsArcs> searchEdges(int pointId, ArrayList<MapPointsArcs> allEdges) {
+    void searchEdges(ArrayList<MapPointsArcs> allEdges) {
         ArrayList<MapPointsArcs> edges = new ArrayList<>();
         for (MapPointsArcs current : allEdges) {
             if (current.getPoint1().getId() == this.getId() || current.getPoint2().getId() == this.getId())
                 edges.add(current);
         }
 
-        return edges;
+        this.edges =  edges;
     }
 
     //po co zwracamy?

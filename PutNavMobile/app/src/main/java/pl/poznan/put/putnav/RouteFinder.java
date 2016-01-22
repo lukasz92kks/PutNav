@@ -1,5 +1,7 @@
 package pl.poznan.put.putnav;
 
+import android.widget.Toast;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -22,7 +24,7 @@ public class RouteFinder {
         ArrayList<MapPoint> path = new ArrayList<MapPoint>();
         start.setDistance(0);
         PriorityQueue<MapPoint> toVisit = new PriorityQueue<MapPoint>();
-        toVisit.add(goal);
+        toVisit.add(start);
 
         while (!toVisit.isEmpty()) {
             MapPoint p = toVisit.poll();

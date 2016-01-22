@@ -48,16 +48,37 @@ public class MainActivity extends Activity {
         try {
             Log.i(MainActivity.class.getSimpleName(), "tu...");
             nn = new ArrayList<MapPoint>(db.getMapPointIntegerDao().queryForAll());
-            Log.i(MainActivity.class.getSimpleName(), "ile: " + Integer.toString(nn.size()));
             mpa = new ArrayList<MapPointsArcs>(db.getMapPointsArcsDao().queryForAll());
-            Log.i(MainActivity.class.getSimpleName(), "ile: " + Integer.toString(mpa.size()));
-
 
             for(MapPointsArcs m : mpa)
             {
                 m.setPoint1(nn);
-                Toast.makeText(MainActivity.this, "weight: " + Double.toString(m.getWeight()), Toast.LENGTH_SHORT).show();
+                m.setPoint2(nn);
+                m.calculateWeight();
+
+               // Toast.makeText(MainActivity.this, "weight: " + Double.toString(m.getWeight()), Toast.LENGTH_SHORT).show();
             }
+
+
+            for(MapPoint m : nn)
+            {
+                m.searchEdges(mpa);
+                //Toast.makeText(MainActivity.this, "distance: " + Double.toString(m.getDistance()), Toast.LENGTH_SHORT).show();
+            }
+
+            for(MapPoint m : nn)
+            {
+                for(MapPointsArcs a : m.getEdges())
+                {
+                    //Toast.makeText(MainActivity.this, a.getPoint1().getId() + " : " + a.getPoint2().getId(), Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            Log.i(MainActivity.class.getSimpleName(), "ile: " + Integer.toString(nn.size()));
+            Log.i(MainActivity.class.getSimpleName(), "ile: " + Integer.toString(mpa.size()));
+
+
+
 
 
         } catch (SQLException e) {
@@ -66,9 +87,8 @@ public class MainActivity extends Activity {
 
         routeFinder = new RouteFinder(nn, mpa);
 
-        Toast.makeText(MainActivity.this, "StartId: " + Integer.toString(nn.get(3).getId()), Toast.LENGTH_SHORT).show();
-        Toast.makeText(MainActivity.this, "GoalId: " + Integer.toString(nn.get(8).getId()), Toast.LENGTH_SHORT).show();
-
+        //Toast.makeText(MainActivity.this, "StartId: " + Integer.toString(nn.get(3).getId()), Toast.LENGTH_SHORT).show();
+        //Toast.makeText(MainActivity.this, "GoalId: " + Integer.toString(nn.get(8).getId()), Toast.LENGTH_SHORT).show();
 
 
 
