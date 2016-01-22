@@ -25,7 +25,7 @@
         <Button
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:text="Nano"
+            android:text="Mapa"
             android:id="@+id/button"
             android:layout_gravity="center_horizontal"
             android:layout_margin="@dimen/abc_text_size_menu_material"
@@ -34,7 +34,7 @@
         <Button
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:text="New Button"
+            android:text="Ustawienia"
             android:id="@+id/button2"
             android:layout_gravity="center_horizontal"
             android:layout_margin="@dimen/abc_text_size_menu_material" />
@@ -42,10 +42,10 @@
         <Button
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:text="New Button"
+            android:text="O Poligrodzie"
             android:id="@+id/button3"
             android:layout_gravity="center_horizontal"
-            android:layout_margin="@dimen/abc_text_size_menu_material" />
+            android:layout_margin="@dimen/abc_text_size_menu_material"/>
 
     </LinearLayout>
 
