@@ -23,8 +23,8 @@ public class DatabaseHandler extends OrmLiteSqliteOpenHelper {
     private static final String DATABASE_NAME = "database.db";
 
     // private static final String DATABASE_PATH =  "/data/data/pl.poznan.put.putnav/databases/";
-    private static int DATABASE_VERSION = 100;
-    private final Context context;
+    private static int DATABASE_VERSION = 1;
+    private Context context;
 
     private Dao<MapPoint, Integer> mapPointIntegerDao = null;
     private Dao<MapPointsArcs, Integer> mapPointsArcsDao = null;
@@ -36,16 +36,21 @@ public class DatabaseHandler extends OrmLiteSqliteOpenHelper {
 
     public DatabaseHandler(Context context) throws SQLException {
 
-        super(context, DATABASE_NAME, null, DATABASE_VERSION, R.raw.ormlite_config);
+        super(context, DATABASE_NAME, null, DATABASE_VERSION);
         this.context = context;
+
     }
 
     @Override
     public void onCreate(SQLiteDatabase database, ConnectionSource connectionSource) {
         Log.i(DatabaseHandler.class.getSimpleName(), "wchodze");
-        //SQLiteDatabase db_Read = null;
-        //db_Read = this.getReadableDatabase();
-        //db_Read.close();
+
+        File mFile = context.getDatabasePath(DATABASE_NAME);
+        if (mFile.exists()) {
+            Log.i(DatabaseHandler.class.getSimpleName(), "istniej!!!");
+            mFile.delete(); //to dodałem z PoliGdzie, ale nie pomogło
+            Log.i(DatabaseHandler.class.getSimpleName(), "poszlzo!!!");
+        }
 
         String fileName = context.getDatabasePath(DATABASE_NAME).getPath();
         Log.i(DatabaseHandler.class.getSimpleName(), fileName);
@@ -84,7 +89,6 @@ public class DatabaseHandler extends OrmLiteSqliteOpenHelper {
     @Override
     public void onUpgrade(SQLiteDatabase database, ConnectionSource connectionSource, int oldVersion, int newVersion) {
         Log.i(DatabaseHandler.class.getSimpleName(), "upgraded");
-
 
     }
 

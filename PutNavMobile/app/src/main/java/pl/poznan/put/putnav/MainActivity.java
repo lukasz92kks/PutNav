@@ -52,8 +52,10 @@ public class MainActivity extends Activity {
             mpa = new ArrayList<MapPointsArcs>(db.getMapPointsArcsDao().queryForAll());
             Log.i(MainActivity.class.getSimpleName(), "ile: " + Integer.toString(mpa.size()));
 
+
             for(MapPointsArcs m : mpa)
             {
+                m.setPoint1(nn);
                 Toast.makeText(MainActivity.this, "weight: " + Double.toString(m.getWeight()), Toast.LENGTH_SHORT).show();
             }
 

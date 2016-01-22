@@ -24,24 +24,33 @@ public class MapPointsArcs {
 
     public MapPointsArcs() {}
 
-    public MapPointsArcs(int id, int fromId, int toId, ArrayList<MapPoint> edges) {
+    public MapPointsArcs(int id, int fromId, int toId) {
         //this.id = id;
         this.FromId = fromId;
         this.ToId = toId;
-        this.point1 = getPoint(fromId, edges);
-        this.point2 = getPoint(toId, edges);
         calculateWeight();
     }
 
-    MapPoint getPoint(int pointId, ArrayList<MapPoint> vertices) {
+    void setPoint1(ArrayList<MapPoint> vertices) {
         MapPoint x = null;
         for (MapPoint m : vertices) {
-            if (m.getId() == pointId) {
+            if (m.getId() == FromId) {
                 x = m;
                 //break;
             }
         }
-        return x;
+        this.point1 = x;
+    }
+
+    void setPoint2(ArrayList<MapPoint> vertices) {
+        MapPoint x = null;
+        for (MapPoint m : vertices) {
+            if (m.getId() == ToId) {
+                x = m;
+                //break;
+            }
+        }
+        this.point2 = x;
     }
 
     /*public int getId() {
