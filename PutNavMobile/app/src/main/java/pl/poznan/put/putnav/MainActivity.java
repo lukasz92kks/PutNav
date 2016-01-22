@@ -7,6 +7,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Toast;
 
 import com.j256.ormlite.android.apptools.OpenHelperManager;
 import com.j256.ormlite.android.apptools.OrmLiteSqliteOpenHelper;
@@ -22,7 +23,11 @@ import java.util.List;
 public class MainActivity extends Activity {
 
     DatabaseHandler db;
-    List<MapPoint> nn;
+    ArrayList<MapPoint> nn;
+
+    ArrayList<MapPointsArcs> mpa;
+    RouteFinder routeFinder;
+    ArrayList<MapPoint> route;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,7 +37,7 @@ public class MainActivity extends Activity {
         Log.i(MainActivity.class.getSimpleName(), "przed...");
         func();
         Log.i(MainActivity.class.getSimpleName(), "po...");
-
+        List<MapPoint> tmp = nn;
 
 
 
@@ -42,11 +47,40 @@ public class MainActivity extends Activity {
         db = OpenHelperManager.getHelper(this, DatabaseHandler.class);
         try {
             Log.i(MainActivity.class.getSimpleName(), "tu...");
-            nn = db.getMapPointIntegerDao().queryForAll();
+            nn = new ArrayList<MapPoint>(db.getMapPointIntegerDao().queryForAll());
             Log.i(MainActivity.class.getSimpleName(), "ile: " + Integer.toString(nn.size()));
+            mpa = new ArrayList<MapPointsArcs>(db.getMapPointsArcsDao().queryForAll());
+            Log.i(MainActivity.class.getSimpleName(), "ile: " + Integer.toString(mpa.size()));
+
+            for(MapPointsArcs m : mpa)
+            {
+                Toast.makeText(MainActivity.this, "weight: " + Double.toString(m.getWeight()), Toast.LENGTH_SHORT).show();
+            }
+
+
         } catch (SQLException e) {
             e.printStackTrace();
         }
+
+        routeFinder = new RouteFinder(nn, mpa);
+
+        Toast.makeText(MainActivity.this, "StartId: " + Integer.toString(nn.get(3).getId()), Toast.LENGTH_SHORT).show();
+        Toast.makeText(MainActivity.this, "GoalId: " + Integer.toString(nn.get(8).getId()), Toast.LENGTH_SHORT).show();
+
+
+
+
+        route = routeFinder.findPath(nn.get(3), nn.get(8));
+        Toast.makeText(MainActivity.this, "RouteSize: " + Integer.toString(route.size()), Toast.LENGTH_SHORT).show();
+
+
+
+        for(MapPoint mp : route)
+        {
+            Toast.makeText(MainActivity.this, "Route: " +Integer.toString(mp.getId()), Toast.LENGTH_SHORT).show();
+        }
+
+
     }
 
     @Override

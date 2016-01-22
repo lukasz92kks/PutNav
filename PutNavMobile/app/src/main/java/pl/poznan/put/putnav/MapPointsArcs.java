@@ -8,14 +8,14 @@ import java.util.ArrayList;
 @DatabaseTable(tableName = "MapPointsArcs")
 public class MapPointsArcs {
 
-    @DatabaseField(id = true)
-    private int id;
+    /*@DatabaseField(id = true)
+    private int id;*/
 
     @DatabaseField
-    private int fromId;
+    private int FromId;
 
     @DatabaseField
-    private int toId;
+    private int ToId;
 
     private MapPoint point1; // inna nazwa?
     private MapPoint point2;
@@ -25,9 +25,9 @@ public class MapPointsArcs {
     public MapPointsArcs() {}
 
     public MapPointsArcs(int id, int fromId, int toId, ArrayList<MapPoint> edges) {
-        this.id = id;
-        this.fromId = fromId;
-        this.toId = toId;
+        //this.id = id;
+        this.FromId = fromId;
+        this.ToId = toId;
         this.point1 = getPoint(fromId, edges);
         this.point2 = getPoint(toId, edges);
         calculateWeight();
@@ -44,13 +44,13 @@ public class MapPointsArcs {
         return x;
     }
 
-    public int getId() {
+    /*public int getId() {
         return id;
-    }
+    }*/
 
-    public void setId(int id) {
+    /*public void setId(int id) {
         this.id = id;
-    }
+    }*/
 
     public MapPoint getPoint1() {
         return point1;
