@@ -2,6 +2,7 @@ package pl.poznan.put.putnav;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 import java.util.PriorityQueue;
 
 public class RouteFinder {
@@ -10,8 +11,9 @@ public class RouteFinder {
     private ArrayList<MapPoint> mapPoints;
     private ArrayList<MapPointsArcs> mapPointsArcs;
 
-    RouteFinder() {
-
+    RouteFinder(ArrayList<MapPoint> nn, ArrayList<MapPointsArcs> mpa) {
+        this.mapPoints = nn;
+        this.mapPointsArcs = mpa;
     }
 
     ArrayList<MapPoint> findPath(MapPoint start, MapPoint goal) {
