@@ -37,14 +37,6 @@ public class DatabaseHandler extends OrmLiteSqliteOpenHelper {
     public DatabaseHandler(Context context) throws SQLException {
 
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
-        this.context = context;
-
-    }
-
-    @Override
-    public void onCreate(SQLiteDatabase database, ConnectionSource connectionSource) {
-        Log.i(DatabaseHandler.class.getSimpleName(), "wchodze");
-
         File mFile = context.getDatabasePath(DATABASE_NAME);
         if (mFile.exists()) {
             Log.i(DatabaseHandler.class.getSimpleName(), "istniej!!!");
@@ -82,6 +74,14 @@ public class DatabaseHandler extends OrmLiteSqliteOpenHelper {
         } catch (IOException e) {
             e.printStackTrace();
         }
+
+    }
+
+    @Override
+    public void onCreate(SQLiteDatabase database, ConnectionSource connectionSource) {
+        Log.i(DatabaseHandler.class.getSimpleName(), "wchodze");
+
+
 
 
     }
