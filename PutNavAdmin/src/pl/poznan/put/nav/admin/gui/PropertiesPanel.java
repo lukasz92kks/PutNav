@@ -3,6 +3,10 @@ package pl.poznan.put.nav.admin.gui;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -24,15 +28,16 @@ import pl.poznan.put.nav.admin.entities.Department;
 import pl.poznan.put.nav.admin.entities.Map;
 import pl.poznan.put.nav.admin.entities.MapPoint;
 import pl.poznan.put.nav.admin.entities.MapPointTypes;
+import pl.poznan.put.nav.admin.entities.Photo;
 import pl.poznan.put.nav.admin.entities.Room;
 import pl.poznan.put.nav.admin.managers.AppFactory;
+import pl.poznan.put.nav.admin.managers.EntitiesManager;
 
 public class PropertiesPanel extends JPanel {
 
 	private static final long serialVersionUID = -128116218890100985L;
 	
 	private MapPoint activeMapPoint = null;
-	private Map activeMap = null;
 	private JTextField floorTextField;
 	private JTextField xTextField;
 	private JTextField yTextField;
@@ -46,16 +51,25 @@ public class PropertiesPanel extends JPanel {
 	private JComboBox<String> mapsComboBox;
 	private List<Building> buildings;
 	private List<Department> departments;
-
 	private List<Map> maps;
+	private EntitiesManager em;
 
 	public PropertiesPanel() {
+		System.out.println("PropertiesPanel");
 		this.setPreferredSize(new Dimension(230, 100));
+		
 		
 		this.add(createMapBox());
 		this.add(createBuildingBox());
 		this.add(createPointBox());
 		this.add(createRoomBox());
+	}
+	
+	public void loadData() {
+		em = AppFactory.getEntitiesManager();
+		buildings = em.getBuildings();
+		departments = em.getDepartments();
+		maps = em.getMaps();
 	}
 	
 	private JPanel createMapBox() {
@@ -67,10 +81,8 @@ public class PropertiesPanel extends JPanel {
 				if(maps != null)
 					for(Map map : maps) {
 						if(map.getBuilding() == null) {
-							ActionsPanel actionsPanel = AppFactory.getActionsPanel();
-							actionsPanel.setActiveMap(map);
-							MapPanel mapPanel = AppFactory.getMapPanel();
-							mapPanel.setMap(map);
+							em.setActiveMap(map);
+							em.setActiveBuilding(null);
 							clearBuildingProperties();
 							setEmptyComboBoxes();
 						}
@@ -94,6 +106,7 @@ public class PropertiesPanel extends JPanel {
 						for(Map map : b.getMaps())
 							names.add(map.getMapFile());
 						setMapsComboBoxList(names);
+						em.setActiveBuilding(b);
 					}
 				}
 			}
@@ -110,13 +123,11 @@ public class PropertiesPanel extends JPanel {
 		mapsComboBox.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent event) {
-				MapPanel mapPanel = AppFactory.getMapPanel();
 				JComboBox<?> comboBox = (JComboBox<?>) event.getSource();
+				if(maps != null)
 				for(Map map : maps) {
 					if(((String)comboBox.getSelectedItem()).equals(map.getMapFile())) {
-						ActionsPanel actionsPanel = AppFactory.getActionsPanel();
-						actionsPanel.setActiveMap(map);
-						mapPanel.setMap(map);
+						em.setActiveMap(map);
 						
 						floorTextField.setText(Integer.toString(map.getFloor()));
 					
@@ -180,15 +191,22 @@ public class PropertiesPanel extends JPanel {
 		floorsPanel.add(floorsLabel);
 		floorsPanel.add(numOfFloorsTextField);
 		
-		JButton departmentsButton = new JButton("Wydzia³y...");
+		JButton departmentsButton = new JButton("Wydzialy...");
 		departmentsButton.setPreferredSize(new Dimension(200, 25));
 		departmentsButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent event) {
-				MapPanel mapPanel = AppFactory.getMapPanel();
-				if(mapPanel.getMap() != null && mapPanel.getMap().getBuilding() != null) {
-					Building building = mapPanel.getMap().getBuilding();
-					BuildingDepartmentsPanel panel = new BuildingDepartmentsPanel(building, departments);
+				if(em == null)
+					loadData();
+				if(em.getActiveMap() != null) {
+					Building building = null;
+					if(em.getActiveBuilding() != null) {
+						building = em.getActiveBuilding();
+					} else {
+						building = new Building();
+						em.setActiveBuilding(building);
+					}
+					BuildingDepartmentsPanel panel = new BuildingDepartmentsPanel();
 					int result = JOptionPane.showConfirmDialog(null, panel, 
 				       "Wydzialy", JOptionPane.OK_CANCEL_OPTION, 1, new ImageIcon("images/building.png"));
 					
@@ -203,14 +221,22 @@ public class PropertiesPanel extends JPanel {
 		photosButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent event) {
-				MapPanel mapPanel = AppFactory.getMapPanel();
-				if(mapPanel.getMap() != null && mapPanel.getMap().getBuilding() != null) {
-					Building building = mapPanel.getMap().getBuilding();
-					BuildingPhotosPanel panel = new BuildingPhotosPanel(building);
+				if(em == null)
+					loadData();
+				if(em.getActiveMap() != null) {
+					Building building = null;
+					if(em.getActiveBuilding() != null) {
+						building = em.getActiveBuilding();
+					} else {
+						building = new Building();
+						em.setActiveBuilding(building);
+					}
+					BuildingPhotosPanel panel = new BuildingPhotosPanel();
 					int result = JOptionPane.showConfirmDialog(null, panel, 
 				       "Zdjecia", JOptionPane.OK_CANCEL_OPTION, 1, new ImageIcon("images/building.png"));
 					
 					if(result == JOptionPane.YES_OPTION) {
+						copyPhotosToTemp(panel.getPhotos());
 						building.setPhotos(panel.getPhotos());
 					}
 				}
@@ -221,10 +247,17 @@ public class PropertiesPanel extends JPanel {
 		mapsButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent event) {
-				MapPanel mapPanel = AppFactory.getMapPanel();
-				if(mapPanel.getMap() != null && mapPanel.getMap().getBuilding() != null) {
-					Building building = mapPanel.getMap().getBuilding();
-					BuildingMapsPanel panel = new BuildingMapsPanel(building, maps);
+				if(em == null)
+					loadData();
+				if(em.getActiveMap() != null) {
+					Building building = null;
+					if(em.getActiveBuilding() != null) {
+						building = em.getActiveBuilding();
+					} else {
+						building = new Building();
+						em.setActiveBuilding(building);
+					}
+					BuildingMapsPanel panel = new BuildingMapsPanel();
 					int result = JOptionPane.showConfirmDialog(null, panel, 
 				       "Mapy", JOptionPane.OK_CANCEL_OPTION, 1, new ImageIcon("images/building.png"));
 					
@@ -236,7 +269,6 @@ public class PropertiesPanel extends JPanel {
 		});
 		JPanel buttonsPanel = new JPanel();
 		buttonsPanel.setPreferredSize(new Dimension(220, 110));
-		//buttonsPanel.setLayout(new BoxLayout(buttonsPanel, BoxLayout.Y_AXIS));
 		buttonsPanel.setBorder(new EmptyBorder(2, 2, 2, 2));
 		buttonsPanel.add(departmentsButton);
 		buttonsPanel.add(photosButton);
@@ -316,6 +348,21 @@ public class PropertiesPanel extends JPanel {
 		pointBox.add(typePanel);
 		
 		return pointBox;
+	}
+	
+	private void copyPhotosToTemp(ArrayList<Photo> photos) {
+		for(Photo photo : photos) {
+			File temp = new File("temp");
+			File source = new File(photo.getFile());
+			File target = new File(temp + File.separator + "images" + File.separator + new File(photo.getFile()).getName());
+			try {
+				Files.copy(source.toPath(), target.toPath(), StandardCopyOption.REPLACE_EXISTING);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			String newFile = target.getPath().substring(temp.getPath().length()+1);
+			photo.setFile(newFile);
+		}
 	}
 	
 	public void setActiveMapPoint(MapPoint point) {

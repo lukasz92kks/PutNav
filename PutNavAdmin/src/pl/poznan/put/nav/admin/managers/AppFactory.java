@@ -11,6 +11,7 @@ public class AppFactory {
 	private static ActionsPanel actionsPanel;
 	private static ArchiveFileManager archiveFileManager;
 	private static DatabaseManager databaseManager;
+	private static EntitiesManager entitiesManager;
 	
 	public static MapPanel getMapPanel() {
 		if(mapPanel == null)
@@ -40,5 +41,11 @@ public class AppFactory {
 		if(databaseManager == null)
 			databaseManager = new DatabaseManager();
 		return databaseManager;
+	}
+	
+	public static EntitiesManager getEntitiesManager() {
+		if(entitiesManager == null)
+			entitiesManager = new EntitiesManager();
+		return entitiesManager;
 	}
 }

@@ -29,6 +29,7 @@ public class ActionsPanel extends JPanel {
 	private JButton deletePointButton = null;
 
 	public ActionsPanel() {
+		System.out.println("ActionsPanel");
 		this.setLayout(new FlowLayout());
 		
 		addPointsConnectionButton = new JButton(new ImageIcon("images/arrow.png"));

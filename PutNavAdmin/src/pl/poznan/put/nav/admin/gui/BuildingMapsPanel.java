@@ -16,23 +16,27 @@ import javax.swing.JPanel;
 import pl.poznan.put.nav.admin.entities.Building;
 import pl.poznan.put.nav.admin.entities.Department;
 import pl.poznan.put.nav.admin.entities.Map;
+import pl.poznan.put.nav.admin.managers.AppFactory;
+import pl.poznan.put.nav.admin.managers.EntitiesManager;
 
 public class BuildingMapsPanel extends JPanel {
 
 	private static final long serialVersionUID = -3973709613817976102L;
 
-	private Building building = null;
-	private List<Map> maps;
+	//private Building building = null;
+	//private List<Map> maps;
 
 	private JList<String> includedMapsList;
 	private JList<String> allFreeMapsList;
 	
 	private List<String> includedMapsNames;
 	private List<String> allFreeMapsNames;
+	
+	EntitiesManager em = AppFactory.getEntitiesManager();
 
-	public BuildingMapsPanel(Building building, List<Map> allMaps) {
-		this.building = building;
-		this.maps = allMaps;
+	public BuildingMapsPanel() {
+		//this.building = building;
+		//this.maps = allMaps;
 		
 		initIncludedMapsList();
 		initAllFreeMapsList();
@@ -48,7 +52,7 @@ public class BuildingMapsPanel extends JPanel {
 		includedMapsList.setPreferredSize(new Dimension(200, 400));
 		
 		includedMapsNames = new ArrayList<String>();
-		for(Map map : building.getMaps()) {
+		for(Map map : em.getActiveBuilding().getMaps()) {
 			includedMapsNames.add(map.getMapFile());
 		}
 		
@@ -60,7 +64,7 @@ public class BuildingMapsPanel extends JPanel {
 		allFreeMapsList.setPreferredSize(new Dimension(200, 400));
 		
 		allFreeMapsNames = new ArrayList<String>();
-		for(Map map : maps) {
+		for(Map map : em.getMaps()) {
 			if(map.getBuilding() == null)
 				allFreeMapsNames.add(map.getMapFile());
 		}
@@ -144,9 +148,9 @@ public class BuildingMapsPanel extends JPanel {
 		
 		for(int i=0; i<includedMapsList.getModel().getSize(); ++i) {
 			String mapFile = includedMapsList.getModel().getElementAt(i);
-			for(Map map : maps) {
+			for(Map map : em.getMaps()) {
 				if(map.getMapFile().equals(mapFile)) {
-					map.setBuilding(building);
+					map.setBuilding(em.getActiveBuilding());
 					includedMaps.add(map);
 					System.out.println(map.getMapFile());
 				}

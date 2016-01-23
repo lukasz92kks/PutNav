@@ -1,5 +1,6 @@
 package pl.poznan.put.nav.admin.managers;
 
+import java.util.HashMap;
 import java.util.List;
 
 import javax.persistence.EntityManager;
@@ -23,8 +24,8 @@ public class DatabaseManager implements DatabaseInterface {
 	private static EntityManager em;
 	
 	public static void main(String[] args) {
-		factory = Persistence.createEntityManagerFactory(PERSISTENCE_UNIT_NAME);
-	    em = factory.createEntityManager();
+		//factory = Persistence.createEntityManagerFactory(PERSISTENCE_UNIT_NAME);
+	    //em = factory.createEntityManager();
 	    
 	    
 	    Query q = em.createQuery("select m from Maps m");
@@ -44,7 +45,14 @@ public class DatabaseManager implements DatabaseInterface {
 	}
 	
 	public DatabaseManager() {
-		factory = Persistence.createEntityManagerFactory(PERSISTENCE_UNIT_NAME);
+		System.out.println("DB manager");
+		HashMap properties = new HashMap();
+		properties.put("javax.persistence.jdbc.driver", "org.sqlite.JDBC");
+		properties.put("javax.persistence.jdbc.url", "jdbc:sqlite:temp/database.db");
+		properties.put("javax.persistence.jdbc.user", "");
+		properties.put("javax.persistence.jdbc.password", "");
+		
+		factory = Persistence.createEntityManagerFactory(PERSISTENCE_UNIT_NAME, properties);
 	    em = factory.createEntityManager();
 	    
 	    getBuildings();
@@ -77,12 +85,8 @@ public class DatabaseManager implements DatabaseInterface {
 	public void commit() {
 		em.getTransaction().begin();
 		
-		for(Building building : buildings) {
-			
-			for(Department department : building.getDepartments()) {
-				em.persist(department);
-			}
-			
+		EntitiesManager entitiesManager = AppFactory.getEntitiesManager();
+		for(Building building : entitiesManager.getBuildings()) {
 			for(Photo photo : building.getPhotos()) {
 				em.persist(photo);
 			}
@@ -91,13 +95,30 @@ public class DatabaseManager implements DatabaseInterface {
 				em.persist(room);
 			}
 			
-			for(Map map : building.getMaps()) {
-				for(MapPoint point : map.getMapPoints()) {
-					em.persist(point);
-				}
-				em.persist(map);
-			}
 			em.persist(building);
+		}
+		
+		for(Department department : entitiesManager.getDepartments()) {
+			em.persist(department);
+		}
+		
+		for(Map map : entitiesManager.getMaps()) {
+			for(MapPoint point : map.getMapPoints()) {
+				em.persist(point);
+			}
+			em.persist(map);
+		}
+		
+		for(Building building : entitiesManager.getBuildingsToRemove()) {
+			em.remove(building);
+		}
+		
+		for(Map map : entitiesManager.getMapsToRemove()) {
+			em.remove(map);
+		}
+		
+		for(Department department : entitiesManager.getDepartmentsToRemove()) {
+			em.remove(department);
 		}
 		
 		em.getTransaction().commit();

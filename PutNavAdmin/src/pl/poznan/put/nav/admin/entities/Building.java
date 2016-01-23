@@ -34,7 +34,7 @@ public class Building {
 	
 	@Column(name = "NumberOfFloors")
     private int numberOfFloors;
-    
+
 	@ManyToMany(cascade = CascadeType.ALL)
     @JoinTable(name = "BuildingsDepartments")
 	@JoinColumn(name = "Departments")

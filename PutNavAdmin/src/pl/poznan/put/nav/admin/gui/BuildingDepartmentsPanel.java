@@ -17,23 +17,26 @@ import pl.poznan.put.nav.admin.entities.Building;
 import pl.poznan.put.nav.admin.entities.Department;
 import pl.poznan.put.nav.admin.managers.AppFactory;
 import pl.poznan.put.nav.admin.managers.DatabaseManager;
+import pl.poznan.put.nav.admin.managers.EntitiesManager;
 
 public class BuildingDepartmentsPanel extends JPanel {
 	
 	private static final long serialVersionUID = -5003915529116868854L;
 	
-	private Building building = null;
-	private List<Department> departments;
+	//private Building building = null;
+	//private List<Department> departments;
 
 	private JList<String> includedDepartmentsList;
 	private JList<String> allDepartmentsList;
 	
 	private List<String> includedDepartmentNames;
 	private List<String> allDepartmentNames;
+	
+	EntitiesManager em = AppFactory.getEntitiesManager();
 
-	public BuildingDepartmentsPanel(Building building, List<Department> allDepartments) {
-		this.building = building;
-		this.departments = allDepartments;
+	public BuildingDepartmentsPanel() {
+		//this.building = building;
+		//this.departments = allDepartments;
 		
 		initIncludedDepartmentsList();
 		initAllDepartmentsList();
@@ -49,7 +52,7 @@ public class BuildingDepartmentsPanel extends JPanel {
 		includedDepartmentsList.setPreferredSize(new Dimension(200, 400));
 		
 		includedDepartmentNames = new ArrayList<String>();
-		for(Department d : building.getDepartments()) {
+		for(Department d : em.getActiveBuilding().getDepartments()) {
 			includedDepartmentNames.add(d.getName());
 		}
 		
@@ -61,8 +64,8 @@ public class BuildingDepartmentsPanel extends JPanel {
 		allDepartmentsList.setPreferredSize(new Dimension(200, 400));
 		
 		allDepartmentNames = new ArrayList<String>();
-		for(Department d : departments) {
-			if(!building.getDepartments().contains(d))
+		for(Department d : em.getDepartments()) {
+			if(!em.getActiveBuilding().getDepartments().contains(d))
 				allDepartmentNames.add(d.getName());
 		}
 		
@@ -140,7 +143,7 @@ public class BuildingDepartmentsPanel extends JPanel {
 		
 		for(int i=0; i<includedDepartmentsList.getModel().getSize(); ++i) {
 			String name = includedDepartmentsList.getModel().getElementAt(i);
-			for(Department d : departments) {
+			for(Department d : em.getDepartments()) {
 				if(d.getName().equals(name))
 					includedDepartments.add(d);
 			}
@@ -149,7 +152,7 @@ public class BuildingDepartmentsPanel extends JPanel {
 		return includedDepartments;
 	}
 	
-	public Building getBuilding() {
+	/*public Building getBuilding() {
 		return building;
 	}
 
@@ -163,5 +166,5 @@ public class BuildingDepartmentsPanel extends JPanel {
 
 	public void setDepartments(List<Department> departments) {
 		this.departments = departments;
-	}
+	}*/
 }

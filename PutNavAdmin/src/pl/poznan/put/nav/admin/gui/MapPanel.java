@@ -23,6 +23,7 @@ import pl.poznan.put.nav.admin.entities.MapPointTypes;
 import pl.poznan.put.nav.admin.entities.MapPointsArcs;
 import pl.poznan.put.nav.admin.entities.Room;
 import pl.poznan.put.nav.admin.managers.AppFactory;
+import pl.poznan.put.nav.admin.managers.EntitiesManager;
 
 public class MapPanel extends JPanel implements MouseListener, MouseMotionListener {
 
@@ -30,6 +31,7 @@ public class MapPanel extends JPanel implements MouseListener, MouseMotionListen
 	private static final String mapsPath = "temp/maps/";
 
 	private PropertiesPanel propertiesPanel = AppFactory.getPropertiesPanel();
+	private EntitiesManager em = AppFactory.getEntitiesManager();
 	private Image buildingPoint = null;
 	private Image roomPoint = null;
 	private Image naviPoint = null;
@@ -47,6 +49,7 @@ public class MapPanel extends JPanel implements MouseListener, MouseMotionListen
 	private int mode = MapPanelModes.EDIT_POINTS;
 	
 	public MapPanel() {
+		System.out.println("MapPanel");
 		addMouseListener(this);
 		addMouseMotionListener(this);
 		
@@ -87,9 +90,9 @@ public class MapPanel extends JPanel implements MouseListener, MouseMotionListen
 			
 			Room room = new Room(panel.getRoomNameTextField().getText(),
 								 panel.getFunctionTextField().getText(),
-								 mapPanel.getMap().getFloor());
+								 mapPanel.em.getActiveMap().getFloor());
 			
-			mapPanel.getMap().getBuilding().getRooms().add(room);
+			mapPanel.em.getActiveBuilding().getRooms().add(room);
 			return room;
 		}
 		else
@@ -114,12 +117,12 @@ public class MapPanel extends JPanel implements MouseListener, MouseMotionListen
 			point.setX(x);
 			point.setY(y);
 			point.setType(activeAddMapPointType);
-			point.setMap(map);
+			point.setMap(em.getActiveMap());
 			if(building != null)
 				point.setBuilding(building);
 			if(room != null)
 				point.setRoom(room);
-			getMap().addMapPoint(point);
+			em.getActiveMap().addMapPoint(point);
 			repaint();
 			
 			return point;
@@ -128,7 +131,7 @@ public class MapPanel extends JPanel implements MouseListener, MouseMotionListen
 	}
 	
 	private MapPoint getClickedMapPoint(int x, int y) {
-		for(MapPoint point : getMap().getMapPoints()) {
+		for(MapPoint point : em.getActiveMap().getMapPoints()) {
 			if( point.getX() <= x && (point.getX() + imagePointWidth) >= x &&
 				point.getY() <= y && (point.getY() + imagePointWidth) >= y )
 				return point;
@@ -139,7 +142,7 @@ public class MapPanel extends JPanel implements MouseListener, MouseMotionListen
 	
 	private MapPointsArcs getClickedMapPointsArc(int x, int y) {
 		double wrongTouch = 0.03;
-		for(MapPoint p : map.getMapPoints()) {
+		for(MapPoint p : em.getActiveMap().getMapPoints()) {
 			for(MapPoint s : p.getSuccessors()) {
 				Point A = new Point(p.getX() + imagePointWidth / 2, p.getY() + imagePointWidth / 2);
 				Point B = new Point(s.getX() + imagePointWidth / 2, s.getY() + imagePointWidth / 2);
@@ -168,12 +171,12 @@ public class MapPanel extends JPanel implements MouseListener, MouseMotionListen
 	
 	public void deleteActiveMapPoint() {
 		if(activeMapPoint != null) {
-			for(MapPoint p : map.getMapPoints()) {
+			for(MapPoint p : em.getActiveMap().getMapPoints()) {
 				if(p.getSuccessors().contains(activeMapPoint)) {
 					p.removeSuccessor(activeMapPoint);
 				}
 			}
-			getMap().removeMapPoint(activeMapPoint);
+			em.getActiveMap().removeMapPoint(activeMapPoint);
 			propertiesPanel.setActiveMapPoint(null);
 			repaint();
 		}
@@ -181,16 +184,16 @@ public class MapPanel extends JPanel implements MouseListener, MouseMotionListen
 	
 	@Override
 	protected void paintComponent(Graphics g) {
-		if(map != null) {
+		if(em.getActiveMap() != null) {
 			if(drawArea == null)
 				drawArea = new DrawArea(0, 0, this.getWidth(), this.getHeight(), 0, 0, this.getWidth(), this.getHeight());
 			g.clearRect(0, 0, this.getWidth(), this.getHeight());
-			g.drawImage(new ImageIcon(mapsPath + getMap().getMapFile()).getImage(), drawArea.getxStartDestination(), drawArea.getyStartDestination(),
+			g.drawImage(new ImageIcon(mapsPath + em.getActiveMap().getMapFile()).getImage(), drawArea.getxStartDestination(), drawArea.getyStartDestination(),
 								  drawArea.getxEndDestination(), drawArea.getyEndDestination(), 
 								  drawArea.getxStartSource(), drawArea.getyStartSource(),
 								  drawArea.getxEndSource(), drawArea.getyEndSource(), this);
 			
-			for(MapPoint p : getMap().getMapPoints()) {
+			for(MapPoint p : em.getActiveMap().getMapPoints()) {
 				int x = p.getX() - drawArea.getxStartSource();
 				int y = p.getY() - drawArea.getyStartSource();
 				int type = p.getType();
@@ -253,7 +256,7 @@ public class MapPanel extends JPanel implements MouseListener, MouseMotionListen
 	private MouseEvent eventClick;
 	@Override
 	public void mouseClicked(MouseEvent event) {
-		if(map != null) {
+		if(em.getActiveMap() != null) {
 			if (isAlreadyOneClick) {
 				if(activeMapPoint != null) {
 					drawArea = null;
@@ -303,7 +306,7 @@ public class MapPanel extends JPanel implements MouseListener, MouseMotionListen
 
 	@Override
 	public void mousePressed(MouseEvent event) {
-		if(map != null) {
+		if(em.getActiveMap() != null) {
 			pressedPoint = new Point(event.getX(), event.getY());
 			if(movableMapPoint == null) {
 				movableMapPoint = getClickedMapPoint(event.getX()+drawArea.getxStartSource(), event.getY()+drawArea.getyStartSource());
@@ -314,7 +317,7 @@ public class MapPanel extends JPanel implements MouseListener, MouseMotionListen
 
 	@Override
 	public void mouseReleased(MouseEvent event) {
-		if(map != null) {
+		if(em.getActiveMap() != null) {
 			if(movableMapPoint != null) {
 				if(mode == MapPanelModes.EDIT_POINTS_CONNECTIONS) {
 					MapPoint endPoint = getClickedMapPoint(event.getX()+drawArea.getxStartSource(), event.getY()+drawArea.getyStartSource());
@@ -336,7 +339,7 @@ public class MapPanel extends JPanel implements MouseListener, MouseMotionListen
 	private Point endArc;
 	@Override
 	public void mouseDragged(MouseEvent event) {
-		if(map != null) {
+		if(em.getActiveMap() != null) {
 			if(movableMapPoint != null) {
 				if(mode == MapPanelModes.EDIT_POINTS) {
 					movableMapPoint.move(event.getX()+drawArea.getxStartSource(), event.getY()+drawArea.getyStartSource());
@@ -383,7 +386,7 @@ public class MapPanel extends JPanel implements MouseListener, MouseMotionListen
 		int newxEnd = drawArea.getxEndSource() + (int)(0.1*diffrentX);
 		int newyEnd = drawArea.getyEndSource() + (int)(0.1*diffrentY);
 		
-		Image mapImage = new ImageIcon(mapsPath + getMap().getMapFile()).getImage();
+		Image mapImage = new ImageIcon(mapsPath + em.getActiveMap().getMapFile()).getImage();
 		if(newxStart >= 0 && newxEnd <= mapImage.getWidth(this)) {
 			drawArea.setxStartSource(newxStart);
 			drawArea.setxEndSource(newxEnd);

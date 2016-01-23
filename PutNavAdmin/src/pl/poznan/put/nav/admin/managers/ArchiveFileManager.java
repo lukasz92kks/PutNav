@@ -10,6 +10,12 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
 
+enum FileType { 
+	Database,
+	Map,
+	Photo
+}
+
 public class ArchiveFileManager {
 
 	private String archiveFile;
@@ -18,6 +24,9 @@ public class ArchiveFileManager {
 	private String imageDirectory = "images";
 	private String mapDirectory = "maps";
 	private String databaseFileName = "database.db";
+	
+	private FileOutputStream fos;
+	private ZipOutputStream zip;
 	
 	public void openArchiveFile(String fileName) {
 		if(isArchiveFileFormatCorrect(fileName))
@@ -49,27 +58,23 @@ public class ArchiveFileManager {
 	}
 
 	public void addImageFile(String fileName) {
-		addFile(destDirectory + File.separator + imageDirectory + File.separator + fileName);
+		addFile(destDirectory + File.separator + imageDirectory + File.separator + fileName, FileType.Photo);
 	}
 	
 	public void addMapFile(String fileName) {
-		addFile(destDirectory + File.separator + mapDirectory + File.separator + fileName);
+		addFile(destDirectory + File.separator + mapDirectory + File.separator + fileName, FileType.Map);
 	}
 	
 	public void addDatabase(String fileName) {
-		addFile(destDirectory + File.separator + fileName);
+		addFile(destDirectory + File.separator + fileName, FileType.Database);
 	}
 	
-	private void addFile(String fileName) {
-		FileOutputStream fos;
-		ZipOutputStream zip;
+	private void addFile(String fileName, FileType type) {
+		
 		try {
-			fos = new FileOutputStream(archiveFile);
-			zip = new ZipOutputStream(fos);
-			
 			File file = new File(fileName);
 			FileInputStream fis = new FileInputStream(file);
-			ZipEntry zipEntry = new ZipEntry(file.getName());
+			ZipEntry zipEntry = new ZipEntry(file.getPath().substring(destDirectory.length()+1));
 			zip.putNextEntry(zipEntry);
 			
 			byte[] bytes = new byte[1024];
@@ -79,9 +84,6 @@ public class ArchiveFileManager {
 			}
 			
 			fis.close();
-			zip.closeEntry();
-			zip.close();
-			fos.close();
 			
 			System.out.println(fileName + " added to archive file");
 		} catch (FileNotFoundException e) {
@@ -90,12 +92,29 @@ public class ArchiveFileManager {
 			e.printStackTrace();
 		}
 	}
+	
+	public void openToWrite() {
+		try {
+			fos = new FileOutputStream(archiveFile);
+			zip = new ZipOutputStream(fos);
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	public void closeWrite() {
+		try {
+			zip.closeEntry();
+			zip.close();
+			fos.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
 
 	public void extractArchiveFile() {
-		File destDir = new File(destDirectory);
-		if(!destDir.exists()) {
-			destDir.mkdir();
-		}
+		makeDirs();
+		
 		try {
 			ZipInputStream zip = new ZipInputStream(new FileInputStream(archiveFile));
 			ZipEntry zipEntry = zip.getNextEntry();
@@ -129,6 +148,19 @@ public class ArchiveFileManager {
 			bos.write(bytes, 0, length);
 		}
 		bos.close();
+	}
+	
+	private void makeDirs() {
+		File dir;
+		
+		dir = new File(destDirectory);
+		if(!dir.exists()) dir.mkdir();
+		
+		dir = new File(destDirectory + File.separator + mapDirectory);
+		if(!dir.exists()) dir.mkdir();
+		
+		dir = new File(destDirectory + File.separator + imageDirectory);
+		if(!dir.exists()) dir.mkdir();
 	}
 	
 	/**

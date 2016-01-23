@@ -18,9 +18,11 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 import pl.poznan.put.nav.admin.entities.Building;
 import pl.poznan.put.nav.admin.entities.Department;
 import pl.poznan.put.nav.admin.entities.Map;
+import pl.poznan.put.nav.admin.entities.Photo;
 import pl.poznan.put.nav.admin.managers.AppFactory;
 import pl.poznan.put.nav.admin.managers.ArchiveFileManager;
 import pl.poznan.put.nav.admin.managers.DatabaseManager;
+import pl.poznan.put.nav.admin.managers.EntitiesManager;
 
 public class MainFrame extends JFrame {
 
@@ -32,6 +34,8 @@ public class MainFrame extends JFrame {
 	private ArchiveFileManager archiveFileManager = AppFactory.getArchiveFileManager();
 	
 	public MainFrame() {
+		System.out.println("MainFrame");
+		this.setTitle("PutNav Admin");
 		this.setExtendedState(MAXIMIZED_BOTH);
 		this.setLayout(new BorderLayout());
 		
@@ -119,30 +123,32 @@ public class MainFrame extends JFrame {
 			archiveFileManager.openArchiveFile(selectedFile.getAbsolutePath());
 			archiveFileManager.extractArchiveFile();
 			
-			DatabaseManager databaseManager = AppFactory.getDatabaseManager();
-			List<Map> maps = databaseManager.getMaps();
+			//DatabaseManager databaseManager = AppFactory.getDatabaseManager();
+			EntitiesManager entitiesManager = AppFactory.getEntitiesManager();
+			entitiesManager.loadData();
+			//List<Map> maps = databaseManager.getMaps();
 			
 			ArrayList<String> mapsFiles = new ArrayList<String>();
-			for(Map map : maps) {
+			for(Map map : entitiesManager.getMaps()) {
 				mapsFiles.add(map.getMapFile());
 			}
 			
-			if(maps.size() > 0)
-				mapPanel.setMap(maps.get(0));
-			propertiesPanel.setMaps(maps);
+			if(entitiesManager.getMaps().size() > 0)
+				entitiesManager.setActiveMap(entitiesManager.getMaps().get(0));
+			propertiesPanel.loadData();
 			propertiesPanel.setMapsComboBoxList(mapsFiles);
 			
-			List<Building> buildings = databaseManager.getBuildings();
+			//List<Building> buildings = databaseManager.getBuildings();
 			
 			ArrayList<String> buildingsName = new ArrayList<String>();
-			for(Building b : buildings) {
+			for(Building b : entitiesManager.getBuildings()) {
 				buildingsName.add(b.getName());
 			}
-			propertiesPanel.setBuildings(buildings);
+			propertiesPanel.setBuildings(entitiesManager.getBuildings());
 			propertiesPanel.setBuildingsComboBoxList(buildingsName);
 			
-			List<Department> departments = databaseManager.getDepartments();
-			propertiesPanel.setDepartments(departments);
+			//List<Department> departments = databaseManager.getDepartments();
+			//propertiesPanel.setDepartments(departments);
 		}
 	}
 	
@@ -152,7 +158,21 @@ public class MainFrame extends JFrame {
 		DatabaseManager databaseManager = AppFactory.getDatabaseManager();
 		databaseManager.commit();
 		
+		archiveFileManager.openToWrite();
+		
+		EntitiesManager entitiesManager = AppFactory.getEntitiesManager();
+		for(Map map : entitiesManager.getMaps()) {
+			archiveFileManager.addMapFile(map.getMapFile());
+		}
+		for(Building building : entitiesManager.getBuildings()) {
+			for(Photo photo : building.getPhotos()) {
+				archiveFileManager.addImageFile(new File(photo.getFile()).getName());
+			}
+		}
+		
 		archiveFileManager.addDatabase(archiveFileManager.getDatabaseFileName());
+		
+		archiveFileManager.closeWrite();
 	}
 	
 	private void manageBuildingsItemAction() {
