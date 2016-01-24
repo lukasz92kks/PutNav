@@ -10,14 +10,11 @@ import android.view.View;
 import android.widget.Toast;
 
 import com.j256.ormlite.android.apptools.OpenHelperManager;
-import com.j256.ormlite.android.apptools.OrmLiteSqliteOpenHelper;
-import com.j256.ormlite.dao.Dao;
-import com.j256.ormlite.dao.RuntimeExceptionDao;
 
-import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.prefs.Preferences;
 
 
 public class MainActivity extends Activity {
@@ -47,7 +44,7 @@ public class MainActivity extends Activity {
         db = OpenHelperManager.getHelper(this, DatabaseHandler.class);
         try {
             Log.i(MainActivity.class.getSimpleName(), "tu...");
-            nn = new ArrayList<MapPoint>(db.getMapPointIntegerDao().queryForAll());
+            nn = new ArrayList<MapPoint>(db.getMapPointDao().queryForAll());
             mpa = new ArrayList<MapPointsArcs>(db.getMapPointsArcsDao().queryForAll());
 
             for(MapPointsArcs m : mpa)
@@ -103,10 +100,11 @@ public class MainActivity extends Activity {
 
 
 
-        for(MapPoint mp : route)
-        {
+        /*
+        for(MapPoint mp : route){
             Toast.makeText(MainActivity.this, "Route: " +Integer.toString(mp.getId()), Toast.LENGTH_SHORT).show();
         }
+        */
 
 
     }
@@ -139,8 +137,8 @@ public class MainActivity extends Activity {
         startActivity(new Intent(this, BuildingActivity.class));
     }
 
-    public void fast1() {
-
+    public void openPreferencesActivity(View view) {
+        startActivity(new Intent(this, PreferencesActivity.class));
     }
 
 }

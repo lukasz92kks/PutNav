@@ -37,7 +37,8 @@
             android:text="Ustawienia"
             android:id="@+id/button2"
             android:layout_gravity="center_horizontal"
-            android:layout_margin="@dimen/abc_text_size_menu_material" />
+            android:layout_margin="@dimen/abc_text_size_menu_material"
+            android:onClick="openPreferencesActivity" />
 
         <Button
             android:layout_width="fill_parent"

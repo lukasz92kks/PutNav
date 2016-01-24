@@ -16,6 +16,7 @@ public class Map {
     private ImageView mapImage = null;
     @DatabaseField(foreign = true)
     private Building buildings;
+
     private ArrayList<MapPoint> mapPoints = new ArrayList<MapPoint>();
 
     public Map() {}

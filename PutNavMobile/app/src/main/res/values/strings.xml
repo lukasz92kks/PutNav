@@ -3,4 +3,10 @@
 
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
+    <string name="title_activity_preferences">PreferencesActivity</string>
+    <string name="disabled_person">Jestem osobą niepełnosprawną</string>
+    <string name="abort">Anuluj</string>
+    <string name="save">Zapisz</string>
+    <string name="polish">Polski</string>
+    <string name="english">English</string>
 </resources>
