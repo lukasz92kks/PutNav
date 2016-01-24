@@ -221,7 +221,8 @@ public class MapPanel extends JPanel implements MouseListener, MouseMotionListen
 				}
 				if(p.getSuccessors() != null)
 				for(MapPoint successor : p.getSuccessors()) {
-					drawArc(g, p, successor);
+					if(p.getMap().equals(successor.getMap()))
+						drawArc(g, p, successor);
 				}
 			}
 			// draw connection arc

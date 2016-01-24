@@ -29,6 +29,9 @@ public class Map {
 	@Column(name = "FileName")
 	private String mapPath;
 	
+	@Column(name = "Campus")
+	private boolean campus = false;	
+	
 	@JoinColumn(name = "Building")
 	private Building building;
 	
@@ -89,5 +92,13 @@ public class Map {
 
 	public void setBuilding(Building building) {
 		this.building = building;
+	}
+	
+	public boolean isCampus() {
+		return campus;
+	}
+
+	public void setCampus(boolean campus) {
+		this.campus = campus;
 	}
 }

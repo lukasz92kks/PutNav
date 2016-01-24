@@ -19,6 +19,9 @@ public class ActionsPanel extends JPanel {
 	private MapPanel mapPanel = AppFactory.getMapPanel();
 	private Map activeMap;
 	private JButton addPointsConnectionButton = null;
+	private JButton deletePointsConnectionButton = null;
+	private JButton addFloorsConnectionButton = null;
+	private JButton deleteFloorsConnectionButton = null;
 	private JButton addBuildingPointButton = null;
 	private JButton addNaviPointButton = null;
 	private JButton addDoorPointButton = null;
@@ -33,6 +36,9 @@ public class ActionsPanel extends JPanel {
 		this.setLayout(new FlowLayout());
 		
 		addPointsConnectionButton = new JButton(new ImageIcon("images/arrow.png"));
+		deletePointsConnectionButton = new JButton(new ImageIcon("images/delete-arrow.png"));
+		addFloorsConnectionButton = new JButton(new ImageIcon("images/arrowfloor.png"));
+		deleteFloorsConnectionButton = new JButton(new ImageIcon("images/delete-arrowfloor.png"));
 		addBuildingPointButton = new JButton(new ImageIcon("images/building.png"));
 		addNaviPointButton = new JButton(new ImageIcon("images/navi.png"));
 		addDoorPointButton = new JButton(new ImageIcon("images/door.png"));
@@ -47,6 +53,27 @@ public class ActionsPanel extends JPanel {
 			@Override
 			public void actionPerformed(ActionEvent event) {
 				mapPanel.setMode(MapPanelModes.EDIT_POINTS_CONNECTIONS);
+			}
+		});
+		deletePointsConnectionButton.addActionListener(new ActionListener() {
+					
+			@Override
+			public void actionPerformed(ActionEvent event) {
+				mapPanel.setMode(MapPanelModes.REMOVE_POINTS_CONNECTIONS);
+			}
+		});
+		addFloorsConnectionButton.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent event) {
+				mapPanel.setMode(MapPanelModes.EDIT_FLOORS_CONNECTIONS);
+			}
+		});
+		deleteFloorsConnectionButton.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent event) {
+				mapPanel.setMode(MapPanelModes.REMOVE_FLOORS_CONNECTIONS);
 			}
 		});
 		addBuildingPointButton.addActionListener(new ActionListener() {
@@ -115,6 +142,9 @@ public class ActionsPanel extends JPanel {
 		});
 		
 		this.add(addPointsConnectionButton);
+		this.add(deletePointsConnectionButton);
+		this.add(addFloorsConnectionButton);
+		this.add(deleteFloorsConnectionButton);
 		this.add(new JSeparator());
 		this.add(addBuildingPointButton);
 		this.add(addRoomPointButton);

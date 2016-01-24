@@ -65,8 +65,9 @@ public class BuildingMapsPanel extends JPanel {
 		
 		allFreeMapsNames = new ArrayList<String>();
 		for(Map map : em.getMaps()) {
-			if(map.getBuilding() == null)
+			if(map.getBuilding() == null){
 				allFreeMapsNames.add(map.getMapFile());
+			}
 		}
 		
 		loadDepartmentList(allFreeMapsList, allFreeMapsNames);
@@ -117,14 +118,10 @@ public class BuildingMapsPanel extends JPanel {
 	}
 	
 	private boolean listContainsString(JList<String> list, String str) {
-		System.out.println("   " + str);
 		if(list != null && str != null) {
-			System.out.println("if");
 			for(int i=0; i<list.getModel().getSize(); ++i) {
-				System.out.println("1");
 				if(list.getModel().getElementAt(i).equals(str))
 					return true;
-				System.out.println("2");
 			}
 		}
 		return false;
@@ -152,11 +149,17 @@ public class BuildingMapsPanel extends JPanel {
 				if(map.getMapFile().equals(mapFile)) {
 					map.setBuilding(em.getActiveBuilding());
 					includedMaps.add(map);
-					System.out.println(map.getMapFile());
 				}
 			}
 		}
-		System.out.println();
+		for(int i=0; i<allFreeMapsList.getModel().getSize(); ++i) {
+			String mapFile = allFreeMapsList.getModel().getElementAt(i);
+			for(Map map : em.getMaps()) {
+				if(map.getMapFile().equals(mapFile)) {
+					map.setBuilding(null);
+				}
+			}
+		}
 		return includedMaps;
 	}
 }
