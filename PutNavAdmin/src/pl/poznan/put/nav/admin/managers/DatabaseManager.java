@@ -24,8 +24,14 @@ public class DatabaseManager implements DatabaseInterface {
 	private static EntityManager em;
 	
 	public static void main(String[] args) {
-		//factory = Persistence.createEntityManagerFactory(PERSISTENCE_UNIT_NAME);
-	    //em = factory.createEntityManager();
+		HashMap properties = new HashMap();
+		properties.put("javax.persistence.jdbc.driver", "org.sqlite.JDBC");
+		properties.put("javax.persistence.jdbc.url", "jdbc:sqlite:temp/database.db");
+		properties.put("javax.persistence.jdbc.user", "");
+		properties.put("javax.persistence.jdbc.password", "");
+		
+		factory = Persistence.createEntityManagerFactory(PERSISTENCE_UNIT_NAME);
+	    em = factory.createEntityManager();
 	    
 	    
 	    Query q = em.createQuery("select m from Maps m");
