@@ -80,7 +80,7 @@ public class PropertiesPanel extends JPanel {
 			public void actionPerformed(ActionEvent event) {
 				if(maps != null)
 					for(Map map : maps) {
-						if(map.getBuilding() == null) {
+						if(map.isCampus()) {
 							em.setActiveMap(map);
 							em.setActiveBuilding(null);
 							clearBuildingProperties();
@@ -131,7 +131,7 @@ public class PropertiesPanel extends JPanel {
 						
 						floorTextField.setText(Integer.toString(map.getFloor()));
 					
-						if(map.getBuilding() != null) {
+						if(!map.isCampus()) {
 							loadBuildingProperties(map.getBuilding());
 						} else {
 							clearBuildingProperties();
@@ -403,6 +403,7 @@ public class PropertiesPanel extends JPanel {
 			xTextField.setText(String.valueOf(mapPoint.getX()));
 			yTextField.setText(String.valueOf(mapPoint.getY()));
 			mapPointTypesComboBox.setSelectedIndex(mapPoint.getType()-1);
+			System.out.println(mapPoint.getId());
 		}
 	}
 	

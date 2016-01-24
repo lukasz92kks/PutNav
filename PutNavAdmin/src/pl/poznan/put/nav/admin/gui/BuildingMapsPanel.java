@@ -65,7 +65,7 @@ public class BuildingMapsPanel extends JPanel {
 		
 		allFreeMapsNames = new ArrayList<String>();
 		for(Map map : em.getMaps()) {
-			if(map.getBuilding() == null){
+			if(map.getBuilding() == null && !map.isCampus()){
 				allFreeMapsNames.add(map.getMapFile());
 			}
 		}

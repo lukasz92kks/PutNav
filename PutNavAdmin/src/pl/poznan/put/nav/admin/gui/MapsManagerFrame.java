@@ -7,25 +7,23 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.imageio.ImageIO;
-import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
-import javax.swing.JOptionPane;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.table.AbstractTableModel;
+import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableModel;
 
 import pl.poznan.put.nav.admin.entities.Map;
-import pl.poznan.put.nav.admin.entities.Photo;
 import pl.poznan.put.nav.admin.managers.AppFactory;
 import pl.poznan.put.nav.admin.managers.EntitiesManager;
 
@@ -51,6 +49,17 @@ public class MapsManagerFrame extends JFrame {
 	}
 	
 	private JPanel createButtonPanel() {
+		JButton setCampusButton = new JButton("Ustaw kampus");
+		setCampusButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				for(Map map : maps) {
+					map.setCampus(false);
+				}
+				maps.get(table.getSelectedRow()).setCampus(true);
+				loadData();
+			}
+		});
 		JButton addButton = new JButton("Dodaj");
 		addButton.addActionListener(new ActionListener() {
 			@Override
@@ -84,6 +93,7 @@ public class MapsManagerFrame extends JFrame {
 		});
 		
 		JPanel buttonPanel = new JPanel();
+		buttonPanel.add(setCampusButton);
 		buttonPanel.add(addButton);
 		buttonPanel.add(delButton);
 		
@@ -95,7 +105,7 @@ public class MapsManagerFrame extends JFrame {
 		TableModel model = new AbstractTableModel() {
 
 			private static final long serialVersionUID = -3387204221783015479L;
-			private String[] columnNames = { "Id", "Plik" };
+			private String[] columnNames = { "Id", "Plik", "Kampus" };
 			
 			@Override
 			public Object getValueAt(int row, int col) {
@@ -103,6 +113,9 @@ public class MapsManagerFrame extends JFrame {
 					return maps.get(row).getId();
 				if(col == 1)
 					return maps.get(row).getMapFile();
+				if(col == 2)
+					if(maps.get(row).isCampus()) return "*";
+					else return "";
 				return null;
 			}
 			
@@ -127,6 +140,9 @@ public class MapsManagerFrame extends JFrame {
 		    }
 		};
 		table.setModel(model);
+		DefaultTableCellRenderer rightRenderer = new DefaultTableCellRenderer();
+	    rightRenderer.setHorizontalAlignment(JLabel.CENTER);
+	    table.getColumnModel().getColumn(2).setCellRenderer(rightRenderer);
 	}
 	
 	private String copyMapFileToTemp(File mapFile) {
