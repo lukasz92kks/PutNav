@@ -163,7 +163,7 @@ public class ActionsPanel extends JPanel {
 
 	public void setActiveMap(Map activeMap) {
 		this.activeMap = activeMap;
-		if(activeMap.getBuilding() == null) {
+		if(activeMap.isCampus()) {
 			addBuildingPointButton.setEnabled(true);
 			addDoorPointButton.setEnabled(false);
 			addLiftPointButton.setEnabled(false);

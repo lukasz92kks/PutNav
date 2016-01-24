@@ -240,7 +240,10 @@ public class MapPanel extends JPanel implements MouseListener, MouseMotionListen
 	private void drawArc(Graphics g, MapPoint start, Point end) {
 		if(start != null && end != null) {
 			Graphics2D g2 = (Graphics2D)g;
-			g2.setColor(Color.BLACK);
+			if(mode == MapPanelModes.REMOVE_POINTS_CONNECTIONS && startArc == start && endArc == end)
+				g2.setColor(Color.RED);
+			else
+				g2.setColor(Color.BLACK);
 			g2.setStroke(new BasicStroke(3));
 			
 			int startx = start.getX() + imagePointWidth/2 - drawArea.getxStartSource();
@@ -277,6 +280,7 @@ public class MapPanel extends JPanel implements MouseListener, MouseMotionListen
 		            		if(mode == MapPanelModes.EDIT_POINTS) {
 		        				activeMapPoint = getClickedMapPoint(eventClick.getX()+drawArea.getxStartSource(), eventClick.getY()+drawArea.getyStartSource());
 		        				if(activeMapPoint == null) {
+		        					
 		        					MapPointsArcs arc = null;//getClickedMapPointsArc(eventClick.getX()+drawArea.getxStartSource(), eventClick.getY()+drawArea.getyStartSource());
 		        					if(arc != null) {
 		        						System.out.println("Klikniete polaczenie");
@@ -330,6 +334,16 @@ public class MapPanel extends JPanel implements MouseListener, MouseMotionListen
 					endArc = null;
 					startArc = null;
 					repaint();
+				} else if(mode == MapPanelModes.REMOVE_POINTS_CONNECTIONS) {
+					MapPoint endPoint = getClickedMapPoint(event.getX()+drawArea.getxStartSource(), event.getY()+drawArea.getyStartSource());
+					if(endPoint != null && !movableMapPoint.equals(endPoint) && movableMapPoint.getSuccessors().contains(endPoint)) {
+						movableMapPoint.removeSuccessor(endPoint);
+						endPoint.removeSuccessor(movableMapPoint);
+						repaint();
+					}
+					endArc = null;
+					startArc = null;
+					repaint();
 				}
 				movableMapPoint = null;
 			}
@@ -345,9 +359,11 @@ public class MapPanel extends JPanel implements MouseListener, MouseMotionListen
 				if(mode == MapPanelModes.EDIT_POINTS) {
 					movableMapPoint.move(event.getX()+drawArea.getxStartSource(), event.getY()+drawArea.getyStartSource());
 					propertiesPanel.setActiveMapPoint(movableMapPoint);
-				} else {
+				} else if(mode == MapPanelModes.EDIT_POINTS_CONNECTIONS || mode == MapPanelModes.REMOVE_POINTS_CONNECTIONS) {
 					startArc = movableMapPoint;
 					endArc = new Point(event.getX()+drawArea.getxStartSource(), event.getY()+drawArea.getyStartSource());
+				} else if(mode == MapPanelModes.EDIT_FLOORS_CONNECTIONS) {
+					
 				}
 				repaint();
 				
