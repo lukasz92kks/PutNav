@@ -91,8 +91,14 @@ public class MainActivity extends Activity {
         //Toast.makeText(MainActivity.this, "GoalId: " + Integer.toString(nn.get(8).getId()), Toast.LENGTH_SHORT).show();
 
 
+        MapPoint p1 = new MapPoint();
+        MapPoint p2 = new MapPoint();
 
-        route = routeFinder.findPath(nn.get(3), nn.get(8));
+        p1 = p1.findPointById(nn, 141);
+        p2 = p2.findPointById(nn, 187);
+
+        route = routeFinder.findPath(p1, p2);
+
         Toast.makeText(MainActivity.this, "RouteSize: " + Integer.toString(route.size()), Toast.LENGTH_SHORT).show();
 
 

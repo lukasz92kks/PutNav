@@ -37,6 +37,10 @@ public class DatabaseHandler extends OrmLiteSqliteOpenHelper {
     public DatabaseHandler(Context context) throws SQLException {
 
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
+
+        File dir = new File(context.getDatabasePath(DATABASE_NAME).getPath());
+        dir.mkdirs(); //żeby nie wywalało błędu ENOENT
+
         File mFile = context.getDatabasePath(DATABASE_NAME);
         if (mFile.exists()) {
             Log.i(DatabaseHandler.class.getSimpleName(), "istniej!!!");

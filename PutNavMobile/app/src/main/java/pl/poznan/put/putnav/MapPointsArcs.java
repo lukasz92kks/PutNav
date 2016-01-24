@@ -86,10 +86,14 @@ public class MapPointsArcs {
     }
 
     public void calculateWeight() {
-        int x1 = this.getPoint1().getX();
-        int y1 = this.getPoint1().getY();
-        int x2 = this.getPoint2().getX();
-        int y2 = this.getPoint2().getY();
-        weight = Math.sqrt((double) ((x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2)));
+        if (this.getPoint1().getType() != this.getPoint2().getType()) {
+            weight = 30.0;
+        } else {
+            int x1 = this.getPoint1().getX();
+            int y1 = this.getPoint1().getY();
+            int x2 = this.getPoint2().getX();
+            int y2 = this.getPoint2().getY();
+            weight = Math.sqrt((double) ((x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2)));
+        }
     }
 }

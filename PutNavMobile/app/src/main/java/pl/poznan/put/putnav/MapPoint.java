@@ -62,6 +62,14 @@ public class MapPoint implements Comparable<MapPoint> {
         return mapPoint;
     }
 
+    public MapPoint findPointById(ArrayList<MapPoint> points, int id) {
+        MapPoint x = null;
+        for (MapPoint m : points) {
+            if (m.getId() == id) x = m;
+        }
+        return x;
+    }
+
     public void removeSuccessor(MapPoint mapPoint) {
         successors.remove(mapPoint);
     }
