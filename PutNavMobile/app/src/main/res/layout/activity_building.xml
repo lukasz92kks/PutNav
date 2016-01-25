@@ -24,7 +24,8 @@
         android:layout_alignParentRight="true"
         android:layout_marginBottom="0dp"
         android:text="Odwróć"
-        android:id="@+id/buttonRevert" />
+        android:id="@+id/buttonRevert"
+        android:onClick="reversePlaces"/>
 
     <Button
         style="?android:attr/buttonStyleSmall"

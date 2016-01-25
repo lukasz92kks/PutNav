@@ -6,7 +6,9 @@ import android.graphics.Paint;
 import android.graphics.drawable.BitmapDrawable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.text.Editable;
 import android.view.Menu;
+import android.view.View;
 import android.widget.AutoCompleteTextView;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
@@ -100,6 +102,16 @@ public class BuildingActivity extends AppCompatActivity {
         return true;
     }
 
+    public void reversePlaces(View view) {
+        String tmpFrom = aCTVFrom.getText().toString();
+
+        //aCTVFrom.setText("Z: " + aCTVTo.getText().toString());
+
+        aCTVFrom.setText(aCTVTo.getText().toString());
+        aCTVTo.setText(tmpFrom);
+    }
+
+    //pasek boczny
     private SeekBar.OnSeekBarChangeListener listenerSeekbar = new SeekBar.OnSeekBarChangeListener()
     {
         @Override
