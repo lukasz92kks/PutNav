@@ -53,6 +53,8 @@ public class ActionsPanel extends JPanel {
 			@Override
 			public void actionPerformed(ActionEvent event) {
 				mapPanel.setMode(MapPanelModes.EDIT_POINTS_CONNECTIONS);
+				mapPanel.clearStartArc();
+				mapPanel.refresh();
 			}
 		});
 		deletePointsConnectionButton.addActionListener(new ActionListener() {
@@ -60,6 +62,8 @@ public class ActionsPanel extends JPanel {
 			@Override
 			public void actionPerformed(ActionEvent event) {
 				mapPanel.setMode(MapPanelModes.REMOVE_POINTS_CONNECTIONS);
+				mapPanel.clearStartArc();
+				mapPanel.refresh();
 			}
 		});
 		addFloorsConnectionButton.addActionListener(new ActionListener() {
@@ -67,6 +71,8 @@ public class ActionsPanel extends JPanel {
 			@Override
 			public void actionPerformed(ActionEvent event) {
 				mapPanel.setMode(MapPanelModes.EDIT_FLOORS_CONNECTIONS);
+				mapPanel.clearStartArc();
+				mapPanel.refresh();
 			}
 		});
 		deleteFloorsConnectionButton.addActionListener(new ActionListener() {
@@ -74,6 +80,8 @@ public class ActionsPanel extends JPanel {
 			@Override
 			public void actionPerformed(ActionEvent event) {
 				mapPanel.setMode(MapPanelModes.REMOVE_FLOORS_CONNECTIONS);
+				mapPanel.clearStartArc();
+				mapPanel.refresh();
 			}
 		});
 		addBuildingPointButton.addActionListener(new ActionListener() {
@@ -90,6 +98,8 @@ public class ActionsPanel extends JPanel {
 			public void actionPerformed(ActionEvent event) {
 				mapPanel.setMode(MapPanelModes.EDIT_POINTS);
 				mapPanel.setActiveAddMapPointType(MapPointTypes.ROOM);
+				mapPanel.clearStartArc();
+				mapPanel.refresh();
 			}
 		});
 		addNaviPointButton.addActionListener(new ActionListener() {
@@ -98,6 +108,8 @@ public class ActionsPanel extends JPanel {
 			public void actionPerformed(ActionEvent event) {
 				mapPanel.setMode(MapPanelModes.EDIT_POINTS);
 				mapPanel.setActiveAddMapPointType(MapPointTypes.NAVIGATION);
+				mapPanel.clearStartArc();
+				mapPanel.refresh();
 			}
 		});
 		addDoorPointButton.addActionListener(new ActionListener() {
@@ -106,6 +118,8 @@ public class ActionsPanel extends JPanel {
 			public void actionPerformed(ActionEvent event) {
 				mapPanel.setMode(MapPanelModes.EDIT_POINTS);
 				mapPanel.setActiveAddMapPointType(MapPointTypes.DOOR);
+				mapPanel.clearStartArc();
+				mapPanel.refresh();
 			}
 		});
 		addOutdoorPointButton.addActionListener(new ActionListener() {
@@ -114,6 +128,8 @@ public class ActionsPanel extends JPanel {
 			public void actionPerformed(ActionEvent event) {
 				mapPanel.setMode(MapPanelModes.EDIT_POINTS);
 				mapPanel.setActiveAddMapPointType(MapPointTypes.OUTDOOR);
+				mapPanel.clearStartArc();
+				mapPanel.refresh();
 			}
 		});
 		addLiftPointButton.addActionListener(new ActionListener() {
@@ -122,6 +138,8 @@ public class ActionsPanel extends JPanel {
 			public void actionPerformed(ActionEvent event) {
 				mapPanel.setMode(MapPanelModes.EDIT_POINTS);
 				mapPanel.setActiveAddMapPointType(MapPointTypes.LIFT);
+				mapPanel.clearStartArc();
+				mapPanel.refresh();
 			}
 		});
 		addStairsPointButton.addActionListener(new ActionListener() {
@@ -130,6 +148,8 @@ public class ActionsPanel extends JPanel {
 			public void actionPerformed(ActionEvent event) {
 				mapPanel.setMode(MapPanelModes.EDIT_POINTS);
 				mapPanel.setActiveAddMapPointType(MapPointTypes.STAIRS);
+				mapPanel.clearStartArc();
+				mapPanel.refresh();
 			}
 		});
 		deletePointButton.addActionListener(new ActionListener() {
@@ -138,6 +158,8 @@ public class ActionsPanel extends JPanel {
 			public void actionPerformed(ActionEvent event) {
 				mapPanel.setMode(MapPanelModes.EDIT_POINTS);
 				mapPanel.deleteActiveMapPoint();
+				mapPanel.clearStartArc();
+				mapPanel.refresh();
 			}
 		});
 		
@@ -165,6 +187,8 @@ public class ActionsPanel extends JPanel {
 		this.activeMap = activeMap;
 		if(activeMap.isCampus()) {
 			addBuildingPointButton.setEnabled(true);
+			addFloorsConnectionButton.setEnabled(false);
+			deleteFloorsConnectionButton.setEnabled(false);
 			addDoorPointButton.setEnabled(false);
 			addLiftPointButton.setEnabled(false);
 			addStairsPointButton.setEnabled(false);
@@ -172,6 +196,8 @@ public class ActionsPanel extends JPanel {
 			addRoomPointButton.setEnabled(false);
 		} else {
 			addBuildingPointButton.setEnabled(false);
+			addFloorsConnectionButton.setEnabled(true);
+			deleteFloorsConnectionButton.setEnabled(true);
 			addDoorPointButton.setEnabled(true);
 			addLiftPointButton.setEnabled(true);
 			addStairsPointButton.setEnabled(true);

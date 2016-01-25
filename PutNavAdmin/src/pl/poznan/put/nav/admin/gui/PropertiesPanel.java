@@ -81,10 +81,17 @@ public class PropertiesPanel extends JPanel {
 				if(maps != null)
 					for(Map map : maps) {
 						if(map.isCampus()) {
+							
 							em.setActiveMap(map);
 							em.setActiveBuilding(null);
+							
 							clearBuildingProperties();
 							setEmptyComboBoxes();
+							
+							MapPanel mapPanel = AppFactory.getMapPanel();
+							mapPanel.clearStartArc();
+							mapPanel.setMode(MapPanelModes.EDIT_POINTS);
+							mapPanel.setActiveAddMapPointType(MapPointTypes.NAVIGATION);
 						}
 				}
 			}

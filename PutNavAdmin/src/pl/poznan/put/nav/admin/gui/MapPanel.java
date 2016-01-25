@@ -9,6 +9,8 @@ import java.awt.Point;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -140,35 +142,6 @@ public class MapPanel extends JPanel implements MouseListener, MouseMotionListen
 		return null;
 	}
 	
-	private MapPointsArcs getClickedMapPointsArc(int x, int y) {
-		double wrongTouch = 0.03;
-		for(MapPoint p : em.getActiveMap().getMapPoints()) {
-			for(MapPoint s : p.getSuccessors()) {
-				Point A = new Point(p.getX() + imagePointWidth / 2, p.getY() + imagePointWidth / 2);
-				Point B = new Point(s.getX() + imagePointWidth / 2, s.getY() + imagePointWidth / 2);
-				Point C = new Point(x, y);
-				
-				// wspolczynniki
-				double wspAB = (double)(B.y - A.y) / (double)(B.x - A.x);
-				double wspAC = (double)(C.y - A.y) / (double)(C.x - A.x);
-				
-				System.out.println("A(" + A.x + "," + A.y + ") " +
-						" B(" + B.x + "," + B.y + ") " +
-						" C(" + C.x + "," + C.y + ") ");
-				System.out.println("a: " + wspAB + "   b: " + wspAC);
-				
-				wrongTouch = wrongTouch * wspAB;
-				// czy punkt lezy na prostej
-				if( (wspAB >= wspAC-wrongTouch && wspAB <= wspAC+wrongTouch) ||
-					(wspAC >= wspAB-wrongTouch && wspAC <= wspAB+wrongTouch) ){
-					MapPointsArcs arc = new MapPointsArcs(p, s);
-					return arc;
-				}
-			}
-		}
-		return null;
-	}
-	
 	public void deleteActiveMapPoint() {
 		if(activeMapPoint != null) {
 			for(MapPoint p : em.getActiveMap().getMapPoints()) {
@@ -199,19 +172,19 @@ public class MapPanel extends JPanel implements MouseListener, MouseMotionListen
 				int type = p.getType();
 				
 				if(type > 0) {
-					if(type == MapPointTypes.NAVIGATION)
+					if(type == MapPointTypes.NAVIGATION && mode != MapPanelModes.EDIT_FLOORS_CONNECTIONS && mode != MapPanelModes.REMOVE_FLOORS_CONNECTIONS)
 						g.drawImage(naviPoint, x, y, this);
-					else if(type == MapPointTypes.DOOR)
+					else if(type == MapPointTypes.DOOR && mode != MapPanelModes.EDIT_FLOORS_CONNECTIONS && mode != MapPanelModes.REMOVE_FLOORS_CONNECTIONS)
 						g.drawImage(doorPoint, x, y, this);
-					else if(type == MapPointTypes.OUTDOOR)
+					else if(type == MapPointTypes.OUTDOOR && mode != MapPanelModes.EDIT_FLOORS_CONNECTIONS && mode != MapPanelModes.REMOVE_FLOORS_CONNECTIONS)
 						g.drawImage(outdoorPoint, x, y, this);
-					else if(type == MapPointTypes.LIFT)
+					else if(type == MapPointTypes.LIFT && (startArc == null || (startArc != null && mode == MapPanelModes.EDIT_POINTS_CONNECTIONS) || (startArc != null && mode == MapPanelModes.EDIT_FLOORS_CONNECTIONS) || (startArc != null && mode == MapPanelModes.REMOVE_FLOORS_CONNECTIONS && startArc.getSuccessors().contains(p)))  )
 						g.drawImage(liftPoint, x, y, this);
-					else if(type == MapPointTypes.STAIRS)
+					else if(type == MapPointTypes.STAIRS && (startArc == null || (startArc != null && mode == MapPanelModes.EDIT_POINTS_CONNECTIONS) || (startArc != null && mode == MapPanelModes.EDIT_FLOORS_CONNECTIONS) || (startArc != null && mode == MapPanelModes.REMOVE_FLOORS_CONNECTIONS && startArc.getSuccessors().contains(p)))  )
 						g.drawImage(stairsPoint, x, y, this);
-					else if(type == MapPointTypes.BUILDING)
+					else if(type == MapPointTypes.BUILDING && mode != MapPanelModes.EDIT_FLOORS_CONNECTIONS && mode != MapPanelModes.REMOVE_FLOORS_CONNECTIONS)
 						g.drawImage(buildingPoint, x, y, this);
-					else if(type == MapPointTypes.ROOM)
+					else if(type == MapPointTypes.ROOM && mode != MapPanelModes.EDIT_FLOORS_CONNECTIONS && mode != MapPanelModes.REMOVE_FLOORS_CONNECTIONS)
 						g.drawImage(roomPoint, x, y, this);
 					
 					if(p.equals(activeMapPoint)) {
@@ -219,11 +192,12 @@ public class MapPanel extends JPanel implements MouseListener, MouseMotionListen
 						g.drawRect(p.getX()-drawArea.getxStartSource(), p.getY()-drawArea.getyStartSource(), imagePointWidth, imagePointWidth);
 					}
 				}
-				if(p.getSuccessors() != null)
-				for(MapPoint successor : p.getSuccessors()) {
-					if(p.getMap().equals(successor.getMap()))
-						drawArc(g, p, successor);
-				}
+				if(!(mode == MapPanelModes.REMOVE_FLOORS_CONNECTIONS || mode == MapPanelModes.EDIT_FLOORS_CONNECTIONS))
+					if(p.getSuccessors() != null)
+					for(MapPoint successor : p.getSuccessors()) {
+						if(p.getMap().equals(successor.getMap()))
+							drawArc(g, p, successor);
+					}
 			}
 			// draw connection arc
 			if(startArc != null && endArc != null) {
@@ -256,6 +230,7 @@ public class MapPanel extends JPanel implements MouseListener, MouseMotionListen
 		}
 	}
 
+	private Map mapToReturn;
 	private boolean isAlreadyOneClick = false;
 	private MouseEvent eventClick;
 	@Override
@@ -280,15 +255,74 @@ public class MapPanel extends JPanel implements MouseListener, MouseMotionListen
 		            		if(mode == MapPanelModes.EDIT_POINTS) {
 		        				activeMapPoint = getClickedMapPoint(eventClick.getX()+drawArea.getxStartSource(), eventClick.getY()+drawArea.getyStartSource());
 		        				if(activeMapPoint == null) {
-		        					
-		        					MapPointsArcs arc = null;//getClickedMapPointsArc(eventClick.getX()+drawArea.getxStartSource(), eventClick.getY()+drawArea.getyStartSource());
-		        					if(arc != null) {
-		        						System.out.println("Klikniete polaczenie");
-		        					} else {
-		        						activeMapPoint = addMapPoint(eventClick.getX()+drawArea.getxStartSource(), eventClick.getY()+drawArea.getyStartSource());
-		        					}
+		        					activeMapPoint = addMapPoint(eventClick.getX()+drawArea.getxStartSource(), eventClick.getY()+drawArea.getyStartSource());
 		        				}
 		        				propertiesPanel.setActiveMapPoint(activeMapPoint);
+		        			} else if(mode == MapPanelModes.EDIT_FLOORS_CONNECTIONS || mode == MapPanelModes.REMOVE_FLOORS_CONNECTIONS) {
+		        				
+		        				activeMapPoint = getClickedMapPoint(eventClick.getX()+drawArea.getxStartSource(), eventClick.getY()+drawArea.getyStartSource());
+		        				if(activeMapPoint != null && 
+		        				  (activeMapPoint.getType() == MapPointTypes.STAIRS || activeMapPoint.getType() == MapPointTypes.LIFT)) {
+		        					
+		        					if(startArc != null) {
+		        						
+		        						MapPoint endPoint = activeMapPoint;
+		        						if(mode == MapPanelModes.EDIT_FLOORS_CONNECTIONS) {
+			        						if(endPoint != null && !startArc.equals(endPoint) && !startArc.getSuccessors().contains(endPoint)) {
+			        							
+		        								startArc.addSuccessor(endPoint);
+		        								endPoint.addSuccessor(startArc);
+			        							
+			        							startArc = null;
+			        							em.setActiveMap(mapToReturn);
+			        						}
+		        						} else if(mode == MapPanelModes.REMOVE_FLOORS_CONNECTIONS) {
+		        							if(endPoint != null && !startArc.equals(endPoint) && startArc.getSuccessors().contains(endPoint)) {
+			        							
+		        								startArc.removeSuccessor(endPoint);
+		        								endPoint.removeSuccessor(startArc);
+			        							
+			        							startArc = null;
+			        							em.setActiveMap(mapToReturn);
+			        						}
+		        						}
+		        					} else {
+			        					List<String> mapNames = new ArrayList<String>();
+			        					for(Map map : em.getActiveBuilding().getMaps()) {
+			        						if(!map.equals(em.getActiveMap())) {
+			        							mapNames.add(map.getMapFile());
+			        						}
+			        					}
+			        					
+			        					String result = null;
+			        					if(mode == MapPanelModes.EDIT_FLOORS_CONNECTIONS) {
+			        					result = (String) JOptionPane.showInputDialog(null, 
+			        					        "Wybierz mape do polaczenia:", "Polacz pietra",
+			        					        JOptionPane.QUESTION_MESSAGE, 
+			        					        new ImageIcon("images/arrowfloor.png"), 
+			        					        mapNames.toArray(), mapNames.get(0));
+			        					} else if(mode == MapPanelModes.REMOVE_FLOORS_CONNECTIONS) {
+			        						result = (String) JOptionPane.showInputDialog(null, 
+				        					        "Wybierz mape do usuniecia polaczenia:", "Usun polaczenie pieter",
+				        					        JOptionPane.QUESTION_MESSAGE, 
+				        					        new ImageIcon("images/delete-arrowfloor.png"), 
+				        					        mapNames.toArray(), mapNames.get(0));
+			        					}
+			        					
+			        					if(result != null) {
+			        						startArc = activeMapPoint;
+			        						for(Map map : em.getActiveBuilding().getMaps()) {
+				        						if(map.getMapFile().equals(result)) {
+				        							mapToReturn = em.getActiveMap();
+				        							em.setActiveMap(map);
+				        							break;
+				        						}
+				        					}
+			        					}
+		        					}
+		        				}
+		        			} else if(mode == MapPanelModes.REMOVE_FLOORS_CONNECTIONS) {
+		        				
 		        			}
 		            	}
 		            }
@@ -393,6 +427,14 @@ public class MapPanel extends JPanel implements MouseListener, MouseMotionListen
 
 	public void setMode(int mode) {
 		this.mode = mode;
+	}
+	
+	public void clearStartArc() {
+		startArc = null;
+	}
+	
+	public void refresh() {
+		repaint();
 	}
 	
 	private void recalculateDrawArea(int cursorX, int cursorY) {

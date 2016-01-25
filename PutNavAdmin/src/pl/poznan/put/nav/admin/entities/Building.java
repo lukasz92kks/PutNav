@@ -40,7 +40,7 @@ public class Building {
 	@JoinColumn(name = "Departments")
     private ArrayList<Department> departments = new ArrayList<Department>();
     
-	@OneToMany(mappedBy = "building")
+	@OneToMany(mappedBy = "building", cascade = CascadeType.PERSIST)
     private ArrayList<Map> maps = new ArrayList<Map>();
     
 	@OneToMany(mappedBy = "building", cascade = CascadeType.ALL, orphanRemoval=true)
