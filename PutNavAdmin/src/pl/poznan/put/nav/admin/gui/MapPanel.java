@@ -68,7 +68,7 @@ public class MapPanel extends JPanel implements MouseListener, MouseMotionListen
 	
 	private Building addBuilding() {
 		PropertiesPanel panel = new PropertiesPanel();
-		int result = JOptionPane.showConfirmDialog(null, panel.createBuildingBox(), 
+		int result = JOptionPane.showConfirmDialog(null, panel.createBuildingBox(true), 
 	               "Dodaj budynek", JOptionPane.OK_CANCEL_OPTION, 1, new ImageIcon("images/building.png"));
 		
 		if(result == JOptionPane.YES_OPTION) {
@@ -84,7 +84,7 @@ public class MapPanel extends JPanel implements MouseListener, MouseMotionListen
 	
 	private Room addRoom() {
 		PropertiesPanel panel = new PropertiesPanel();
-		int result = JOptionPane.showConfirmDialog(null, panel.createRoomBox(), 
+		int result = JOptionPane.showConfirmDialog(null, panel.createRoomBox(true), 
 	               "Dodaj pomieszczenie", JOptionPane.OK_CANCEL_OPTION, 1, new ImageIcon("images/room.png"));
 		
 		if(result == JOptionPane.YES_OPTION) {

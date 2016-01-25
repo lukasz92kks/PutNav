@@ -60,9 +60,9 @@ public class PropertiesPanel extends JPanel {
 		
 		
 		this.add(createMapBox());
-		this.add(createBuildingBox());
+		this.add(createBuildingBox(false));
 		this.add(createPointBox());
-		this.add(createRoomBox());
+		this.add(createRoomBox(false));
 	}
 	
 	public void loadData() {
@@ -162,18 +162,19 @@ public class PropertiesPanel extends JPanel {
 		floorPanel.add(floorTextField);
 		
 		JPanel mapBox = new JPanel();
-		mapBox.setPreferredSize(new Dimension(220, 150));
+		//mapBox.setPreferredSize(new Dimension(220, 150));
+		mapBox.setPreferredSize(new Dimension(220, 125));
 		mapBox.setLayout(new BoxLayout(mapBox, BoxLayout.Y_AXIS));
 		mapBox.setBorder(BorderFactory.createTitledBorder("Wybor mapy"));
 		mapBox.add(campusPanel);
 		mapBox.add(buildingsPanel);
 		mapBox.add(mapsPanel);
-		mapBox.add(floorPanel);
+		//mapBox.add(floorPanel);
 		
 		return mapBox;
 	}
 	
-	public JPanel createBuildingBox() {
+	public JPanel createBuildingBox(boolean openAsJOptionPane) {
 		JLabel nameLabel = new JLabel("Nazwa: ");
 		buildingNameTextField = new JTextField(12);
 		JPanel namePanel = new JPanel();
@@ -192,11 +193,24 @@ public class PropertiesPanel extends JPanel {
 		
 		JLabel floorsLabel = new JLabel("Liczba pieter: ");
 		numOfFloorsTextField = new JTextField(3);
+		numOfFloorsTextField.setEnabled(false);
 		JPanel floorsPanel = new JPanel();
 		floorsPanel.setLayout(new BoxLayout(floorsPanel, BoxLayout.LINE_AXIS));
 		floorsPanel.setBorder(new EmptyBorder(2, 2, 2, 2));
 		floorsPanel.add(floorsLabel);
 		floorsPanel.add(numOfFloorsTextField);
+		
+		JButton saveButton = new JButton("Zapisz zmiany");
+		saveButton.setPreferredSize(new Dimension(200, 20));
+		saveButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				if(em.getActiveBuilding() != null) {
+					em.getActiveBuilding().setName(buildingNameTextField.getText());
+					em.getActiveBuilding().setAddress(addressTextField.getText());
+				}
+			}
+		});
 		
 		JButton departmentsButton = new JButton("Wydzialy...");
 		departmentsButton.setPreferredSize(new Dimension(200, 25));
@@ -275,17 +289,19 @@ public class PropertiesPanel extends JPanel {
 			}
 		});
 		JPanel buttonsPanel = new JPanel();
-		buttonsPanel.setPreferredSize(new Dimension(220, 110));
+		buttonsPanel.setPreferredSize(new Dimension(220, openAsJOptionPane ? 110 : 133));
 		buttonsPanel.setBorder(new EmptyBorder(2, 2, 2, 2));
+		if(!openAsJOptionPane)
+			buttonsPanel.add(saveButton);
 		buttonsPanel.add(departmentsButton);
 		buttonsPanel.add(photosButton);
 		buttonsPanel.add(mapsButton);
 		
 		JPanel buildingBox = new JPanel();
-		buildingBox.setPreferredSize(new Dimension(220, 205));
+		buildingBox.setPreferredSize(new Dimension(220, openAsJOptionPane ? 205 : 228));
 		buildingBox.setLayout(new BoxLayout(buildingBox, BoxLayout.Y_AXIS));
 		buildingBox.setBorder(new CompoundBorder(new EmptyBorder(10,0,0,0), 
-				BorderFactory.createTitledBorder("Parametry budynku")));
+				BorderFactory.createTitledBorder("Opis budynku")));
 		buildingBox.add(namePanel);
 		buildingBox.add(addressPanel);
 		buildingBox.add(floorsPanel);
@@ -294,7 +310,7 @@ public class PropertiesPanel extends JPanel {
 		return buildingBox;
 	}
 	
-	public JPanel createRoomBox() {
+	public JPanel createRoomBox(boolean openAsJOptionPane) {
 		JLabel nameLabel = new JLabel("Nazwa: ");
 		roomNameTextField = new JTextField(14);
 		JPanel namePanel = new JPanel();
@@ -311,13 +327,32 @@ public class PropertiesPanel extends JPanel {
 		functionPanel.add(functionLabel);
 		functionPanel.add(functionTextField);
 		
+		JButton saveButton = new JButton("Zapisz zmiany");
+		saveButton.setPreferredSize(new Dimension(200, 20));
+		saveButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				if(activeMapPoint != null)
+					if(activeMapPoint.getType() == MapPointTypes.ROOM) {
+						activeMapPoint.getRoom().setName(roomNameTextField.getText());
+						activeMapPoint.getRoom().setFunction(functionTextField.getText());
+					}
+			}
+		});
+		JPanel buttonsPanel = new JPanel();
+		//buttonsPanel.setPreferredSize(new Dimension(220, 135));
+		buttonsPanel.setBorder(new EmptyBorder(2, 2, 2, 2));
+		buttonsPanel.add(saveButton);
+		
 		JPanel roomBox = new JPanel();
-		roomBox.setPreferredSize(new Dimension(220, 85));
+		roomBox.setPreferredSize(new Dimension(220, openAsJOptionPane ? 85 : 118));
 		roomBox.setLayout(new BoxLayout(roomBox, BoxLayout.Y_AXIS));
 		roomBox.setBorder(new CompoundBorder(new EmptyBorder(10,0,0,0), 
-				BorderFactory.createTitledBorder("Parametry pomieszczenia")));
+				BorderFactory.createTitledBorder("Opis pomieszczenia")));
 		roomBox.add(namePanel);
 		roomBox.add(functionPanel);
+		if(!openAsJOptionPane)
+			roomBox.add(buttonsPanel);
 		
 		return roomBox;
 	}
@@ -325,9 +360,11 @@ public class PropertiesPanel extends JPanel {
 	private JPanel createPointBox() {
 		JLabel xLabel = new JLabel("X: ");
 		xTextField = new JTextField();
+		xTextField.setEnabled(false);
 		xTextField.setPreferredSize(new Dimension(85,  25));
 		JLabel yLabel = new JLabel("Y: ");
 		yTextField = new JTextField();
+		yTextField.setEnabled(false);
 		yTextField.setPreferredSize(new Dimension(85,  25));
 		JPanel coordsPanel = new JPanel();
 		coordsPanel.setLayout(new BoxLayout(coordsPanel, BoxLayout.LINE_AXIS));
@@ -350,7 +387,7 @@ public class PropertiesPanel extends JPanel {
 		pointBox.setPreferredSize(new Dimension(220, 95));
 		pointBox.setLayout(new BoxLayout(pointBox, BoxLayout.Y_AXIS));
 		pointBox.setBorder(new CompoundBorder(new EmptyBorder(10,0,0,0), 
-				BorderFactory.createTitledBorder("Parametry punktu")));
+				BorderFactory.createTitledBorder("Opis punktu")));
 		pointBox.add(coordsPanel);
 		pointBox.add(typePanel);
 		

@@ -5,7 +5,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.util.ArrayList;
-import java.util.List;
 
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
@@ -16,7 +15,6 @@ import javax.swing.JSeparator;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
 import pl.poznan.put.nav.admin.entities.Building;
-import pl.poznan.put.nav.admin.entities.Department;
 import pl.poznan.put.nav.admin.entities.Map;
 import pl.poznan.put.nav.admin.entities.Photo;
 import pl.poznan.put.nav.admin.managers.AppFactory;
@@ -70,8 +68,6 @@ public class MainFrame extends JFrame {
 		fileMenu.add(exitMenuItem);
 		
 		JMenu editMenu = new JMenu("Edycja");
-		JMenuItem undoMenuItem = new JMenuItem("Cofnij");
-		JMenuItem redoMenuItem = new JMenuItem("Ponow");
 		JMenuItem deleteAllPoints = new JMenuItem("Usun wszystkie punkty");
 		JMenu manageMenuItem = new JMenu("Zarzadzaj");
 		JMenuItem manageBuildingsMenuItem = new JMenuItem("Zarzadzaj budynkami");
@@ -95,8 +91,6 @@ public class MainFrame extends JFrame {
 				manageDepartmentsItemAction();
 			}
 		});
-		editMenu.add(undoMenuItem);
-		editMenu.add(redoMenuItem);
 		editMenu.add(deleteAllPoints);
 		editMenu.add(new JSeparator());
 		editMenu.add(manageMenuItem);
@@ -123,10 +117,8 @@ public class MainFrame extends JFrame {
 			archiveFileManager.openArchiveFile(selectedFile.getAbsolutePath());
 			archiveFileManager.extractArchiveFile();
 			
-			//DatabaseManager databaseManager = AppFactory.getDatabaseManager();
 			EntitiesManager entitiesManager = AppFactory.getEntitiesManager();
 			entitiesManager.loadData();
-			//List<Map> maps = databaseManager.getMaps();
 			
 			ArrayList<String> mapsFiles = new ArrayList<String>();
 			for(Map map : entitiesManager.getMaps()) {
@@ -138,17 +130,12 @@ public class MainFrame extends JFrame {
 			propertiesPanel.loadData();
 			propertiesPanel.setMapsComboBoxList(mapsFiles);
 			
-			//List<Building> buildings = databaseManager.getBuildings();
-			
 			ArrayList<String> buildingsName = new ArrayList<String>();
 			for(Building b : entitiesManager.getBuildings()) {
 				buildingsName.add(b.getName());
 			}
 			propertiesPanel.setBuildings(entitiesManager.getBuildings());
 			propertiesPanel.setBuildingsComboBoxList(buildingsName);
-			
-			//List<Department> departments = databaseManager.getDepartments();
-			//propertiesPanel.setDepartments(departments);
 		}
 	}
 	
