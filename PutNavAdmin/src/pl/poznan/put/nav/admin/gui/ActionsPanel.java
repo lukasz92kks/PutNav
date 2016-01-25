@@ -12,6 +12,7 @@ import javax.swing.JSeparator;
 import pl.poznan.put.nav.admin.entities.Map;
 import pl.poznan.put.nav.admin.entities.MapPointTypes;
 import pl.poznan.put.nav.admin.managers.AppFactory;
+import pl.poznan.put.nav.admin.managers.EntitiesManager;
 
 public class ActionsPanel extends JPanel {
 
@@ -65,10 +66,13 @@ public class ActionsPanel extends JPanel {
 			
 			@Override
 			public void actionPerformed(ActionEvent event) {
-				mapPanel.setMode(MapPanelModes.EDIT_POINTS);
-				mapPanel.deleteActiveMapPoint();
-				mapPanel.clearStartArc();
-				mapPanel.refresh();
+				EntitiesManager em = AppFactory.getEntitiesManager();
+				if(em.getActiveMap() != null) {
+					mapPanel.setMode(MapPanelModes.EDIT_POINTS);
+					mapPanel.deleteActiveMapPoint();
+					mapPanel.clearStartArc();
+					mapPanel.refresh();
+				}
 			}
 		});
 		
@@ -94,12 +98,15 @@ public class ActionsPanel extends JPanel {
 			
 			@Override
 			public void actionPerformed(ActionEvent event) {
-				mapPanel.setMode(mode);
-				if(type >= 0)
-					mapPanel.setActiveAddMapPointType(type);
-				mapPanel.clearStartArc();
-				mapPanel.refresh();
-				button.getModel().setPressed(true);
+				EntitiesManager em = AppFactory.getEntitiesManager();
+				if(em.getActiveMap() != null) {
+					mapPanel.setMode(mode);
+					if(type >= 0)
+						mapPanel.setActiveAddMapPointType(type);
+					mapPanel.clearStartArc();
+					mapPanel.refresh();
+					button.getModel().setPressed(true);
+				}
 			}
 		});
 	}
@@ -110,24 +117,26 @@ public class ActionsPanel extends JPanel {
 
 	public void setActiveMap(Map activeMap) {
 		this.activeMap = activeMap;
-		if(activeMap.isCampus()) {
-			addBuildingPointButton.setEnabled(true);
-			addFloorsConnectionButton.setEnabled(false);
-			deleteFloorsConnectionButton.setEnabled(false);
-			addDoorPointButton.setEnabled(false);
-			addLiftPointButton.setEnabled(false);
-			addStairsPointButton.setEnabled(false);
-			addOutdoorPointButton.setEnabled(false);
-			addRoomPointButton.setEnabled(false);
-		} else {
-			addBuildingPointButton.setEnabled(false);
-			addFloorsConnectionButton.setEnabled(true);
-			deleteFloorsConnectionButton.setEnabled(true);
-			addDoorPointButton.setEnabled(true);
-			addLiftPointButton.setEnabled(true);
-			addStairsPointButton.setEnabled(true);
-			addOutdoorPointButton.setEnabled(true);
-			addRoomPointButton.setEnabled(true);
-		}
+		
+		if(activeMap != null)
+			if(activeMap.isCampus()) {
+				addBuildingPointButton.setEnabled(true);
+				addFloorsConnectionButton.setEnabled(false);
+				deleteFloorsConnectionButton.setEnabled(false);
+				addDoorPointButton.setEnabled(false);
+				addLiftPointButton.setEnabled(false);
+				addStairsPointButton.setEnabled(false);
+				addOutdoorPointButton.setEnabled(false);
+				addRoomPointButton.setEnabled(false);
+			} else {
+				addBuildingPointButton.setEnabled(false);
+				addFloorsConnectionButton.setEnabled(true);
+				deleteFloorsConnectionButton.setEnabled(true);
+				addDoorPointButton.setEnabled(true);
+				addLiftPointButton.setEnabled(true);
+				addStairsPointButton.setEnabled(true);
+				addOutdoorPointButton.setEnabled(true);
+				addRoomPointButton.setEnabled(true);
+			}
 	}
 }

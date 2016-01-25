@@ -122,11 +122,13 @@ public class EntitiesManager {
 		MapPanel mapPanel = AppFactory.getMapPanel();
 		mapPanel.setMap(activeMap);
 		
-		if(activeMap.getBuilding() == null)
-			campusMapActive = true;
-		else
-			campusMapActive = false;
-		
+		if(activeMap != null) {
+			if(activeMap.isCampus())
+				campusMapActive = true;
+			else
+				campusMapActive = false;
+		}
+			
 		ActionsPanel actionsPanel = AppFactory.getActionsPanel();
 		actionsPanel.setActiveMap(activeMap);
 	}

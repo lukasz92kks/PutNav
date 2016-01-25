@@ -82,16 +82,17 @@ public class PropertiesPanel extends JPanel {
 					for(Map map : maps) {
 						if(map.isCampus()) {
 							
-							em.setActiveMap(map);
-							em.setActiveBuilding(null);
-							
 							clearBuildingProperties();
 							setEmptyComboBoxes();
+							
+							em.setActiveMap(map);
+							em.setActiveBuilding(null);
 							
 							MapPanel mapPanel = AppFactory.getMapPanel();
 							mapPanel.clearStartArc();
 							mapPanel.setMode(MapPanelModes.EDIT_POINTS);
 							mapPanel.setActiveAddMapPointType(MapPointTypes.NAVIGATION);
+							mapPanel.refresh();
 						}
 				}
 			}
@@ -114,6 +115,7 @@ public class PropertiesPanel extends JPanel {
 							names.add(map.getMapFile());
 						setMapsComboBoxList(names);
 						em.setActiveBuilding(b);
+						loadBuildingProperties(b);
 					}
 				}
 			}
@@ -130,20 +132,27 @@ public class PropertiesPanel extends JPanel {
 		mapsComboBox.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent event) {
+				boolean mapExist = false;
 				JComboBox<?> comboBox = (JComboBox<?>) event.getSource();
 				if(maps != null)
-				for(Map map : maps) {
-					if(((String)comboBox.getSelectedItem()).equals(map.getMapFile())) {
-						em.setActiveMap(map);
+					for(Map map : maps) {
 						
-						floorTextField.setText(Integer.toString(map.getFloor()));
-					
-						if(!map.isCampus()) {
-							loadBuildingProperties(map.getBuilding());
-						} else {
-							clearBuildingProperties();
+						if(((String)comboBox.getSelectedItem()).equals(map.getMapFile())) {
+							em.setActiveMap(map);
+							mapExist = true;
+							floorTextField.setText(Integer.toString(map.getFloor()));
+						
+							if(!map.isCampus()) {
+								loadBuildingProperties(map.getBuilding());
+							} else {
+								clearBuildingProperties();
+							}
 						}
 					}
+				if(!mapExist) {
+					MapPanel mapPanel = AppFactory.getMapPanel();
+					em.setActiveMap(null);
+					mapPanel.setMap(null);
 				}
 			}
 		});
@@ -219,7 +228,7 @@ public class PropertiesPanel extends JPanel {
 			public void actionPerformed(ActionEvent event) {
 				if(em == null)
 					loadData();
-				if(em.getActiveMap() != null) {
+				if(!em.getActiveMap().isCampus()) {
 					Building building = null;
 					if(em.getActiveBuilding() != null) {
 						building = em.getActiveBuilding();
@@ -244,7 +253,7 @@ public class PropertiesPanel extends JPanel {
 			public void actionPerformed(ActionEvent event) {
 				if(em == null)
 					loadData();
-				if(em.getActiveMap() != null) {
+				if(!em.getActiveMap().isCampus()) {
 					Building building = null;
 					if(em.getActiveBuilding() != null) {
 						building = em.getActiveBuilding();
@@ -270,7 +279,7 @@ public class PropertiesPanel extends JPanel {
 			public void actionPerformed(ActionEvent event) {
 				if(em == null)
 					loadData();
-				if(em.getActiveMap() != null) {
+				if(!em.getActiveMap().isCampus()) {
 					Building building = null;
 					if(em.getActiveBuilding() != null) {
 						building = em.getActiveBuilding();
@@ -284,6 +293,12 @@ public class PropertiesPanel extends JPanel {
 					
 					if(result == JOptionPane.YES_OPTION) {
 						building.setMaps(panel.getIncludedMaps());
+						building.setNumberOfFloors(building.getMaps().size());
+						
+						int i = 0;
+						for(Map map : building.getMaps()) {
+							map.setFloor(i++);
+						}
 					}
 				}
 			}

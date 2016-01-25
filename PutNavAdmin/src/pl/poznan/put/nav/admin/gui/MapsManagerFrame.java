@@ -67,14 +67,17 @@ public class MapsManagerFrame extends JFrame {
 				JFileChooser fileChooser = new JFileChooser();
 				fileChooser.setCurrentDirectory(new File(System.getProperty("user.dir")));
 				fileChooser.setFileFilter(new FileNameExtensionFilter("Image files", ImageIO.getReaderFileSuffixes()));
+				fileChooser.setMultiSelectionEnabled(true);
 				
 				int result = fileChooser.showOpenDialog(null);
 				if(result == JFileChooser.APPROVE_OPTION) {
-					File selectedFile = fileChooser.getSelectedFile();
-					String path = copyMapFileToTemp(selectedFile);
-					Map map = new Map();
-					map.setMapFile(path);
-					maps.add(map);
+					File[] selectedFiles = fileChooser.getSelectedFiles();
+					for(File file : selectedFiles) {
+						String path = copyMapFileToTemp(file);
+						Map map = new Map();
+						map.setMapFile(path);
+						maps.add(map);
+					}
 					
 					loadData();
 				}
