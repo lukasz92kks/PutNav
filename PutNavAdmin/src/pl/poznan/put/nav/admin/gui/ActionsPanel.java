@@ -3,6 +3,7 @@ package pl.poznan.put.nav.admin.gui;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JPanel;
@@ -48,110 +49,18 @@ public class ActionsPanel extends JPanel {
 		addRoomPointButton = new JButton(new ImageIcon("images/room.png"));
 		deletePointButton = new JButton(new ImageIcon("images/delete.png"));
 		
-		addPointsConnectionButton.addActionListener(new ActionListener() {
-			
-			@Override
-			public void actionPerformed(ActionEvent event) {
-				mapPanel.setMode(MapPanelModes.EDIT_POINTS_CONNECTIONS);
-				mapPanel.clearStartArc();
-				mapPanel.refresh();
-			}
-		});
-		deletePointsConnectionButton.addActionListener(new ActionListener() {
-					
-			@Override
-			public void actionPerformed(ActionEvent event) {
-				mapPanel.setMode(MapPanelModes.REMOVE_POINTS_CONNECTIONS);
-				mapPanel.clearStartArc();
-				mapPanel.refresh();
-			}
-		});
-		addFloorsConnectionButton.addActionListener(new ActionListener() {
-			
-			@Override
-			public void actionPerformed(ActionEvent event) {
-				mapPanel.setMode(MapPanelModes.EDIT_FLOORS_CONNECTIONS);
-				mapPanel.clearStartArc();
-				mapPanel.refresh();
-			}
-		});
-		deleteFloorsConnectionButton.addActionListener(new ActionListener() {
-			
-			@Override
-			public void actionPerformed(ActionEvent event) {
-				mapPanel.setMode(MapPanelModes.REMOVE_FLOORS_CONNECTIONS);
-				mapPanel.clearStartArc();
-				mapPanel.refresh();
-			}
-		});
-		addBuildingPointButton.addActionListener(new ActionListener() {
-			
-			@Override
-			public void actionPerformed(ActionEvent event) {
-				mapPanel.setMode(MapPanelModes.EDIT_POINTS);
-				mapPanel.setActiveAddMapPointType(MapPointTypes.BUILDING);
-			}
-		});
-		addRoomPointButton.addActionListener(new ActionListener() {
-			
-			@Override
-			public void actionPerformed(ActionEvent event) {
-				mapPanel.setMode(MapPanelModes.EDIT_POINTS);
-				mapPanel.setActiveAddMapPointType(MapPointTypes.ROOM);
-				mapPanel.clearStartArc();
-				mapPanel.refresh();
-			}
-		});
-		addNaviPointButton.addActionListener(new ActionListener() {
-			
-			@Override
-			public void actionPerformed(ActionEvent event) {
-				mapPanel.setMode(MapPanelModes.EDIT_POINTS);
-				mapPanel.setActiveAddMapPointType(MapPointTypes.NAVIGATION);
-				mapPanel.clearStartArc();
-				mapPanel.refresh();
-			}
-		});
-		addDoorPointButton.addActionListener(new ActionListener() {
-			
-			@Override
-			public void actionPerformed(ActionEvent event) {
-				mapPanel.setMode(MapPanelModes.EDIT_POINTS);
-				mapPanel.setActiveAddMapPointType(MapPointTypes.DOOR);
-				mapPanel.clearStartArc();
-				mapPanel.refresh();
-			}
-		});
-		addOutdoorPointButton.addActionListener(new ActionListener() {
-			
-			@Override
-			public void actionPerformed(ActionEvent event) {
-				mapPanel.setMode(MapPanelModes.EDIT_POINTS);
-				mapPanel.setActiveAddMapPointType(MapPointTypes.OUTDOOR);
-				mapPanel.clearStartArc();
-				mapPanel.refresh();
-			}
-		});
-		addLiftPointButton.addActionListener(new ActionListener() {
-			
-			@Override
-			public void actionPerformed(ActionEvent event) {
-				mapPanel.setMode(MapPanelModes.EDIT_POINTS);
-				mapPanel.setActiveAddMapPointType(MapPointTypes.LIFT);
-				mapPanel.clearStartArc();
-				mapPanel.refresh();
-			}
-		});
-		addStairsPointButton.addActionListener(new ActionListener() {
-			
-			@Override
-			public void actionPerformed(ActionEvent event) {
-				mapPanel.setMode(MapPanelModes.EDIT_POINTS);
-				mapPanel.setActiveAddMapPointType(MapPointTypes.STAIRS);
-				mapPanel.clearStartArc();
-				mapPanel.refresh();
-			}
-		});
+		addActionListener(addPointsConnectionButton, MapPanelModes.EDIT_POINTS_CONNECTIONS, -1);
+		addActionListener(deletePointsConnectionButton, MapPanelModes.REMOVE_POINTS_CONNECTIONS, -1);
+		addActionListener(addFloorsConnectionButton, MapPanelModes.EDIT_FLOORS_CONNECTIONS, -1);
+		addActionListener(deleteFloorsConnectionButton, MapPanelModes.REMOVE_FLOORS_CONNECTIONS, -1);
+		addActionListener(addBuildingPointButton, MapPanelModes.EDIT_POINTS, MapPointTypes.BUILDING);
+		addActionListener(addRoomPointButton, MapPanelModes.EDIT_POINTS, MapPointTypes.ROOM);
+		addActionListener(addNaviPointButton, MapPanelModes.EDIT_POINTS, MapPointTypes.NAVIGATION);
+		addActionListener(addDoorPointButton, MapPanelModes.EDIT_POINTS, MapPointTypes.DOOR);
+		addActionListener(addOutdoorPointButton, MapPanelModes.EDIT_POINTS, MapPointTypes.OUTDOOR);
+		addActionListener(addLiftPointButton, MapPanelModes.EDIT_POINTS, MapPointTypes.LIFT);
+		addActionListener(addStairsPointButton, MapPanelModes.EDIT_POINTS, MapPointTypes.STAIRS);
+		
 		deletePointButton.addActionListener(new ActionListener() {
 			
 			@Override
@@ -177,6 +86,22 @@ public class ActionsPanel extends JPanel {
 		this.add(addStairsPointButton);
 		this.add(new JSeparator());
 		this.add(deletePointButton);
+	}
+	
+	public void addActionListener(final JButton button, final int mode, final int type) {
+		
+		button.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent event) {
+				mapPanel.setMode(mode);
+				if(type >= 0)
+					mapPanel.setActiveAddMapPointType(type);
+				mapPanel.clearStartArc();
+				mapPanel.refresh();
+				button.getModel().setPressed(true);
+			}
+		});
 	}
 	
 	public Map getActiveMap() {
