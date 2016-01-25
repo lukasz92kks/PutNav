@@ -14,7 +14,6 @@ import com.j256.ormlite.android.apptools.OpenHelperManager;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.prefs.Preferences;
 
 
 public class MainActivity extends Activity {
@@ -30,10 +29,7 @@ public class MainActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-        Log.i(MainActivity.class.getSimpleName(), "przed...");
         func();
-        Log.i(MainActivity.class.getSimpleName(), "po...");
         List<MapPoint> tmp = nn;
 
 
@@ -43,7 +39,7 @@ public class MainActivity extends Activity {
     public void func() {
         db = OpenHelperManager.getHelper(this, DatabaseHandler.class);
         try {
-            Log.i(MainActivity.class.getSimpleName(), "tu...");
+
             nn = new ArrayList<MapPoint>(db.getMapPointDao().queryForAll());
             mpa = new ArrayList<MapPointsArcs>(db.getMapPointsArcsDao().queryForAll());
 
@@ -83,10 +79,6 @@ public class MainActivity extends Activity {
         }
 
         routeFinder = new RouteFinder(nn, mpa);
-
-        //Toast.makeText(MainActivity.this, "StartId: " + Integer.toString(nn.get(3).getId()), Toast.LENGTH_SHORT).show();
-        //Toast.makeText(MainActivity.this, "GoalId: " + Integer.toString(nn.get(8).getId()), Toast.LENGTH_SHORT).show();
-
 
         MapPoint p1 = new MapPoint();
         MapPoint p2 = new MapPoint();

@@ -7,6 +7,7 @@ import android.graphics.drawable.BitmapDrawable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.Menu;
+import android.widget.AutoCompleteTextView;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.SeekBar;
@@ -19,6 +20,8 @@ import pl.poznan.put.putnav.widgets.VerticalSeekBar;
 
 public class BuildingActivity extends AppCompatActivity {
 
+    AutoCompleteTextView aCTVFrom;
+    AutoCompleteTextView aCTVTo;
     FrameLayout container;
 
     VerticalSeekBar verticalSeekBar = null;
@@ -38,16 +41,26 @@ public class BuildingActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_building);
 
+        init();
+
+    }
+
+    public void init() {
+
         // TODO: funkcja która wypełnia tablice lines (koniecznie przed funkcją loadImageToContainer)
 
         container = (FrameLayout) findViewById(R.id.picture_container);
 
         loadImageToContainer(0);
 
+        aCTVFrom = (AutoCompleteTextView) findViewById(R.id.autoCompleteTextView1);
+        aCTVTo = (AutoCompleteTextView) findViewById(R.id.autoCompleteTextView2);
+
         verticalSeekBar = (VerticalSeekBar) findViewById(R.id.verticalSeekBar);
         verticalSeekBar.setOnSeekBarChangeListener(listenerSeekbar);
         //podajemy ilość pięter, np. 0 - budynek parterowy
         verticalSeekBar.setMaximum(4);
+
     }
 
     private void loadImageToContainer(int floor) {
