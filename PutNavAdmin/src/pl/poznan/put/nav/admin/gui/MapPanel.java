@@ -18,11 +18,11 @@ import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
+import pl.poznan.put.nav.admin.Main;
 import pl.poznan.put.nav.admin.entities.Building;
 import pl.poznan.put.nav.admin.entities.Map;
 import pl.poznan.put.nav.admin.entities.MapPoint;
 import pl.poznan.put.nav.admin.entities.MapPointTypes;
-import pl.poznan.put.nav.admin.entities.MapPointsArcs;
 import pl.poznan.put.nav.admin.entities.Room;
 import pl.poznan.put.nav.admin.managers.AppFactory;
 import pl.poznan.put.nav.admin.managers.EntitiesManager;
@@ -55,13 +55,13 @@ public class MapPanel extends JPanel implements MouseListener, MouseMotionListen
 		addMouseListener(this);
 		addMouseMotionListener(this);
 		
-		buildingPoint = new ImageIcon("images/building.png").getImage();
-		roomPoint = new ImageIcon("images/room.png").getImage();
-		naviPoint = new ImageIcon("images/navi.png").getImage();
-		doorPoint = new ImageIcon("images/door.png").getImage();
-		outdoorPoint = new ImageIcon("images/outdoor.png").getImage();
-		liftPoint = new ImageIcon("images/lift.png").getImage();
-		stairsPoint = new ImageIcon("images/stairs.png").getImage();
+		buildingPoint = new ImageIcon(Main.class.getResource("/resources/building.png")).getImage();
+		roomPoint = new ImageIcon(Main.class.getResource("/resources/room.png")).getImage();
+		naviPoint = new ImageIcon(Main.class.getResource("/resources/navi.png")).getImage();
+		doorPoint = new ImageIcon(Main.class.getResource("/resources/door.png")).getImage();
+		outdoorPoint = new ImageIcon(Main.class.getResource("/resources/outdoor.png")).getImage();
+		liftPoint = new ImageIcon(Main.class.getResource("/resources/lift.png")).getImage();
+		stairsPoint = new ImageIcon(Main.class.getResource("/resources/stairs.png")).getImage();
 		
 		imagePointWidth = naviPoint.getWidth(this);
 	}
@@ -69,7 +69,7 @@ public class MapPanel extends JPanel implements MouseListener, MouseMotionListen
 	private Building addBuilding() {
 		PropertiesPanel panel = new PropertiesPanel();
 		int result = JOptionPane.showConfirmDialog(null, panel.createBuildingBox(true), 
-	               "Dodaj budynek", JOptionPane.OK_CANCEL_OPTION, 1, new ImageIcon("images/building.png"));
+	               "Dodaj budynek", JOptionPane.OK_CANCEL_OPTION, 1, new ImageIcon(Main.class.getResource("/resources/building.png")));
 		
 		if(result == JOptionPane.YES_OPTION) {
 			Building building = new Building(panel.getBuildingNameTextField().getText(),
@@ -85,7 +85,7 @@ public class MapPanel extends JPanel implements MouseListener, MouseMotionListen
 	private Room addRoom() {
 		PropertiesPanel panel = new PropertiesPanel();
 		int result = JOptionPane.showConfirmDialog(null, panel.createRoomBox(true), 
-	               "Dodaj pomieszczenie", JOptionPane.OK_CANCEL_OPTION, 1, new ImageIcon("images/room.png"));
+	               "Dodaj pomieszczenie", JOptionPane.OK_CANCEL_OPTION, 1, new ImageIcon(Main.class.getResource("/resources/room.png")));
 		
 		if(result == JOptionPane.YES_OPTION) {
 			MapPanel mapPanel = AppFactory.getMapPanel();
@@ -157,7 +157,9 @@ public class MapPanel extends JPanel implements MouseListener, MouseMotionListen
 	
 	@Override
 	protected void paintComponent(Graphics g) {
-		if(em.getActiveMap() != null) {
+		if(em.getActiveMap() == null) {
+			g.clearRect(0, 0, this.getWidth(), this.getHeight());
+		} else {
 			if(drawArea == null)
 				drawArea = new DrawArea(0, 0, this.getWidth(), this.getHeight(), 0, 0, this.getWidth(), this.getHeight());
 			g.clearRect(0, 0, this.getWidth(), this.getHeight());
@@ -178,9 +180,9 @@ public class MapPanel extends JPanel implements MouseListener, MouseMotionListen
 						g.drawImage(doorPoint, x, y, this);
 					else if(type == MapPointTypes.OUTDOOR && mode != MapPanelModes.EDIT_FLOORS_CONNECTIONS && mode != MapPanelModes.REMOVE_FLOORS_CONNECTIONS)
 						g.drawImage(outdoorPoint, x, y, this);
-					else if(type == MapPointTypes.LIFT && (startArc == null || (startArc != null && mode == MapPanelModes.EDIT_POINTS_CONNECTIONS) || (startArc != null && mode == MapPanelModes.EDIT_FLOORS_CONNECTIONS) || (startArc != null && mode == MapPanelModes.REMOVE_FLOORS_CONNECTIONS && startArc.getSuccessors().contains(p)))  )
+					else if(type == MapPointTypes.LIFT && (startArc == null || (startArc != null && mode == MapPanelModes.REMOVE_POINTS_CONNECTIONS) || (startArc != null && mode == MapPanelModes.EDIT_POINTS_CONNECTIONS) || (startArc != null && mode == MapPanelModes.EDIT_FLOORS_CONNECTIONS) || (startArc != null && mode == MapPanelModes.REMOVE_FLOORS_CONNECTIONS && startArc.getSuccessors().contains(p)))  )
 						g.drawImage(liftPoint, x, y, this);
-					else if(type == MapPointTypes.STAIRS && (startArc == null || (startArc != null && mode == MapPanelModes.EDIT_POINTS_CONNECTIONS) || (startArc != null && mode == MapPanelModes.EDIT_FLOORS_CONNECTIONS) || (startArc != null && mode == MapPanelModes.REMOVE_FLOORS_CONNECTIONS && startArc.getSuccessors().contains(p)))  )
+					else if(type == MapPointTypes.STAIRS && (startArc == null || (startArc != null && mode == MapPanelModes.REMOVE_POINTS_CONNECTIONS) || (startArc != null && mode == MapPanelModes.EDIT_POINTS_CONNECTIONS) || (startArc != null && mode == MapPanelModes.EDIT_FLOORS_CONNECTIONS) || (startArc != null && mode == MapPanelModes.REMOVE_FLOORS_CONNECTIONS && startArc.getSuccessors().contains(p)))  )
 						g.drawImage(stairsPoint, x, y, this);
 					else if(type == MapPointTypes.BUILDING && mode != MapPanelModes.EDIT_FLOORS_CONNECTIONS && mode != MapPanelModes.REMOVE_FLOORS_CONNECTIONS)
 						g.drawImage(buildingPoint, x, y, this);

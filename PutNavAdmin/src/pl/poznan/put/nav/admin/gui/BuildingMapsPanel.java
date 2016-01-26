@@ -13,8 +13,6 @@ import javax.swing.JButton;
 import javax.swing.JList;
 import javax.swing.JPanel;
 
-import pl.poznan.put.nav.admin.entities.Building;
-import pl.poznan.put.nav.admin.entities.Department;
 import pl.poznan.put.nav.admin.entities.Map;
 import pl.poznan.put.nav.admin.managers.AppFactory;
 import pl.poznan.put.nav.admin.managers.EntitiesManager;
@@ -22,9 +20,6 @@ import pl.poznan.put.nav.admin.managers.EntitiesManager;
 public class BuildingMapsPanel extends JPanel {
 
 	private static final long serialVersionUID = -3973709613817976102L;
-
-	//private Building building = null;
-	//private List<Map> maps;
 
 	private JList<String> includedMapsList;
 	private JList<String> allFreeMapsList;
@@ -35,8 +30,6 @@ public class BuildingMapsPanel extends JPanel {
 	EntitiesManager em = AppFactory.getEntitiesManager();
 
 	public BuildingMapsPanel() {
-		//this.building = building;
-		//this.maps = allMaps;
 		
 		initIncludedMapsList();
 		initAllFreeMapsList();
@@ -44,7 +37,6 @@ public class BuildingMapsPanel extends JPanel {
 		this.add(includedMapsList);
 		this.add(createButtonsPanel());
 		this.add(allFreeMapsList);
-		
 	}
 	
 	private void initIncludedMapsList() {

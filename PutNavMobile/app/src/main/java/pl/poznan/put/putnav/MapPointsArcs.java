@@ -3,10 +3,11 @@ package pl.poznan.put.putnav;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
 @DatabaseTable(tableName = "MapPointsArcs")
-public class MapPointsArcs {
+public class MapPointsArcs implements Serializable {
 
     /*@DatabaseField(id = true)
     private int id;*/
