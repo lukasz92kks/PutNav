@@ -3,8 +3,11 @@ package pl.poznan.put.putnav;
 import android.widget.ImageView;
 
 import com.j256.ormlite.field.DatabaseField;
+import com.j256.ormlite.table.DatabaseTable;
 
 import java.util.ArrayList;
+
+@DatabaseTable(tableName = "Maps")
 
 public class Map {
 
@@ -14,10 +17,10 @@ public class Map {
     private int floor;
     @DatabaseField
     private int campus;
-
-    private ImageView mapImage = null;
     @DatabaseField(foreign = true, columnName = "Building")
     private Building buildings;
+
+    private ImageView mapImage = null;
 
     private ArrayList<MapPoint> mapPoints = new ArrayList<MapPoint>();
 
