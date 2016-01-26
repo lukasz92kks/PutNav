@@ -12,9 +12,11 @@ public class Map {
     private int id;
     @DatabaseField
     private int floor;
+    @DatabaseField
+    private int campus;
 
     private ImageView mapImage = null;
-    @DatabaseField(foreign = true)
+    @DatabaseField(foreign = true, columnName = "Building")
     private Building buildings;
 
     private ArrayList<MapPoint> mapPoints = new ArrayList<MapPoint>();
@@ -74,5 +76,13 @@ public class Map {
 
     public void setBuildings(Building buildings) {
         this.buildings = buildings;
+    }
+
+    public int getCampus() {
+        return campus;
+    }
+
+    public void setCampus(int campus) {
+        this.campus = campus;
     }
 }

@@ -4,6 +4,7 @@ import android.content.Context;
 import android.graphics.Canvas;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
+import android.view.View;
 import android.widget.SeekBar;
 
 public class VerticalSeekBar extends SeekBar {
@@ -90,7 +91,7 @@ public class VerticalSeekBar extends SeekBar {
 
     public synchronized void setProgressAndThumb(int progress) {
         setProgress(progress);
-        onSizeChanged(getWidth(), getHeight() , 0, 0);
+        onSizeChanged(getWidth(), getHeight(), 0, 0);
         if(progress != lastProgress) {
             // Only enact listener if the progress has actually changed
             lastProgress = progress;
@@ -100,6 +101,11 @@ public class VerticalSeekBar extends SeekBar {
 
     public synchronized void setMaximum(int maximum) {
         setMax(maximum);
+        if(maximum == 0){
+            this.setVisibility(View.INVISIBLE);
+        }else{
+            this.setVisibility(View.VISIBLE);
+        }
     }
 
     public synchronized int getMaximum() {

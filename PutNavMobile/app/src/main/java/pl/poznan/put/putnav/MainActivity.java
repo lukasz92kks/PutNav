@@ -43,6 +43,7 @@ public class MainActivity extends Activity {
             nn = new ArrayList<MapPoint>(db.getMapPointDao().queryForAll());
             mpa = new ArrayList<MapPointsArcs>(db.getMapPointsArcsDao().queryForAll());
 
+            //dla każdej krawędzi przeliczamy wagi
             for(MapPointsArcs m : mpa)
             {
                 m.setPoint1(nn);
@@ -80,24 +81,6 @@ public class MainActivity extends Activity {
 
         routeFinder = new RouteFinder(nn, mpa);
 
-        MapPoint p1 = new MapPoint();
-        MapPoint p2 = new MapPoint();
-
-        p1 = p1.findPointById(nn, 141);
-        p2 = p2.findPointById(nn, 187);
-
-        route = routeFinder.findPath(p1, p2);
-
-        Toast.makeText(MainActivity.this, "RouteSize: " + Integer.toString(route.size()), Toast.LENGTH_SHORT).show();
-
-
-
-        /*
-        for(MapPoint mp : route){
-            Toast.makeText(MainActivity.this, "Route: " +Integer.toString(mp.getId()), Toast.LENGTH_SHORT).show();
-        }
-        */
-
 
     }
 
@@ -126,7 +109,8 @@ public class MainActivity extends Activity {
     //----------------------------------------------------------------
 
     public void openBuildingActivity(View view) {
-        startActivity(new Intent(this, BuildingActivity.class));
+        Intent intent = new Intent(this, BuildingActivity.class);
+        startActivity(intent);
     }
 
     public void openPreferencesActivity(View view) {

@@ -3,11 +3,12 @@ package pl.poznan.put.putnav;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
 @DatabaseTable(tableName = "MapPoints")
 
-public class MapPoint implements Comparable<MapPoint> {
+public class MapPoint implements Comparable<MapPoint>, Serializable {
 
     @DatabaseField(id = true)
     private int Id;
@@ -17,11 +18,11 @@ public class MapPoint implements Comparable<MapPoint> {
     private int Y;
     @DatabaseField
     private int Type;
-    //@DatabaseField (foreign = true)
+    @DatabaseField (foreign = true, columnName = "Map")
     private Map map;
-    //@DatabaseField (foreign = true)
+    @DatabaseField (foreign = true, columnName = "Building")
     private Building building;
-    //@DatabaseField (foreign = true)
+    @DatabaseField (foreign = true, columnName = "Room")
     private Room room;
 
     private double distance;
