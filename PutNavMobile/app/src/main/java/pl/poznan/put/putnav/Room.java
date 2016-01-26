@@ -1,29 +1,32 @@
 package pl.poznan.put.putnav;
 
 import com.j256.ormlite.field.DatabaseField;
+import com.j256.ormlite.table.DatabaseTable;
 
 import java.util.ArrayList;
+
+@DatabaseTable(tableName = "Rooms")
 
 public class Room {
 
     @DatabaseField(id = true)
-    private int id;
+    private int Id;
     @DatabaseField
-    private String name;
+    private String Name;
     @DatabaseField
-    private String function;
-    @DatabaseField
+    private String Function;
+    //@DatabaseField
     private int floor;
-    @DatabaseField(foreign = true)
+    //@DatabaseField(foreign = true)
     private Building building;
     private ArrayList<MapPoint> mapPoints = new ArrayList<MapPoint>();
 
     public Room() {}
 
     public Room(int id, String name, String function, int floor) {
-        this.id = id;
-        this.name = name;
-        this.function = function;
+        this.Id = id;
+        this.Name = name;
+        this.Function = function;
         this.floor = floor;
     }
 
@@ -37,27 +40,27 @@ public class Room {
     }
 
     public int getId() {
-        return id;
+        return Id;
     }
 
     public void setId(int id) {
-        this.id = id;
+        this.Id = id;
     }
 
     public String getName() {
-        return name;
+        return Name;
     }
 
     public void setName(String name) {
-        this.name = name;
+        this.Name = name;
     }
 
     public String getFunction() {
-        return function;
+        return Function;
     }
 
     public void setFunction(String function) {
-        this.function = function;
+        this.Function = function;
     }
 
     public int getFloor() {

@@ -7,13 +7,20 @@ import android.graphics.drawable.BitmapDrawable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.Editable;
+import android.text.TextWatcher;
+import android.util.Log;
 import android.view.Menu;
 import android.view.View;
 import android.widget.AutoCompleteTextView;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.SeekBar;
+import android.widget.Toast;
 
+import com.j256.ormlite.android.apptools.OpenHelperManager;
+
+import java.sql.SQLException;
 import java.util.ArrayList;
 
 import pl.poznan.put.putnav.widgets.TouchImageView;
@@ -24,7 +31,11 @@ public class BuildingActivity extends AppCompatActivity {
 
     AutoCompleteTextView aCTVFrom;
     AutoCompleteTextView aCTVTo;
+    ArrayList<Room> allRooms;
+    ArrayList<SearchItem> toBeShown = new ArrayList<SearchItem>();
     FrameLayout container;
+
+    DatabaseHandler db;
 
     VerticalSeekBar verticalSeekBar = null;
     ImageView imageView = null;
@@ -40,6 +51,7 @@ public class BuildingActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_building);
 
@@ -49,6 +61,14 @@ public class BuildingActivity extends AppCompatActivity {
 
     public void init() {
 
+        db = OpenHelperManager.getHelper(this, DatabaseHandler.class);
+        try {
+            allRooms = new ArrayList<Room>(db.getRoomDao().queryForAll());
+            Toast.makeText(BuildingActivity.this, "rooms: " + allRooms.size(), Toast.LENGTH_SHORT).show();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
         // TODO: funkcja która wypełnia tablice lines (koniecznie przed funkcją loadImageToContainer)
 
         container = (FrameLayout) findViewById(R.id.picture_container);
@@ -57,6 +77,26 @@ public class BuildingActivity extends AppCompatActivity {
 
         aCTVFrom = (AutoCompleteTextView) findViewById(R.id.autoCompleteTextView1);
         aCTVTo = (AutoCompleteTextView) findViewById(R.id.autoCompleteTextView2);
+        SearchAdapter adapter = new SearchAdapter(this, R.layout.listview_item_row, toBeShown);
+
+        aCTVFrom.setAdapter(adapter);
+        aCTVTo.setAdapter(adapter);
+        //testy
+
+        for (int i = 0; i < 5; i++) {
+            int id = allRooms.get(i).getId();
+            String type = "Room";
+            String name = allRooms.get(i).getName();
+            SearchItem sI = new SearchItem(id, type, name);
+            toBeShown.add(sI);
+        }
+
+        //
+
+
+        aCTVFrom.addTextChangedListener(myWatcher);
+        aCTVTo.addTextChangedListener(myWatcher);
+
 
         verticalSeekBar = (VerticalSeekBar) findViewById(R.id.verticalSeekBar);
         verticalSeekBar.setOnSeekBarChangeListener(listenerSeekbar);
@@ -64,6 +104,37 @@ public class BuildingActivity extends AppCompatActivity {
         verticalSeekBar.setMaximum(4);
 
     }
+
+    public final TextWatcher myWatcher = new TextWatcher() {
+        @Override
+        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+        }
+
+        @Override
+        public void onTextChanged(CharSequence s, int start, int before, int count) {
+            //String regex = "(?i:.*" + s.toString() + ".*)";
+            /*
+
+
+            */
+
+            toBeShown.clear();
+            for (int i = 0; i < 5; i++) {
+                int id = allRooms.get(i).getId();
+                String type = "Room";
+                String name = allRooms.get(i).getName();
+                SearchItem sI = new SearchItem(id, type, name);
+                toBeShown.add(sI);
+            }
+        }
+
+
+        @Override
+        public void afterTextChanged(Editable s) {
+
+        }
+    };
 
     private void loadImageToContainer(int floor) {
         container.removeAllViews();
