@@ -9,6 +9,7 @@ import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.JSeparator;
 
+import pl.poznan.put.nav.admin.Main;
 import pl.poznan.put.nav.admin.entities.Map;
 import pl.poznan.put.nav.admin.entities.MapPointTypes;
 import pl.poznan.put.nav.admin.managers.AppFactory;
@@ -37,18 +38,18 @@ public class ActionsPanel extends JPanel {
 		System.out.println("ActionsPanel");
 		this.setLayout(new FlowLayout());
 		
-		addPointsConnectionButton = new JButton(new ImageIcon("images/arrow.png"));
-		deletePointsConnectionButton = new JButton(new ImageIcon("images/delete-arrow.png"));
-		addFloorsConnectionButton = new JButton(new ImageIcon("images/arrowfloor.png"));
-		deleteFloorsConnectionButton = new JButton(new ImageIcon("images/delete-arrowfloor.png"));
-		addBuildingPointButton = new JButton(new ImageIcon("images/building.png"));
-		addNaviPointButton = new JButton(new ImageIcon("images/navi.png"));
-		addDoorPointButton = new JButton(new ImageIcon("images/door.png"));
-		addLiftPointButton = new JButton(new ImageIcon("images/lift.png"));
-		addStairsPointButton = new JButton(new ImageIcon("images/stairs.png"));
-		addOutdoorPointButton = new JButton(new ImageIcon("images/outdoor.png"));
-		addRoomPointButton = new JButton(new ImageIcon("images/room.png"));
-		deletePointButton = new JButton(new ImageIcon("images/delete.png"));
+		addPointsConnectionButton = new JButton(new ImageIcon(Main.class.getResource("/resources/arrow.png")));
+		deletePointsConnectionButton = new JButton(new ImageIcon(Main.class.getResource("/resources/delete-arrow.png")));
+		addFloorsConnectionButton = new JButton(new ImageIcon(Main.class.getResource("/resources/arrowfloor.png")));
+		deleteFloorsConnectionButton = new JButton(new ImageIcon(Main.class.getResource("/resources/delete-arrowfloor.png")));
+		addBuildingPointButton = new JButton(new ImageIcon(Main.class.getResource("/resources/building.png")));
+		addNaviPointButton = new JButton(new ImageIcon(Main.class.getResource("/resources/navi.png")));
+		addDoorPointButton = new JButton(new ImageIcon(Main.class.getResource("/resources/door.png")));
+		addLiftPointButton = new JButton(new ImageIcon(Main.class.getResource("/resources/lift.png")));
+		addStairsPointButton = new JButton(new ImageIcon(Main.class.getResource("/resources/stairs.png")));
+		addOutdoorPointButton = new JButton(new ImageIcon(Main.class.getResource("/resources/outdoor.png")));
+		addRoomPointButton = new JButton(new ImageIcon(Main.class.getResource("/resources/room.png")));
+		deletePointButton = new JButton(new ImageIcon(Main.class.getResource("/resources/delete.png")));
 		
 		addActionListener(addPointsConnectionButton, MapPanelModes.EDIT_POINTS_CONNECTIONS, -1);
 		addActionListener(deletePointsConnectionButton, MapPanelModes.REMOVE_POINTS_CONNECTIONS, -1);

@@ -18,6 +18,7 @@ import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
+import pl.poznan.put.nav.admin.Main;
 import pl.poznan.put.nav.admin.entities.Building;
 import pl.poznan.put.nav.admin.entities.Map;
 import pl.poznan.put.nav.admin.entities.MapPoint;
@@ -54,13 +55,13 @@ public class MapPanel extends JPanel implements MouseListener, MouseMotionListen
 		addMouseListener(this);
 		addMouseMotionListener(this);
 		
-		buildingPoint = new ImageIcon("images/building.png").getImage();
-		roomPoint = new ImageIcon("images/room.png").getImage();
-		naviPoint = new ImageIcon("images/navi.png").getImage();
-		doorPoint = new ImageIcon("images/door.png").getImage();
-		outdoorPoint = new ImageIcon("images/outdoor.png").getImage();
-		liftPoint = new ImageIcon("images/lift.png").getImage();
-		stairsPoint = new ImageIcon("images/stairs.png").getImage();
+		buildingPoint = new ImageIcon(Main.class.getResource("/resources/building.png")).getImage();
+		roomPoint = new ImageIcon(Main.class.getResource("/resources/room.png")).getImage();
+		naviPoint = new ImageIcon(Main.class.getResource("/resources/navi.png")).getImage();
+		doorPoint = new ImageIcon(Main.class.getResource("/resources/door.png")).getImage();
+		outdoorPoint = new ImageIcon(Main.class.getResource("/resources/outdoor.png")).getImage();
+		liftPoint = new ImageIcon(Main.class.getResource("/resources/lift.png")).getImage();
+		stairsPoint = new ImageIcon(Main.class.getResource("/resources/stairs.png")).getImage();
 		
 		imagePointWidth = naviPoint.getWidth(this);
 	}
@@ -68,7 +69,7 @@ public class MapPanel extends JPanel implements MouseListener, MouseMotionListen
 	private Building addBuilding() {
 		PropertiesPanel panel = new PropertiesPanel();
 		int result = JOptionPane.showConfirmDialog(null, panel.createBuildingBox(true), 
-	               "Dodaj budynek", JOptionPane.OK_CANCEL_OPTION, 1, new ImageIcon("images/building.png"));
+	               "Dodaj budynek", JOptionPane.OK_CANCEL_OPTION, 1, new ImageIcon(Main.class.getResource("/resources/building.png")));
 		
 		if(result == JOptionPane.YES_OPTION) {
 			Building building = new Building(panel.getBuildingNameTextField().getText(),
@@ -84,7 +85,7 @@ public class MapPanel extends JPanel implements MouseListener, MouseMotionListen
 	private Room addRoom() {
 		PropertiesPanel panel = new PropertiesPanel();
 		int result = JOptionPane.showConfirmDialog(null, panel.createRoomBox(true), 
-	               "Dodaj pomieszczenie", JOptionPane.OK_CANCEL_OPTION, 1, new ImageIcon("images/room.png"));
+	               "Dodaj pomieszczenie", JOptionPane.OK_CANCEL_OPTION, 1, new ImageIcon(Main.class.getResource("/resources/room.png")));
 		
 		if(result == JOptionPane.YES_OPTION) {
 			MapPanel mapPanel = AppFactory.getMapPanel();

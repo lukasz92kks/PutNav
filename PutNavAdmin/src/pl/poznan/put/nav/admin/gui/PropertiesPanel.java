@@ -23,6 +23,7 @@ import javax.swing.JTextField;
 import javax.swing.border.CompoundBorder;
 import javax.swing.border.EmptyBorder;
 
+import pl.poznan.put.nav.admin.Main;
 import pl.poznan.put.nav.admin.entities.Building;
 import pl.poznan.put.nav.admin.entities.Department;
 import pl.poznan.put.nav.admin.entities.Map;
@@ -238,7 +239,7 @@ public class PropertiesPanel extends JPanel {
 					}
 					BuildingDepartmentsPanel panel = new BuildingDepartmentsPanel();
 					int result = JOptionPane.showConfirmDialog(null, panel, 
-				       "Wydzialy", JOptionPane.OK_CANCEL_OPTION, 1, new ImageIcon("images/building.png"));
+				       "Wydzialy", JOptionPane.OK_CANCEL_OPTION, 1, new ImageIcon(Main.class.getResource("/resources/building.png")));
 					
 					if(result == JOptionPane.YES_OPTION) {
 						building.setDepartments(panel.getIncludedDepartments());
@@ -263,7 +264,7 @@ public class PropertiesPanel extends JPanel {
 					}
 					BuildingPhotosPanel panel = new BuildingPhotosPanel();
 					int result = JOptionPane.showConfirmDialog(null, panel, 
-				       "Zdjecia", JOptionPane.OK_CANCEL_OPTION, 1, new ImageIcon("images/building.png"));
+				       "Zdjecia", JOptionPane.OK_CANCEL_OPTION, 1, new ImageIcon(Main.class.getResource("/resources/building.png")));
 					
 					if(result == JOptionPane.YES_OPTION) {
 						copyPhotosToTemp(panel.getPhotos());
@@ -279,7 +280,7 @@ public class PropertiesPanel extends JPanel {
 			public void actionPerformed(ActionEvent event) {
 				if(em == null)
 					loadData();
-				if(!em.getActiveMap().isCampus()) {
+				//if(em.getActiveMap() != null && !em.getActiveMap().isCampus()) {
 					Building building = null;
 					if(em.getActiveBuilding() != null) {
 						building = em.getActiveBuilding();
@@ -289,7 +290,7 @@ public class PropertiesPanel extends JPanel {
 					}
 					BuildingMapsPanel panel = new BuildingMapsPanel();
 					int result = JOptionPane.showConfirmDialog(null, panel, 
-				       "Mapy", JOptionPane.OK_CANCEL_OPTION, 1, new ImageIcon("images/building.png"));
+				       "Mapy", JOptionPane.OK_CANCEL_OPTION, 1, new ImageIcon(Main.class.getResource("/resources/building.png")));
 					
 					if(result == JOptionPane.YES_OPTION) {
 						building.setMaps(panel.getIncludedMaps());
@@ -300,7 +301,7 @@ public class PropertiesPanel extends JPanel {
 							map.setFloor(i++);
 						}
 					}
-				}
+				//}
 			}
 		});
 		JPanel buttonsPanel = new JPanel();
