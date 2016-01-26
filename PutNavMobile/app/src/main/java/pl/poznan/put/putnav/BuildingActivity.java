@@ -92,8 +92,8 @@ public class BuildingActivity extends AppCompatActivity {
 
             mapPoints = new ArrayList<>(db.getMapPointDao().queryForAll());
             mapPointsArcses = new ArrayList<>(db.getMapPointsArcsDao().queryForAll());
-            maps = new ArrayList<>(db.getMapDao().queryForAll());
-            buildings = new ArrayList<>(db.getBuildingDao().queryForAll());
+            //maps = new ArrayList<>(db.getMapDao().queryForAll());
+            //buildings = new ArrayList<>(db.getBuildingDao().queryForAll());
 
             //dla każdej krawędzi przeliczamy wagi
             for(MapPointsArcs mpa : mapPointsArcses) {
@@ -146,7 +146,6 @@ public class BuildingActivity extends AppCompatActivity {
                 if (mp.getBuilding().getId() == 5) mapPointTo = mp;
             }
         }
-        if (mapPointFrom == null || mapPointTo == null) return;
 
         // null ewentialnie jakis obiekt ktory zwraca db jak nie znajdzie (jeśli to nie null)
         if(mapPointFrom == null || mapPointTo == null) return;
@@ -156,7 +155,7 @@ public class BuildingActivity extends AppCompatActivity {
         // wyszukanie trasy
         // route - cała trasa, routeCpy - kopia robocza route
         route = routeFinder.findPath(mapPointFrom, mapPointTo);
-        routeCpy = route;
+        routeCpy = new ArrayList<MapPoint>(route);
 
         fillLines();
 
@@ -170,12 +169,12 @@ public class BuildingActivity extends AppCompatActivity {
         ArrayList<MapPoint> routeCurrentMap = new ArrayList<MapPoint>();
         int firstsPointMapId = -1;
 
-        for (MapPoint mp : routeCpy){
+        for(MapPoint mp : routeCpy){
             currentMapId = mp.getMap().getId();
 
             if(mp.getMap().getId() == currentMapId) {
                 routeCurrentMap.add(mp);
-                routeCpy.remove(mp);
+                //routeCpy.remove(mp);
             }else{
                 break;
             }
@@ -189,7 +188,7 @@ public class BuildingActivity extends AppCompatActivity {
                 mplast = mp;
                 continue;
             }
-            lines.add(new Line(mplast.getX(), mplast.getY(), mp.getX(), mp.getY()));
+            lines.add(new Line(2*mplast.getX(), 2*mplast.getY(), 2*mp.getX(), 2*mp.getY()));
             mplast = mp;
         }
 
