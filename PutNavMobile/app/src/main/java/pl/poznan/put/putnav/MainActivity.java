@@ -109,6 +109,7 @@ public class MainActivity extends Activity {
     //----------------------------------------------------------------
 
     public void openBuildingActivity(View view) {
+        super.onResume();
         Intent intent = new Intent(this, BuildingActivity.class);
         startActivity(intent);
     }

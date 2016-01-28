@@ -10,14 +10,14 @@ import java.util.ArrayList;
 
 public class MapPoint implements Comparable<MapPoint>, Serializable {
 
-    @DatabaseField(id = true)
-    private int Id;
-    @DatabaseField
-    private int X;
-    @DatabaseField
-    private int Y;
-    @DatabaseField
-    private int Type;
+    @DatabaseField(id = true, columnName = "Id")
+    private int id;
+    @DatabaseField(columnName = "X")
+    private int x;
+    @DatabaseField(columnName = "Y")
+    private int y;
+    @DatabaseField(columnName = "Type")
+    private int type;
     @DatabaseField (foreign = true, columnName = "Map")
     private Map map;
     @DatabaseField (foreign = true, columnName = "Building")
@@ -32,6 +32,11 @@ public class MapPoint implements Comparable<MapPoint>, Serializable {
     private ArrayList<MapPointsArcs> edges = new ArrayList<MapPointsArcs>(); //lista krawedzi wychodzacych z danego wierzcholka
 
     @Override
+    public String toString() {
+        return Integer.toString(id);
+    }
+
+    @Override
     public int compareTo(MapPoint another) {
         return Double.compare(distance, another.distance);
     }
@@ -41,9 +46,10 @@ public class MapPoint implements Comparable<MapPoint>, Serializable {
     }
 
     public MapPoint(int id, int x, int y, int type) {
-        this.X = x;
-        this.Y = y;
-        this.Type = type;
+        this.id = id;
+        this.x = x;
+        this.y = y;
+        this.type = type;
         this.distance = Double.longBitsToDouble(0x7ff0000000000000L);
     }
 
@@ -84,27 +90,27 @@ public class MapPoint implements Comparable<MapPoint>, Serializable {
     }
 
     public int getX() {
-        return X;
+        return x;
     }
 
     public void setX(int x) {
-        this.X = x;
+        this.x = x;
     }
 
     public int getY() {
-        return Y;
+        return y;
     }
 
     public void setY(int y) {
-        this.Y = y;
+        this.y = y;
     }
 
     public int getType() {
-        return Type;
+        return type;
     }
 
     public void setType(int type) {
-        this.Type = type;
+        this.type = type;
     }
 
     public double getDistance() {
@@ -129,11 +135,11 @@ public class MapPoint implements Comparable<MapPoint>, Serializable {
     }
 
     public int getId() {
-        return Id;
+        return id;
     }
 
     public void setId(int id) {
-        this.Id = id;
+        this.id = id;
     }
 
     public Map getMap() {

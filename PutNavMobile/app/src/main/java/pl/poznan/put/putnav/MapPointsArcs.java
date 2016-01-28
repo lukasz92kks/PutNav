@@ -12,11 +12,11 @@ public class MapPointsArcs implements Serializable {
     /*@DatabaseField(id = true)
     private int id;*/
 
-    @DatabaseField
-    private int FromId;
+    @DatabaseField(columnName = "FromId")
+    private int fromId;
 
-    @DatabaseField
-    private int ToId;
+    @DatabaseField(columnName = "ToId")
+    private int toId;
 
     private MapPoint point1; // inna nazwa?
     private MapPoint point2;
@@ -27,15 +27,15 @@ public class MapPointsArcs implements Serializable {
 
     public MapPointsArcs(int id, int fromId, int toId) {
         //this.id = id;
-        this.FromId = fromId;
-        this.ToId = toId;
+        this.fromId = fromId;
+        this.toId = toId;
         calculateWeight();
     }
 
     void setPoint1(ArrayList<MapPoint> vertices) {
         MapPoint x = null;
         for (MapPoint m : vertices) {
-            if (m.getId() == FromId) {
+            if (m.getId() == fromId) {
                 x = m;
                 //break;
             }
@@ -46,7 +46,7 @@ public class MapPointsArcs implements Serializable {
     void setPoint2(ArrayList<MapPoint> vertices) {
         MapPoint x = null;
         for (MapPoint m : vertices) {
-            if (m.getId() == ToId) {
+            if (m.getId() == toId) {
                 x = m;
                 //break;
             }

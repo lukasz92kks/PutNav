@@ -55,10 +55,10 @@
     <AutoCompleteTextView
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:text="Z: "
+        android:text=""
         android:id="@+id/autoCompleteTextView1"
         android:singleLine="true"
-        android:completionThreshold="2"
+        android:completionThreshold="1"
         android:background="@color/background_floating_material_light"
         android:layout_alignParentTop="true"
         android:layout_toLeftOf="@+id/buttonRevert"
@@ -67,8 +67,9 @@
     <AutoCompleteTextView
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:text="Do: "
+        android:text=""
         android:id="@+id/autoCompleteTextView2"
+        android:completionThreshold="1"
         android:background="@color/background_floating_material_light"
         android:layout_below="@+id/autoCompleteTextView1"
         android:layout_toLeftOf="@+id/buttonRevert"

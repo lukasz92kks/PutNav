@@ -9,26 +9,32 @@ import java.util.ArrayList;
 
 public class Room {
 
-    @DatabaseField(id = true)
-    private int Id;
-    @DatabaseField
-    private String Name;
-    @DatabaseField
-    private String Function;
+    @DatabaseField(id = true, columnName = "Id")
+    private int id;
+    @DatabaseField(columnName = "Name")
+    private String name;
+    @DatabaseField(columnName = "Function")
+    private String function;
     //@DatabaseField
     private int floor;
     //@DatabaseField(foreign = true)
     private Building building;
     private ArrayList<MapPoint> mapPoints = new ArrayList<MapPoint>();
 
+    @Override
+    public String toString() {
+        return name;
+    }
+
     public Room() {}
 
     public Room(int id, String name, String function, int floor) {
-        this.Id = id;
-        this.Name = name;
-        this.Function = function;
+        this.id = id;
+        this.name = name;
+        this.function = function;
         this.floor = floor;
     }
+
 
     public MapPoint addMapPoint(MapPoint point) {
         mapPoints.add(point);
@@ -40,27 +46,27 @@ public class Room {
     }
 
     public int getId() {
-        return Id;
+        return id;
     }
 
     public void setId(int id) {
-        this.Id = id;
+        this.id = id;
     }
 
     public String getName() {
-        return Name;
+        return name;
     }
 
     public void setName(String name) {
-        this.Name = name;
+        this.name = name;
     }
 
     public String getFunction() {
-        return Function;
+        return function;
     }
 
     public void setFunction(String function) {
-        this.Function = function;
+        this.function = function;
     }
 
     public int getFloor() {
@@ -81,6 +87,10 @@ public class Room {
 
     public ArrayList<MapPoint> getMapPoints() {
         return mapPoints;
+    }
+
+    public MapPoint getFirstMapPoint() {
+        return mapPoints.get(0);
     }
 
     public void setMapPoints(ArrayList<MapPoint> mapPoints) {

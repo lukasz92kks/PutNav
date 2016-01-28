@@ -6,8 +6,12 @@ import android.graphics.Paint;
 import android.graphics.drawable.BitmapDrawable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
+import android.view.MotionEvent;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
@@ -17,12 +21,13 @@ import com.j256.ormlite.android.apptools.OpenHelperManager;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.List;
 
 import pl.poznan.put.putnav.widgets.TouchImageView;
 import pl.poznan.put.putnav.widgets.VerticalSeekBar;
 
 
-public class BuildingActivity extends AppCompatActivity {
+public class BuildingActivity extends AppCompatActivity implements View.OnTouchListener {
 
     AutoCompleteTextView aCTVFrom;
     AutoCompleteTextView aCTVTo;
@@ -30,13 +35,16 @@ public class BuildingActivity extends AppCompatActivity {
 
     DatabaseHandler db;
     ArrayList<MapPoint> mapPoints;
-    ArrayList<MapPointsArcs> mapPointsArcses;
+    ArrayList<MapPoint> originMapPoints;
+    ArrayList<MapPointsArcs> mapPointsArcs;
 
     RouteFinder routeFinder;
     ArrayList<MapPoint> route;
     ArrayList<MapPoint> routeCpy;
+    ArrayList<Room> rooms;
     ArrayList<Map> maps;
-    ArrayList<Building> buildings;
+    ArrayList<Building> buildings = new ArrayList<>();
+    List<Object> lista = new ArrayList<>();
 
     MapPoint mapPointFrom;
     MapPoint mapPointTo;
@@ -61,20 +69,66 @@ public class BuildingActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_building);
-
-        init();
         loadDb();
+        init();
+
+        Log.i(BuildingActivity.class.getSimpleName(), "ile budynkow: " + Integer.toString(buildings.size()));
     }
 
     public void init() {
 
+
         container = (FrameLayout) findViewById(R.id.picture_container);
+
+        verticalSeekBar = (VerticalSeekBar) findViewById(R.id.verticalSeekBar);
+        verticalSeekBar.setOnSeekBarChangeListener(listenerSeekbar);
 
         aCTVFrom = (AutoCompleteTextView) findViewById(R.id.autoCompleteTextView1);
         aCTVTo = (AutoCompleteTextView) findViewById(R.id.autoCompleteTextView2);
 
-        verticalSeekBar = (VerticalSeekBar) findViewById(R.id.verticalSeekBar);
-        verticalSeekBar.setOnSeekBarChangeListener(listenerSeekbar);
+
+        for (MapPoint m : mapPoints) {
+            lista.add(m);
+        }
+
+        for (Room r : rooms) {
+            lista.add(r);
+        }
+
+        ArrayAdapter<Object> adapter = new ArrayAdapter<Object>(
+                this, android.R.layout.simple_dropdown_item_1line, lista);
+        aCTVFrom.setAdapter(adapter);
+        ArrayAdapter<MapPoint> adapter2 = new ArrayAdapter<MapPoint>(
+                this, android.R.layout.simple_dropdown_item_1line, mapPoints);
+        aCTVTo.setAdapter(adapter2);
+
+        aCTVFrom.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+
+            public void onItemClick(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
+                if (arg0.getItemAtPosition(arg2) instanceof Room) {
+                    Room r = (Room) arg0.getItemAtPosition(arg2);
+                    mapPointFrom = r.getFirstMapPoint();
+                } else if (arg0.getItemAtPosition(arg2) instanceof MapPoint) {
+                    mapPointFrom = (MapPoint) arg0.getItemAtPosition(arg2);
+                }
+                Log.i(BuildingActivity.class.getSimpleName(), "id: " + mapPointFrom.getId());
+            }
+        });
+
+        aCTVTo.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+
+            public void onItemClick(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
+
+                if (arg0.getItemAtPosition(arg2) instanceof Room) {
+                    Room r = (Room) arg0.getItemAtPosition(arg2);
+                    mapPointTo = r.getFirstMapPoint();
+                } else if (arg0.getItemAtPosition(arg2) instanceof MapPoint) {
+                    mapPointTo = (MapPoint) arg0.getItemAtPosition(arg2);
+                }
+                Log.i(BuildingActivity.class.getSimpleName(), "id: " + mapPointTo.getId());
+            }
+        });
+
 
         //podajemy ilość pięter, np. 0 - budynek parterowy (powinien znikać ten pasek)
         verticalSeekBar.setMaximum(0);
@@ -84,6 +138,32 @@ public class BuildingActivity extends AppCompatActivity {
         // foreach maps gdzie pole campus jest 1(albo !=, > 0)
         loadImageToContainer(0);
 
+        imageView.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                if (event.getAction() == MotionEvent.ACTION_DOWN) {
+                    int x = (int) event.getX();
+                    int y = (int) event.getY();
+                    Log.i(BuildingActivity.class.getSimpleName(), "x: " + x + "y: " + y);
+                    int[] viewCoords = new int[2];
+                    imageView.getLocationOnScreen(viewCoords);
+                    int iX = x - viewCoords[0]; // viewCoords[0] is the X coordinate
+                    int iY = y - viewCoords[1];
+                    Log.i(BuildingActivity.class.getSimpleName(), "ximg: " + iX + "yimg: " + iY);
+
+
+                    // Transform to relative coordinates
+                    /*
+                    float[] point = new float[2];
+                    point[0] = e.getX();
+                    point[1] = e.getY();
+                    inverseMatrix.mapPoints(point);
+                    */
+                }
+                return false;
+            }
+        });
+
     }
 
     private void loadDb() {
@@ -91,12 +171,14 @@ public class BuildingActivity extends AppCompatActivity {
         try {
 
             mapPoints = new ArrayList<>(db.getMapPointDao().queryForAll());
-            mapPointsArcses = new ArrayList<>(db.getMapPointsArcsDao().queryForAll());
+            mapPointsArcs = new ArrayList<>(db.getMapPointsArcsDao().queryForAll());
+            buildings = new ArrayList<>(db.getBuildingDao().queryForAll());
+            rooms = new ArrayList<>(db.getRoomDao().queryForAll());
             //maps = new ArrayList<>(db.getMapDao().queryForAll());
             //buildings = new ArrayList<>(db.getBuildingDao().queryForAll());
 
             //dla każdej krawędzi przeliczamy wagi
-            for(MapPointsArcs mpa : mapPointsArcses) {
+            for (MapPointsArcs mpa : mapPointsArcs) {
                 mpa.setPoint1(mapPoints);
                 mpa.setPoint2(mapPoints);
                 mpa.calculateWeight();
@@ -104,8 +186,10 @@ public class BuildingActivity extends AppCompatActivity {
 
 
             for(MapPoint mp : mapPoints) {
-                mp.searchEdges(mapPointsArcses);
+                mp.searchEdges(mapPointsArcs);
             }
+
+            originMapPoints = new ArrayList<>(mapPoints);
 
         } catch (SQLException e) {
             //błąd Bazy Danych
@@ -136,21 +220,20 @@ public class BuildingActivity extends AppCompatActivity {
     }
 
     public void searchPath(View view) {
-        //TODO: do usunięcia
-
-        for(MapPoint mp : mapPoints){
-            if (mp.getBuilding() !=  null) {
-                //cw
-                if (mp.getBuilding().getId() == 2) mapPointFrom = mp;
-                //bl
-                if (mp.getBuilding().getId() == 5) mapPointTo = mp;
-            }
-        }
 
         // null ewentialnie jakis obiekt ktory zwraca db jak nie znajdzie (jeśli to nie null)
         if(mapPointFrom == null || mapPointTo == null) return;
 
-        routeFinder = new RouteFinder(mapPoints, mapPointsArcses);
+        mapPoints = new ArrayList<>(originMapPoints); //usunięcie śmieci po poprzednim wyszukiwaniu
+        //ew. w ten sposób:
+        /*
+        for (MapPoint m : mapPoints){
+            m.setPrevious(null);
+            m.setDistance(Double.longBitsToDouble(0x7ff0000000000000L));
+        }
+        */
+        lines.clear();
+        routeFinder = new RouteFinder(mapPoints, mapPointsArcs);
 
         // wyszukanie trasy
         // route - cała trasa, routeCpy - kopia robocza route
@@ -249,4 +332,11 @@ public class BuildingActivity extends AppCompatActivity {
         }
 
     };
+
+    @Override
+    public boolean onTouch(View v, MotionEvent event) {
+
+        Log.i(BuildingActivity.class.getSimpleName(), "ggggggggg");
+        return false;
+    }
 }

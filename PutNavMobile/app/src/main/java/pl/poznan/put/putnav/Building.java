@@ -11,13 +11,13 @@ import java.util.ArrayList;
 
 public class Building {
 
-    @DatabaseField(id = true)
+    @DatabaseField(id = true, columnName = "Id")
     private int id;
-    @DatabaseField
+    @DatabaseField(columnName = "Name")
     private String name;
-    @DatabaseField
+    @DatabaseField(columnName = "Address")
     private String address;
-    @DatabaseField
+    @DatabaseField(columnName = "NumberOfFloors")
     private int numberOfFloors;
     private ArrayList<Department> departments = new ArrayList<Department>();
     private ArrayList<Map> maps = new ArrayList<Map>();
@@ -26,6 +26,11 @@ public class Building {
     private ArrayList<ImageView> images = new ArrayList<ImageView>();
 
     public Building() {}
+
+    @Override
+    public String toString() {
+        return name;
+    }
 
     public Building(int id, String name, String address, int numberOfFloors) {
         this.id  = id;
