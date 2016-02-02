@@ -48,7 +48,7 @@ public class MainActivity extends Activity {
             {
                 m.setPoint1(nn);
                 m.setPoint2(nn);
-                m.calculateWeight();
+                m.calculateWeight(false);
 
                // Toast.makeText(MainActivity.this, "weight: " + Double.toString(m.getWeight()), Toast.LENGTH_SHORT).show();
             }

@@ -61,6 +61,9 @@
         android:completionThreshold="1"
         android:background="@color/background_floating_material_light"
         android:layout_alignParentTop="true"
+        android:layout_marginBottom="2dp"
+        android:layout_toLeftOf="@+id/buttonRevert"
+        android:layout_toStartOf="@+id/buttonRevert" />
         android:layout_toLeftOf="@+id/buttonRevert"
         android:layout_toStartOf="@+id/buttonRevert" />
 

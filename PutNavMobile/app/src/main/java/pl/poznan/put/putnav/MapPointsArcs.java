@@ -29,7 +29,7 @@ public class MapPointsArcs implements Serializable {
         //this.id = id;
         this.fromId = fromId;
         this.toId = toId;
-        calculateWeight();
+        //calculateWeight();
     }
 
     void setPoint1(ArrayList<MapPoint> vertices) {
@@ -86,15 +86,42 @@ public class MapPointsArcs implements Serializable {
         this.weight = weight;
     }
 
-    public void calculateWeight() {
-        if (this.getPoint1().getType() != this.getPoint2().getType()) {
-            weight = 30.0;
+    public void calculateWeight(boolean disabled) { //TODO inwalidzi oraz przejscia miedzy budynkami itd.
+        if (!disabled) {
+
+            if (this.getPoint1().getType() != this.getPoint2().getType()) {
+                weight = 30.0;
+            } else {
+                int x1 = this.getPoint1().getX();
+                int y1 = this.getPoint1().getY();
+                int x2 = this.getPoint2().getX();
+                int y2 = this.getPoint2().getY();
+                weight = Math.sqrt((double) ((x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2)));
+            }
         } else {
-            int x1 = this.getPoint1().getX();
-            int y1 = this.getPoint1().getY();
-            int x2 = this.getPoint2().getX();
-            int y2 = this.getPoint2().getY();
-            weight = Math.sqrt((double) ((x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2)));
+            if (this.getPoint1().getType() != this.getPoint2().getType()) {
+                weight = 30.0;
+            } else {
+                int x1 = this.getPoint1().getX();
+                int y1 = this.getPoint1().getY();
+                int x2 = this.getPoint2().getX();
+                int y2 = this.getPoint2().getY();
+                weight = Math.sqrt((double) ((x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2)));
+            }
+
+            /*
+            NAVIGATION = 1;
+            DOOR = 2;
+            OUTDOOR = 3;
+            STAIRS = 4;
+            LIFT = 5;
+            ROOM = 6;
+            BUILDING = 7;
+             */
+
+
+
+
         }
     }
 }

@@ -15,6 +15,7 @@ import android.widget.RadioButton;
 public class PreferencesActivity extends AppCompatActivity {
 
     private static final String PREFERENCES_NAME = "appPreferences";
+    private static final String PREFERENCE_DISABLED = "disabled";
 
     private Button btn6;
     private Button btn7;
@@ -22,7 +23,7 @@ public class PreferencesActivity extends AppCompatActivity {
     private RadioButton radioButtonPolish;
     private RadioButton radioButtonEnglish;
     private SharedPreferences sharedPreferences;
-    static final String PREFERENCE_DISABLED = "disabled";
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

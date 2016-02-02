@@ -53,6 +53,7 @@ public class MapPoint implements Comparable<MapPoint>, Serializable {
         this.distance = Double.longBitsToDouble(0x7ff0000000000000L);
     }
 
+
     void searchEdges(ArrayList<MapPointsArcs> allEdges) {
         ArrayList<MapPointsArcs> edges = new ArrayList<>();
         for (MapPointsArcs current : allEdges) {

@@ -1,7 +1,10 @@
 package pl.poznan.put.putnav;
+
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.drawable.BitmapDrawable;
 import android.support.v7.app.AppCompatActivity;
@@ -27,7 +30,7 @@ import pl.poznan.put.putnav.widgets.TouchImageView;
 import pl.poznan.put.putnav.widgets.VerticalSeekBar;
 
 
-public class BuildingActivity extends AppCompatActivity implements View.OnTouchListener {
+public class BuildingActivity extends AppCompatActivity {
 
     AutoCompleteTextView aCTVFrom;
     AutoCompleteTextView aCTVTo;
@@ -51,6 +54,8 @@ public class BuildingActivity extends AppCompatActivity implements View.OnTouchL
 
     VerticalSeekBar verticalSeekBar = null;
     ImageView imageView = null;
+    Matrix matrix = new Matrix();
+    Matrix savedMatrix = new Matrix();
 
     ArrayList<Line> lines = new ArrayList<Line>();
 
@@ -65,18 +70,31 @@ public class BuildingActivity extends AppCompatActivity implements View.OnTouchL
             R.drawable.nano_5
     };
 
+    private SharedPreferences sharedPreferences;
+    private static final String PREFERENCES_NAME = "appPreferences";
+    private static final String PREFERENCE_DISABLED = "disabled";
+    boolean disabled;
+    
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_building);
+        loadPreferences();
         loadDb();
         init();
 
         Log.i(BuildingActivity.class.getSimpleName(), "ile budynkow: " + Integer.toString(buildings.size()));
     }
 
-    public void init() {
+    public void loadPreferences() {
+        sharedPreferences = getSharedPreferences(PREFERENCES_NAME, AppCompatActivity.MODE_PRIVATE);
+        if (sharedPreferences.contains("exists")) {
+            disabled = sharedPreferences.getBoolean(PREFERENCE_DISABLED, false);
+        }
+    }
 
+    public void init() {
 
         container = (FrameLayout) findViewById(R.id.picture_container);
 
@@ -92,26 +110,54 @@ public class BuildingActivity extends AppCompatActivity implements View.OnTouchL
         }
 
         for (Room r : rooms) {
+            //Log.i(BuildingActivity.class.getSimpleName(), "pokoj : " + r.getName());
             lista.add(r);
         }
+
+        for (MapPoint m : mapPoints) {
+            if (m.getRoom() != null) {
+                if (m.getRoom().getId() == 1809) {
+                    Log.i(BuildingActivity.class.getSimpleName(), ".............");
+                }
+            }
+        }
+
 
         ArrayAdapter<Object> adapter = new ArrayAdapter<Object>(
                 this, android.R.layout.simple_dropdown_item_1line, lista);
         aCTVFrom.setAdapter(adapter);
+        ArrayAdapter<Object> adapter2 = new ArrayAdapter<Object>(
+                this, android.R.layout.simple_dropdown_item_1line, lista);
+        aCTVTo.setAdapter(adapter2);
+        /*
+        ArrayAdapter<MapPoint> adapter = new ArrayAdapter<MapPoint>(
+                this, android.R.layout.simple_dropdown_item_1line, mapPoints);
+        aCTVFrom.setAdapter(adapter);
         ArrayAdapter<MapPoint> adapter2 = new ArrayAdapter<MapPoint>(
                 this, android.R.layout.simple_dropdown_item_1line, mapPoints);
         aCTVTo.setAdapter(adapter2);
-
+        */
         aCTVFrom.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
             public void onItemClick(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
+
                 if (arg0.getItemAtPosition(arg2) instanceof Room) {
                     Room r = (Room) arg0.getItemAtPosition(arg2);
-                    mapPointFrom = r.getFirstMapPoint();
+                    for (MapPoint m : mapPoints) {
+                        if (m.getRoom() != null) {
+                            if (m.getRoom().getId() == r.getId()) {
+                                mapPointFrom = m;
+                                Log.i(BuildingActivity.class.getSimpleName(), "znalazło: " + mapPointFrom.getId());
+                            }
+                        }
+                    }
+                    //mapPointFrom = r.getFirstMapPoint();
                 } else if (arg0.getItemAtPosition(arg2) instanceof MapPoint) {
                     mapPointFrom = (MapPoint) arg0.getItemAtPosition(arg2);
                 }
                 Log.i(BuildingActivity.class.getSimpleName(), "id: " + mapPointFrom.getId());
+
+
             }
         });
 
@@ -121,7 +167,14 @@ public class BuildingActivity extends AppCompatActivity implements View.OnTouchL
 
                 if (arg0.getItemAtPosition(arg2) instanceof Room) {
                     Room r = (Room) arg0.getItemAtPosition(arg2);
-                    mapPointTo = r.getFirstMapPoint();
+                    for (MapPoint m : mapPoints) {
+                        if (m.getRoom() != null) {
+                            if (m.getRoom().getId() == r.getId()) {
+                                mapPointTo = m;
+                                Log.i(BuildingActivity.class.getSimpleName(), "znalazło: " + mapPointFrom.getId());
+                            }
+                        }
+                    }
                 } else if (arg0.getItemAtPosition(arg2) instanceof MapPoint) {
                     mapPointTo = (MapPoint) arg0.getItemAtPosition(arg2);
                 }
@@ -142,23 +195,23 @@ public class BuildingActivity extends AppCompatActivity implements View.OnTouchL
             @Override
             public boolean onTouch(View v, MotionEvent event) {
                 if (event.getAction() == MotionEvent.ACTION_DOWN) {
-                    int x = (int) event.getX();
-                    int y = (int) event.getY();
-                    Log.i(BuildingActivity.class.getSimpleName(), "x: " + x + "y: " + y);
-                    int[] viewCoords = new int[2];
-                    imageView.getLocationOnScreen(viewCoords);
-                    int iX = x - viewCoords[0]; // viewCoords[0] is the X coordinate
-                    int iY = y - viewCoords[1];
-                    Log.i(BuildingActivity.class.getSimpleName(), "ximg: " + iX + "yimg: " + iY);
 
-
-                    // Transform to relative coordinates
-                    /*
-                    float[] point = new float[2];
-                    point[0] = e.getX();
-                    point[1] = e.getY();
-                    inverseMatrix.mapPoints(point);
-                    */
+                    imageView.getImageMatrix().invert(matrix);
+                    final float[] coords = new float[]{event.getX(), event.getY()};
+                    matrix.postTranslate(imageView.getScrollX(), imageView.getScrollY());
+                    matrix.mapPoints(coords);
+                    Log.i(BuildingActivity.class.getSimpleName(), "X: " + coords[0] + "Y: " + coords[1]);
+                    int x = (int) coords[0] / 2;
+                    int y = (int) coords[1] / 2;
+                    double distance = 0;
+                    for (MapPoint m : mapPoints) {
+                        if (m.getType() == 7) {
+                            distance = Math.sqrt((double) ((x - m.getX()) * (x - m.getX()) + (y - m.getY()) * (y - m.getY())));
+                            if (distance < 30) {
+                                Log.i(BuildingActivity.class.getSimpleName(), "distance: " + distance + " " + m.getBuilding().getId());
+                            }
+                        }
+                    }
                 }
                 return false;
             }
@@ -169,11 +222,11 @@ public class BuildingActivity extends AppCompatActivity implements View.OnTouchL
     private void loadDb() {
         db = OpenHelperManager.getHelper(this, DatabaseHandler.class);
         try {
-
+            rooms = new ArrayList<>(db.getRoomDao().queryForAll());
             mapPoints = new ArrayList<>(db.getMapPointDao().queryForAll());
             mapPointsArcs = new ArrayList<>(db.getMapPointsArcsDao().queryForAll());
             buildings = new ArrayList<>(db.getBuildingDao().queryForAll());
-            rooms = new ArrayList<>(db.getRoomDao().queryForAll());
+
             //maps = new ArrayList<>(db.getMapDao().queryForAll());
             //buildings = new ArrayList<>(db.getBuildingDao().queryForAll());
 
@@ -181,7 +234,7 @@ public class BuildingActivity extends AppCompatActivity implements View.OnTouchL
             for (MapPointsArcs mpa : mapPointsArcs) {
                 mpa.setPoint1(mapPoints);
                 mpa.setPoint2(mapPoints);
-                mpa.calculateWeight();
+                mpa.calculateWeight(disabled);
             }
 
 
@@ -239,6 +292,9 @@ public class BuildingActivity extends AppCompatActivity implements View.OnTouchL
         // route - cała trasa, routeCpy - kopia robocza route
         route = routeFinder.findPath(mapPointFrom, mapPointTo);
         routeCpy = new ArrayList<MapPoint>(route);
+        for (MapPoint r : route) {
+            Log.i(BuildingActivity.class.getSimpleName(), "ID " + r.getId());
+        }
 
         fillLines();
 
@@ -333,10 +389,4 @@ public class BuildingActivity extends AppCompatActivity implements View.OnTouchL
 
     };
 
-    @Override
-    public boolean onTouch(View v, MotionEvent event) {
-
-        Log.i(BuildingActivity.class.getSimpleName(), "ggggggggg");
-        return false;
-    }
 }
