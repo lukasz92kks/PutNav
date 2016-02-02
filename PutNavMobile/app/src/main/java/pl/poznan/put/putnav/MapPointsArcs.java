@@ -9,8 +9,8 @@ import java.util.ArrayList;
 @DatabaseTable(tableName = "MapPointsArcs")
 public class MapPointsArcs implements Serializable {
 
-    /*@DatabaseField(id = true)
-    private int id;*/
+    //@DatabaseField(id = true)
+    //private int id;
 
     @DatabaseField(columnName = "FromId")
     private int fromId;
@@ -18,7 +18,9 @@ public class MapPointsArcs implements Serializable {
     @DatabaseField(columnName = "ToId")
     private int toId;
 
+    //@DatabaseField(foreign = true, columnName = "FromId")
     private MapPoint point1; // inna nazwa?
+    //@DatabaseField(foreign = true, columnName = "ToId")
     private MapPoint point2;
 
     private double weight;
