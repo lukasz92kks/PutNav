@@ -17,7 +17,7 @@ import javax.persistence.TableGenerator;
 @Entity(name = "Maps")
 @Table(name = "Maps")
 @TableGenerator(name="generator", initialValue=100, allocationSize=1)
-public class Map {
+public class Map implements Comparable<Map> {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator="generator")
@@ -102,5 +102,9 @@ public class Map {
 
 	public void setCampus(boolean campus) {
 		this.campus = campus;
+	}
+	
+	public int compareTo(Map map) {
+		return this.floor - map.getFloor();
 	}
 }

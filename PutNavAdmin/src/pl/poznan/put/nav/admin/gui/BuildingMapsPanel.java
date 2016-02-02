@@ -4,6 +4,7 @@ import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
@@ -44,7 +45,9 @@ public class BuildingMapsPanel extends JPanel {
 		includedMapsList.setPreferredSize(new Dimension(200, 400));
 		
 		includedMapsNames = new ArrayList<String>();
-		for(Map map : em.getActiveBuilding().getMaps()) {
+		ArrayList<Map> maps = em.getActiveBuilding().getMaps();
+		Collections.sort(maps);
+		for(Map map : maps) {
 			includedMapsNames.add(map.getMapFile());
 		}
 		

@@ -13,10 +13,8 @@ import javax.swing.JButton;
 import javax.swing.JList;
 import javax.swing.JPanel;
 
-import pl.poznan.put.nav.admin.entities.Building;
 import pl.poznan.put.nav.admin.entities.Department;
 import pl.poznan.put.nav.admin.managers.AppFactory;
-import pl.poznan.put.nav.admin.managers.DatabaseManager;
 import pl.poznan.put.nav.admin.managers.EntitiesManager;
 
 public class BuildingDepartmentsPanel extends JPanel {

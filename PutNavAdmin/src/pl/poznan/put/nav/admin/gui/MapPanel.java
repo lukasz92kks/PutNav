@@ -93,12 +93,29 @@ public class MapPanel extends JPanel implements MouseListener, MouseMotionListen
 			Room room = new Room(panel.getRoomNameTextField().getText(),
 								 panel.getFunctionTextField().getText(),
 								 mapPanel.em.getActiveMap().getFloor());
-			
+			room.setBuilding(em.getActiveBuilding());
 			mapPanel.em.getActiveBuilding().getRooms().add(room);
 			return room;
 		}
 		else
 			return null;
+	}
+	
+	private void connectOutdoorWithBuildingPoint(MapPoint outdoor) {
+		Map campus = null;
+		for(Map map : em.getMaps()) {
+			if(map.isCampus()) {
+				campus = map;
+				break;
+			}
+		}
+		if(campus != null)
+			for(MapPoint point : campus.getMapPoints()) {
+				if(point.getType() == MapPointTypes.BUILDING && point.getBuilding().equals(outdoor.getMap().getBuilding())) {
+					point.addSuccessor(outdoor);
+					outdoor.addSuccessor(point);
+				}
+			}
 	}
 	
 	private MapPoint addMapPoint(int x, int y) {
@@ -124,6 +141,11 @@ public class MapPanel extends JPanel implements MouseListener, MouseMotionListen
 				point.setBuilding(building);
 			if(room != null)
 				point.setRoom(room);
+			
+			if(point.getType() == MapPointTypes.OUTDOOR) {
+				connectOutdoorWithBuildingPoint(point);
+			}
+			
 			em.getActiveMap().addMapPoint(point);
 			repaint();
 			
