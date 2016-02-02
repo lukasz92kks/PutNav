@@ -14,6 +14,7 @@ import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
@@ -88,9 +89,20 @@ public class MapsManagerFrame extends JFrame {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				if(table.getSelectedRow() >= 0) {
-					Map map = maps.remove(table.getSelectedRow());
-					loadData();
-					em.addMapToRemove(map);
+					boolean couldBeRemoved = false;
+					for(Map map : maps) {
+						if(map.getMapFile().equals(table.getValueAt(table.getSelectedRow(), 1)))
+							if(map.getMapPoints().isEmpty())
+								couldBeRemoved = true;
+					}
+					
+					if(couldBeRemoved) {
+						Map map = maps.remove(table.getSelectedRow());
+						loadData();
+						em.addMapToRemove(map);
+					} else {
+						JOptionPane.showMessageDialog(null, "Nie mozna usunac mapy. Najpierw usun wszystkie punkty z mapy.", "Uwaga", JOptionPane.WARNING_MESSAGE);
+					}
 				}
 			}
 		});

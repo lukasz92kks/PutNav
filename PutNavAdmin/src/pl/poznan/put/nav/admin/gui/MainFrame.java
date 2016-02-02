@@ -3,6 +3,8 @@ package pl.poznan.put.nav.admin.gui;
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.io.File;
 import java.util.ArrayList;
 
@@ -11,6 +13,7 @@ import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 import javax.swing.JSeparator;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
@@ -33,7 +36,7 @@ public class MainFrame extends JFrame {
 	
 	public MainFrame() {
 		System.out.println("MainFrame");
-		this.setTitle("PutNav Admin");
+		this.setTitle("PutNavAdmin");
 		this.setExtendedState(MAXIMIZED_BOTH);
 		this.setLayout(new BorderLayout());
 		
@@ -42,6 +45,14 @@ public class MainFrame extends JFrame {
 		this.add(actionsPanel, BorderLayout.NORTH);
 		
 		createMenu();
+		
+		this.addWindowListener(new WindowAdapter() {
+			@Override
+			public void windowClosing(WindowEvent e) {
+			    closeAppAction();
+			}
+		});
+
 	}
 	
 	public void createMenu() {
@@ -60,15 +71,27 @@ public class MainFrame extends JFrame {
 				saveMenuItemAction();
 			}
 		});
-		JMenuItem saveAsMenuItem = new JMenuItem("Zapisz jako...");
+		//JMenuItem saveAsMenuItem = new JMenuItem("Zapisz jako...");
 		JMenuItem exitMenuItem =  new JMenuItem("Zakoncz");
+		exitMenuItem.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				closeAppAction();
+			}
+		});
 		fileMenu.add(openMenuItem);
 		fileMenu.add(saveMenuItem);
-		fileMenu.add(saveAsMenuItem);
+		//fileMenu.add(saveAsMenuItem);
 		fileMenu.add(exitMenuItem);
 		
 		JMenu editMenu = new JMenu("Edycja");
 		JMenuItem deleteAllPoints = new JMenuItem("Usun wszystkie punkty");
+		deleteAllPoints.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				deleteAllPointsAction();
+			}
+		});
 		JMenu manageMenuItem = new JMenu("Zarzadzaj");
 		JMenuItem manageBuildingsMenuItem = new JMenuItem("Zarzadzaj budynkami");
 		manageBuildingsMenuItem.addActionListener(new ActionListener() {
@@ -175,5 +198,26 @@ public class MainFrame extends JFrame {
 	private void manageDepartmentsItemAction() {
 		DepartmentsManagerFrame manager = new DepartmentsManagerFrame();
 		manager.setVisible(true);
+	}
+	
+	private void deleteAllPointsAction() {
+		int result = JOptionPane.showConfirmDialog(null, "Usunac wszystkie punkty z mapy?", "", JOptionPane.YES_NO_OPTION);
+		if(result == JOptionPane.YES_OPTION) {
+			EntitiesManager em = AppFactory.getEntitiesManager();
+			em.getActiveMap().getMapPoints().clear();
+			mapPanel.refresh();
+		}
+	}
+	
+	private void closeAppAction() {
+		EntitiesManager em = AppFactory.getEntitiesManager();
+		if(em.getActiveBuilding() != null || em.getActiveMap() != null) {
+			int result = JOptionPane.showConfirmDialog(null, "Zapisac zmiany przed zamknieciem?", "", JOptionPane.YES_NO_OPTION);
+			if(result == JOptionPane.YES_OPTION) {
+				saveMenuItemAction();
+			}
+		}
+		setVisible(false);
+		dispose();
 	}
 }
