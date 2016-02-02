@@ -18,7 +18,7 @@ public class MapPoint implements Comparable<MapPoint>, Serializable {
     private int y;
     @DatabaseField(columnName = "Type")
     private int type;
-    @DatabaseField (foreign = true, columnName = "Map")
+    @DatabaseField (foreign = true, columnName = "Map", foreignAutoRefresh = true,maxForeignAutoRefreshLevel = 3)
     private Map map;
     @DatabaseField (foreign = true, columnName = "Building")
     private Building building;

@@ -11,14 +11,16 @@ import java.util.ArrayList;
 
 public class Map {
 
-    @DatabaseField(id = true)
+    @DatabaseField(id = true, columnName = "Id")
     private int id;
-    @DatabaseField
+    @DatabaseField(columnName = "Floor")
     private int floor;
-    @DatabaseField
+    @DatabaseField(columnName = "Campus")
     private int campus;
     @DatabaseField(foreign = true, columnName = "Building")
     private Building buildings;
+    @DatabaseField(columnName = "FileName")
+    private String fileName;
 
     private ImageView mapImage = null;
 
@@ -87,5 +89,9 @@ public class Map {
 
     public void setCampus(int campus) {
         this.campus = campus;
+    }
+
+    public String getFileName() {
+        return fileName;
     }
 }
