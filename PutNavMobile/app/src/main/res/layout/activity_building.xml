@@ -103,7 +103,9 @@
         android:layout_height="wrap_content"
         android:text="cofnij"
         android:id="@+id/button7"
-        android:layout_below="@+id/button8" /> />
+        android:layout_below="@+id/button8"
+        android:onClick="previousMap" />
+    />
 
     <Button
         style="?android:attr/buttonStyleSmall"

@@ -1,7 +1,12 @@
 package pl.poznan.put.putnav;
+
+import android.content.SharedPreferences;
+import android.content.res.Resources;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.drawable.BitmapDrawable;
 import android.support.v7.app.AppCompatActivity;
@@ -28,7 +33,7 @@ import pl.poznan.put.putnav.widgets.TouchImageView;
 import pl.poznan.put.putnav.widgets.VerticalSeekBar;
 
 
-public class BuildingActivity extends AppCompatActivity implements View.OnTouchListener {
+public class BuildingActivity extends AppCompatActivity {
 
     AutoCompleteTextView aCTVFrom;
     AutoCompleteTextView aCTVTo;
@@ -45,6 +50,13 @@ public class BuildingActivity extends AppCompatActivity implements View.OnTouchL
     ArrayList<Map> maps;
     ArrayList<Building> buildings = new ArrayList<>();
     List<Object> lista = new ArrayList<>();
+
+    private SharedPreferences sharedPreferences;
+    private static final String PREFERENCES_NAME = "appPreferences";
+    private static final String PREFERENCE_DISABLED = "disabled";
+    boolean disabled;
+
+    Matrix matrix = new Matrix();
 
     MapPoint mapPointFrom;
     MapPoint mapPointTo;
@@ -78,6 +90,13 @@ public class BuildingActivity extends AppCompatActivity implements View.OnTouchL
         Log.i(BuildingActivity.class.getSimpleName(), "ile budynkow: " + Integer.toString(buildings.size()));
     }
 
+    public void loadPreferences() {
+        sharedPreferences = getSharedPreferences(PREFERENCES_NAME, AppCompatActivity.MODE_PRIVATE);
+        if (sharedPreferences.contains("exists")) {
+            disabled = sharedPreferences.getBoolean(PREFERENCE_DISABLED, false);
+        }
+    }
+
     public void init() {
 
         container = (FrameLayout) findViewById(R.id.picture_container);
@@ -102,8 +121,8 @@ public class BuildingActivity extends AppCompatActivity implements View.OnTouchL
         ArrayAdapter<Object> adapter = new ArrayAdapter<Object>(
                 this, android.R.layout.simple_dropdown_item_1line, lista);
         aCTVFrom.setAdapter(adapter);
-        ArrayAdapter<MapPoint> adapter2 = new ArrayAdapter<MapPoint>(
-                this, android.R.layout.simple_dropdown_item_1line, mapPoints);
+        ArrayAdapter<Object> adapter2 = new ArrayAdapter<Object>(
+                this, android.R.layout.simple_dropdown_item_1line, lista);
         aCTVTo.setAdapter(adapter2);
 
         aCTVFrom.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -111,11 +130,17 @@ public class BuildingActivity extends AppCompatActivity implements View.OnTouchL
             public void onItemClick(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
                 if (arg0.getItemAtPosition(arg2) instanceof Room) {
                     Room r = (Room) arg0.getItemAtPosition(arg2);
-                    mapPointFrom = r.getFirstMapPoint();
+                    for (MapPoint m : mapPoints) {
+                        if (m.getRoom() != null) {
+                            if (m.getRoom().getId() == r.getId()) {
+                                mapPointFrom = m;
+                            }
+                        }
+                    }
+                    //mapPointFrom = r.getFirstMapPoint();
                 } else if (arg0.getItemAtPosition(arg2) instanceof MapPoint) {
                     mapPointFrom = (MapPoint) arg0.getItemAtPosition(arg2);
                 }
-                Log.i(BuildingActivity.class.getSimpleName(), "id: " + mapPointFrom.getId());
             }
         });
 
@@ -125,11 +150,16 @@ public class BuildingActivity extends AppCompatActivity implements View.OnTouchL
 
                 if (arg0.getItemAtPosition(arg2) instanceof Room) {
                     Room r = (Room) arg0.getItemAtPosition(arg2);
-                    mapPointTo = r.getFirstMapPoint();
+                    for (MapPoint m : mapPoints) {
+                        if (m.getRoom() != null) {
+                            if (m.getRoom().getId() == r.getId()) {
+                                mapPointTo = m;
+                            }
+                        }
+                    }
                 } else if (arg0.getItemAtPosition(arg2) instanceof MapPoint) {
                     mapPointTo = (MapPoint) arg0.getItemAtPosition(arg2);
                 }
-                Log.i(BuildingActivity.class.getSimpleName(), "id: " + mapPointTo.getId());
             }
         });
 
@@ -139,9 +169,9 @@ public class BuildingActivity extends AppCompatActivity implements View.OnTouchL
 
 
         // ladowanie kampusu
-        // foreach maps gdzie pole campus jest 1(albo !=, > 0)
-        for (Map map : maps){
-            if(map.getCampus() == 1)
+        // for each maps gdzie pole campus jest 1(albo !=, > 0)
+        for (Map map : maps) {
+            if (map.getCampus() == 1)
                 currentMapId = mapsHash.get(map.getFileName());
         }
 
@@ -151,23 +181,23 @@ public class BuildingActivity extends AppCompatActivity implements View.OnTouchL
             @Override
             public boolean onTouch(View v, MotionEvent event) {
                 if (event.getAction() == MotionEvent.ACTION_DOWN) {
-                    int x = (int) event.getX();
-                    int y = (int) event.getY();
-                    Log.i(BuildingActivity.class.getSimpleName(), "x: " + x + "y: " + y);
-                    int[] viewCoords = new int[2];
-                    imageView.getLocationOnScreen(viewCoords);
-                    int iX = x - viewCoords[0]; // viewCoords[0] is the X coordinate
-                    int iY = y - viewCoords[1];
-                    Log.i(BuildingActivity.class.getSimpleName(), "ximg: " + iX + "yimg: " + iY);
 
-
-                    // Transform to relative coordinates
-                    /*
-                    float[] point = new float[2];
-                    point[0] = e.getX();
-                    point[1] = e.getY();
-                    inverseMatrix.mapPoints(point);
-                    */
+                    imageView.getImageMatrix().invert(matrix);
+                    final float[] coords = new float[]{event.getX(), event.getY()};
+                    matrix.postTranslate(imageView.getScrollX(), imageView.getScrollY());
+                    matrix.mapPoints(coords);
+                    Log.i(BuildingActivity.class.getSimpleName(), "X: " + coords[0] + "Y: " + coords[1]);
+                    int x = (int) coords[0] / 2;
+                    int y = (int) coords[1] / 2;
+                    double distance = 0;
+                    for (MapPoint m : mapPoints) {
+                        if (m.getType() == 7) {
+                            distance = Math.sqrt((double) ((x - m.getX()) * (x - m.getX()) + (y - m.getY()) * (y - m.getY())));
+                            if (distance < 30) {
+                                Log.i(BuildingActivity.class.getSimpleName(), "distance: " + distance + " " + m.getBuilding().getId());
+                            }
+                        }
+                    }
                 }
                 return false;
             }
@@ -212,7 +242,7 @@ public class BuildingActivity extends AppCompatActivity implements View.OnTouchL
             for (MapPointsArcs mpa : mapPointsArcs) {
                 mpa.setPoint1(mapPoints);
                 mpa.setPoint2(mapPoints);
-                mpa.calculateWeight();
+                mpa.calculateWeight(false);
             }
 
 
@@ -251,19 +281,11 @@ public class BuildingActivity extends AppCompatActivity implements View.OnTouchL
     }
 
     public void searchPath(View view) {
-        //TODO: do usunięcia
-        for(MapPoint mp : mapPoints){
-            //p1
-            if (mp.getId() == 116) mapPointFrom = mp;
-            //p2
-            if (mp.getId() == 112) mapPointTo = mp;
-
-        }
 
         // null ewentialnie jakis obiekt ktory zwraca db jak nie znajdzie (jeśli to nie null)
         if(mapPointFrom == null || mapPointTo == null) return;
 
-        //mapPoints = new ArrayList<>(originMapPoints); //usunięcie śmieci po poprzednim wyszukiwaniu
+        mapPoints = new ArrayList<>(originMapPoints); //usunięcie śmieci po poprzednim wyszukiwaniu
         //ew. w ten sposób:
         /*
         for (MapPoint m : mapPoints){
@@ -284,7 +306,7 @@ public class BuildingActivity extends AppCompatActivity implements View.OnTouchL
         // wypełnienie listy map na ktorych bedzie trasa
         Map lastMap = null;
         for (MapPoint mp : route) {
-            if(lastMap != null && lastMap.getFileName().equals(mp.getMap().getFileName()))
+            if (lastMap != null && lastMap.getFileName().equals(mp.getMap().getFileName()))
                 continue;
 
             pathMaps.add(mp.getMap());
@@ -292,8 +314,15 @@ public class BuildingActivity extends AppCompatActivity implements View.OnTouchL
         }
 
         currentPathMapId = 0;
+        Map a = pathMaps.get(currentPathMapId);
+        Log.i(BuildingActivity.class.getSimpleName(), "mapa: " + a.getId());
+        currentMapId = mapsHash.get(a.getFileName());
+        //currentMapId = mapsHash.get(map.getFileName());
 
-        currentMapId = mapsHash.get(pathMaps.get(currentPathMapId).getFileName());
+        for (Map m : pathMaps) {
+            Log.i(BuildingActivity.class.getSimpleName(), "mapy: " + m.getId());
+        }
+
 
         fillLines();
 
@@ -304,8 +333,8 @@ public class BuildingActivity extends AppCompatActivity implements View.OnTouchL
         // currentMapPoints - lista punkow na danym piętrze
         ArrayList<MapPoint> currentMapPoints = new ArrayList<MapPoint>();
 
-        for(MapPoint mp : route){
-            if(mapsHash.get(mp.getMap().getFileName()) == currentMapId) {
+        for (MapPoint mp : route) {
+            if (mapsHash.get(mp.getMap().getFileName()) == currentMapId) {
                 currentMapPoints.add(mp);
             }
         }
@@ -313,7 +342,7 @@ public class BuildingActivity extends AppCompatActivity implements View.OnTouchL
         // zmienna pomocnicza do foreach-a do wyznaczenia linii z p1 do p2
         MapPoint mplast = null;
 
-        for (MapPoint mp : currentMapPoints){
+        for (MapPoint mp : currentMapPoints) {
             if (mplast == null) {
                 mplast = mp;
                 continue;
@@ -325,11 +354,16 @@ public class BuildingActivity extends AppCompatActivity implements View.OnTouchL
 
     // rysowanie tego co jest w tablicy (ArrayList<MapPoint>) route
     private void drawMap(){
-        container.removeAllViews();
+
         imageView = new TouchImageView(this);
-
-        imageView.setImageResource(currentMapId);
-
+        container.removeAllViews();
+        //((BitmapDrawable)imageView.getDrawable()).getBitmap().recycle();
+        //imageView = new TouchImageView(this);
+        Log.i(BuildingActivity.class.getSimpleName(), "currentmapId: " + currentMapId);
+        //imageView.setImageResource(currentMapId);
+        //imageView.setImageBitmap(decodeResource(getResources(), currentMapId));
+        imageView.setImageBitmap(
+                decodeSampledBitmapFromResource(getResources(), currentMapId, 500, 500));
         // tworzenie kopii na której rysujemy linie
 
         Bitmap lineOnBmp = ((BitmapDrawable)imageView.getDrawable()).getBitmap();
@@ -354,9 +388,22 @@ public class BuildingActivity extends AppCompatActivity implements View.OnTouchL
 
     }
 
-    public void nextMap(View view){
-        if(currentPathMapId < pathMaps.size()-1)
+    public void nextMap(View view) {
+        Log.i(BuildingActivity.class.getSimpleName(), "map id: " + currentMapId);
+        if (currentPathMapId < pathMaps.size() - 1)
             currentPathMapId++;
+        else
+            return;
+
+        currentMapId = mapsHash.get(pathMaps.get(currentPathMapId).getFileName());
+        Log.i(BuildingActivity.class.getSimpleName(), "map id: " + currentMapId);
+        fillLines();
+        drawMap();
+    }
+
+    public void previousMap(View view) {
+        if (currentMapId > 0)
+            currentPathMapId--;
         else
             return;
 
@@ -365,15 +412,43 @@ public class BuildingActivity extends AppCompatActivity implements View.OnTouchL
         drawMap();
     }
 
-    public void previousMap(View view){
-        if(currentMapId > 0)
-            currentPathMapId--;
-        else
-            return;
+    public static Bitmap decodeSampledBitmapFromResource(Resources res, int resId,
+                                                         int reqWidth, int reqHeight) {
 
-        currentMapId = mapsHash.get(pathMaps.get(currentPathMapId).getFileName());
-        fillLines();
-        drawMap();
+        // First decode with inJustDecodeBounds=true to check dimensions
+        final BitmapFactory.Options options = new BitmapFactory.Options();
+        options.inJustDecodeBounds = true;
+        BitmapFactory.decodeResource(res, resId, options);
+
+        // Calculate inSampleSize
+        options.inSampleSize = calculateInSampleSize(options, reqWidth, reqHeight);
+
+        // Decode bitmap with inSampleSize set
+        options.inJustDecodeBounds = false;
+        return BitmapFactory.decodeResource(res, resId, options);
+    }
+
+    public static int calculateInSampleSize(
+            BitmapFactory.Options options, int reqWidth, int reqHeight) {
+        // Raw height and width of image
+        final int height = options.outHeight;
+        final int width = options.outWidth;
+        int inSampleSize = 1;
+
+        if (height > reqHeight || width > reqWidth) {
+
+            final int halfHeight = height / 2;
+            final int halfWidth = width / 2;
+
+            // Calculate the largest inSampleSize value that is a power of 2 and keeps both
+            // height and width larger than the requested height and width.
+            while ((halfHeight / inSampleSize) > reqHeight
+                    && (halfWidth / inSampleSize) > reqWidth) {
+                inSampleSize *= 2;
+            }
+        }
+
+        return inSampleSize;
     }
 
     //pasek boczny
@@ -397,10 +472,4 @@ public class BuildingActivity extends AppCompatActivity implements View.OnTouchL
 
     };
 
-    @Override
-    public boolean onTouch(View v, MotionEvent event) {
-
-        Log.i(BuildingActivity.class.getSimpleName(), "ggggggggg");
-        return false;
-    }
 }

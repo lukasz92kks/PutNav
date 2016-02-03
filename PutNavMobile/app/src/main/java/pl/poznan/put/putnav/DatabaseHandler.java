@@ -8,6 +8,8 @@ import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.support.ConnectionSource;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -40,6 +42,7 @@ public class DatabaseHandler extends OrmLiteSqliteOpenHelper {
 
         String fileName = context.getDatabasePath(DATABASE_NAME).getPath();
         InputStream in = null;
+
         try {
             in = context.getAssets().open(DATABASE_NAME);
             FileOutputStream out = null;
