@@ -37,6 +37,18 @@
 
     </RadioGroup>
 
+    <EditText
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:inputType="textUri"
+        android:id="@+id/serverAddress" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Aktualizuj"
+        android:id="@+id/buttonUpdate" />
+
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
