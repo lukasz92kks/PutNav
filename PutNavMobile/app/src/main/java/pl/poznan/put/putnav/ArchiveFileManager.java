@@ -19,9 +19,7 @@ enum FileType {
     Photo
 }
 
-/**
- * Created by £ukasz on 2016-02-02.
- */
+
 public class ArchiveFileManager {
 
     private String archiveFile;

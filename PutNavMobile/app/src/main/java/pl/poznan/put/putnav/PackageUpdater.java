@@ -7,9 +7,7 @@ import java.io.*;
 import java.net.*;
 import android.os.AsyncTask;
 
-/**
- * Created by £ukasz on 2016-02-02.
- */
+
 class PackageUpdater extends AsyncTask<URL, Integer, Long> {
 
     private File appDir = new File(Environment.getExternalStorageDirectory().getAbsolutePath(), "putnavadmin");

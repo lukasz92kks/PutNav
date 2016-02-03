@@ -8,6 +8,7 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Matrix;
 import android.graphics.Paint;
+import android.graphics.PixelFormat;
 import android.graphics.drawable.BitmapDrawable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -23,7 +24,6 @@ import android.widget.ImageView;
 import android.widget.SeekBar;
 
 import com.j256.ormlite.android.apptools.OpenHelperManager;
-
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -86,6 +86,7 @@ public class BuildingActivity extends AppCompatActivity {
         setContentView(R.layout.activity_building);
         loadDb();
         init();
+        getWindow().setFormat(PixelFormat.RGB_565);
 
         Log.i(BuildingActivity.class.getSimpleName(), "ile budynkow: " + Integer.toString(buildings.size()));
     }
@@ -237,6 +238,15 @@ public class BuildingActivity extends AppCompatActivity {
             mapsHash.put(maps.get(16).getFileName(), R.drawable.bm_pietro_6);
             mapsHash.put(maps.get(17).getFileName(), R.drawable.bm_pietro_7);
             mapsHash.put(maps.get(18).getFileName(), R.drawable.bm_pietro_8);
+            mapsHash.put(maps.get(19).getFileName(), R.drawable.el_parter);
+            mapsHash.put(maps.get(20).getFileName(), R.drawable.el_pietro_1);
+            mapsHash.put(maps.get(21).getFileName(), R.drawable.el_pietro_2);
+            mapsHash.put(maps.get(22).getFileName(), R.drawable.el_pietro_3);
+            mapsHash.put(maps.get(23).getFileName(), R.drawable.el_pietro_4);
+            mapsHash.put(maps.get(24).getFileName(), R.drawable.el_pietro_5);
+            mapsHash.put(maps.get(25).getFileName(), R.drawable.el_pietro_6);
+            mapsHash.put(maps.get(26).getFileName(), R.drawable.el_pietro_7);
+            mapsHash.put(maps.get(27).getFileName(), R.drawable.el_pietro_8);
 
             //dla każdej krawędzi przeliczamy wagi
             for (MapPointsArcs mpa : mapPointsArcs) {
@@ -362,13 +372,12 @@ public class BuildingActivity extends AppCompatActivity {
         Log.i(BuildingActivity.class.getSimpleName(), "currentmapId: " + currentMapId);
         //imageView.setImageResource(currentMapId);
         //imageView.setImageBitmap(decodeResource(getResources(), currentMapId));
-        imageView.setImageBitmap(
-                decodeSampledBitmapFromResource(getResources(), currentMapId, 500, 500));
+        imageView.setImageBitmap(decodeSampledBitmapFromResource(getResources(), currentMapId, 2000, 2000));
         // tworzenie kopii na której rysujemy linie
 
         Bitmap lineOnBmp = ((BitmapDrawable)imageView.getDrawable()).getBitmap();
         Bitmap copy = Bitmap.createBitmap(lineOnBmp);
-        Bitmap mutableBitmap = copy.copy(Bitmap.Config.ARGB_8888, true);
+        Bitmap mutableBitmap = copy.copy(Bitmap.Config.RGB_565, true);
 
         Canvas canvasCopy = new Canvas(mutableBitmap);
 
@@ -449,6 +458,23 @@ public class BuildingActivity extends AppCompatActivity {
         }
 
         return inSampleSize;
+    }
+
+    public Bitmap getResizedBitmap(Bitmap bm, int newWidth, int newHeight) {
+        int width = bm.getWidth();
+        int height = bm.getHeight();
+        float scaleWidth = ((float) newWidth) / width;
+        float scaleHeight = ((float) newHeight) / height;
+        // CREATE A MATRIX FOR THE MANIPULATION
+        Matrix matrix = new Matrix();
+        // RESIZE THE BIT MAP
+        matrix.postScale(scaleWidth, scaleHeight);
+
+        // "RECREATE" THE NEW BITMAP
+        Bitmap resizedBitmap = Bitmap.createBitmap(
+                bm, 0, 0, width, height, matrix, false);
+        bm.recycle();
+        return resizedBitmap;
     }
 
     //pasek boczny
