@@ -212,7 +212,7 @@ public class BuildingActivity extends AppCompatActivity implements View.OnTouchL
             for (MapPointsArcs mpa : mapPointsArcs) {
                 mpa.setPoint1(mapPoints);
                 mpa.setPoint2(mapPoints);
-                mpa.calculateWeight();
+                mpa.calculateWeight(false);
             }
 
 

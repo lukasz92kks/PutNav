@@ -7,10 +7,15 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.RadioButton;
+import android.widget.EditText;
+
+import java.net.MalformedURLException;
+import java.net.URL;
 
 public class PreferencesActivity extends AppCompatActivity {
 
@@ -19,9 +24,11 @@ public class PreferencesActivity extends AppCompatActivity {
 
     private Button btn6;
     private Button btn7;
+    private Button buttonUpdate;
     private CheckBox checkBox;
     private RadioButton radioButtonPolish;
     private RadioButton radioButtonEnglish;
+    private EditText textViewServer;
     private SharedPreferences sharedPreferences;
 
 
@@ -32,8 +39,6 @@ public class PreferencesActivity extends AppCompatActivity {
         sharedPreferences = getSharedPreferences(PREFERENCES_NAME, AppCompatActivity.MODE_PRIVATE);
         init();
         loadPreferences();
-
-
     }
 
     public void loadPreferences() {
@@ -47,6 +52,8 @@ public class PreferencesActivity extends AppCompatActivity {
             } else {
                 radioButtonPolish.setChecked(true);
             }
+
+            textViewServer.setText(sharedPreferences.getString("serverAddress", "brak"));
         }
     }
 
@@ -67,10 +74,20 @@ public class PreferencesActivity extends AppCompatActivity {
             }
         });
 
+        buttonUpdate = (Button) findViewById(R.id.buttonUpdate); //cancel
+        buttonUpdate.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                update();
+            }
+        });
+
         checkBox = (CheckBox) findViewById(R.id.checkBox1);
 
         radioButtonEnglish = (RadioButton) findViewById(R.id.radio_english);
         radioButtonPolish = (RadioButton) findViewById(R.id.radio_polish);
+
+        textViewServer = (EditText) findViewById(R.id.serverAddress);
     }
 
     public void saveChanges() {
@@ -83,8 +100,17 @@ public class PreferencesActivity extends AppCompatActivity {
         preferencesEditor.putBoolean(PREFERENCE_DISABLED, a);
         preferencesEditor.putBoolean("exists", true);
         preferencesEditor.putInt("language", language);
+        preferencesEditor.putString("serverAddress", "http://putnav.cba.pl/PutNavArchive.pna");
         preferencesEditor.commit();
         finish();
     }
 
+    private void update() {
+        PackageUpdater packageUpdater = new PackageUpdater();
+        try {
+            packageUpdater.execute(new URL(textViewServer.getText().toString())); //PutNavArchive%20v0.9.pna
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        }
+    }
 }
