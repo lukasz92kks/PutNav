@@ -10,6 +10,7 @@ import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.PixelFormat;
 import android.graphics.drawable.BitmapDrawable;
+import android.os.Environment;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -24,10 +25,19 @@ import android.widget.ImageView;
 import android.widget.SeekBar;
 
 import com.j256.ormlite.android.apptools.OpenHelperManager;
+
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.RandomAccessFile;
+import java.nio.MappedByteBuffer;
+import java.nio.channels.FileChannel;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+
+import javax.microedition.khronos.opengles.GL10;
 
 import pl.poznan.put.putnav.widgets.TouchImageView;
 import pl.poznan.put.putnav.widgets.VerticalSeekBar;
@@ -372,12 +382,16 @@ public class BuildingActivity extends AppCompatActivity {
         Log.i(BuildingActivity.class.getSimpleName(), "currentmapId: " + currentMapId);
         //imageView.setImageResource(currentMapId);
         //imageView.setImageBitmap(decodeResource(getResources(), currentMapId));
-        imageView.setImageBitmap(decodeSampledBitmapFromResource(getResources(), currentMapId, 2000, 2000));
+        Bitmap m = decodeSampledBitmapFromResource(getResources(), currentMapId, 2000, 2000);
+        Log.i(BuildingActivity.class.getSimpleName(), "config: " + m.getConfig());
+        imageView.setImageBitmap(m);
         // tworzenie kopii na której rysujemy linie
 
-        Bitmap lineOnBmp = ((BitmapDrawable)imageView.getDrawable()).getBitmap();
-        Bitmap copy = Bitmap.createBitmap(lineOnBmp);
-        Bitmap mutableBitmap = copy.copy(Bitmap.Config.RGB_565, true);
+        //Bitmap lineOnBmp = ((BitmapDrawable)imageView.getDrawable()).getBitmap();
+        //Bitmap copy = Bitmap.createBitmap(lineOnBmp);
+        //Bitmap mutableBitmap = copy.copy(Bitmap.Config.RGB_565, true);
+        Bitmap mutableBitmap = convertToMutable(m);
+        Log.i(BuildingActivity.class.getSimpleName(), "config : " + mutableBitmap.getConfig());
 
         Canvas canvasCopy = new Canvas(mutableBitmap);
 
@@ -391,7 +405,24 @@ public class BuildingActivity extends AppCompatActivity {
             canvasCopy.drawLine(line.getStartX(),line.getStartY(), line.getStopX(), line.getStopY(), paint);
         }
 
-        imageView.setImageBitmap(mutableBitmap);
+        if (mutableBitmap.getHeight() > 4096 || mutableBitmap.getWidth() > 4096) {
+
+            float aspect_ratio = ((float) mutableBitmap.getHeight()) / ((float) mutableBitmap.getWidth());
+
+
+            Bitmap scaled = Bitmap.createScaledBitmap(mutableBitmap, (int) (4096), (int) ((4096) * aspect_ratio), true);
+            /*Bitmap scaledBitmap = Bitmap.createBitmap(mutableBitmap, 0, 0,
+                    (int) (4096 * 0.9),
+                    (int) ((4096* 0.9) * aspect_ratio));
+                    //Log.i(BuildingActivity.class.getSimpleName(), "max: " + GL10.GL_MAX_TEXTURE_SIZE);
+                <------ nie kasować!
+            */
+
+            imageView.setImageBitmap(scaled);
+        } else {
+            imageView.setImageBitmap(mutableBitmap);
+        }
+
 
         container.addView(imageView);
 
@@ -427,6 +458,7 @@ public class BuildingActivity extends AppCompatActivity {
         // First decode with inJustDecodeBounds=true to check dimensions
         final BitmapFactory.Options options = new BitmapFactory.Options();
         options.inJustDecodeBounds = true;
+        options.inPreferredConfig = Bitmap.Config.RGB_565;
         BitmapFactory.decodeResource(res, resId, options);
 
         // Calculate inSampleSize
@@ -434,6 +466,7 @@ public class BuildingActivity extends AppCompatActivity {
 
         // Decode bitmap with inSampleSize set
         options.inJustDecodeBounds = false;
+
         return BitmapFactory.decodeResource(res, resId, options);
     }
 
@@ -475,6 +508,62 @@ public class BuildingActivity extends AppCompatActivity {
                 bm, 0, 0, width, height, matrix, false);
         bm.recycle();
         return resizedBitmap;
+    }
+
+    public static Bitmap convertToMutable(Bitmap imgIn) {
+        try {
+            //this is the file going to use temporally to save the bytes.
+            // This file will not be a image, it will store the raw image data.
+            File file = new File(Environment.getExternalStorageDirectory() + File.separator + "temp.tmp");
+
+            //Open an RandomAccessFile
+            //Make sure you have added uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"
+            //into AndroidManifest.xml file
+            RandomAccessFile randomAccessFile = null;
+            try {
+                randomAccessFile = new RandomAccessFile(file, "rw");
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            }
+
+            // get the width and height of the source bitmap.
+            int width = imgIn.getWidth();
+            int height = imgIn.getHeight();
+            Bitmap.Config type = imgIn.getConfig();
+
+            //Copy the byte to the file
+            //Assume source bitmap loaded using options.inPreferredConfig = Config.ARGB_8888;
+            FileChannel channel = randomAccessFile.getChannel();
+            MappedByteBuffer map = null;
+            try {
+                map = channel.map(FileChannel.MapMode.READ_WRITE, 0, imgIn.getRowBytes() * height);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            imgIn.copyPixelsToBuffer(map);
+            //recycle the source bitmap, this will be no longer used.
+            imgIn.recycle();
+            System.gc();// try to force the bytes from the imgIn to be released
+
+            //Create a new bitmap to load the bitmap again. Probably the memory will be available.
+            imgIn = Bitmap.createBitmap(width, height, type);
+            map.position(0);
+            //load it back from temporary
+            imgIn.copyPixelsFromBuffer(map);
+            //close the temporary file and channel , then delete that also
+            channel.close();
+            randomAccessFile.close();
+
+            // delete the temp file
+            file.delete();
+
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return imgIn;
     }
 
     //pasek boczny
