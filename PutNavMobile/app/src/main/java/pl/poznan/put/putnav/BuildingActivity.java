@@ -523,9 +523,15 @@ public class BuildingActivity extends AppCompatActivity {
     public void goInside(View view) {
         // zmiana mapy na podstawie chosenBuilding -> domyslnie wybieramy parter tego budynku
         for (Map map : maps) {
-            if (map.getBuildings() != null && map.getBuildings().getName() == chosenBuilding.getName()) {
-                Log.i(BuildingActivity.class.getSimpleName(), "ZNALEZIONY BUDYNEK: " + map.getBuildings().getName());
-                changeMap(map.getFileName());
+            if (map.getBuildings() != null) {
+                Log.i(BuildingActivity.class.getSimpleName(), "mapa z fora: " + map.getBuildings().getId());
+                Log.i(BuildingActivity.class.getSimpleName(), "mapa z fora: " + map.getBuildings().getName());
+
+                Log.i(BuildingActivity.class.getSimpleName(), "wybrany: " + chosenBuilding.getName());
+                if (map.getBuildings() != null && map.getBuildings().getId() == chosenBuilding.getId()) {
+                    Log.i(BuildingActivity.class.getSimpleName(), "ZNALEZIONY BUDYNEK: " + map.getBuildings().getName());
+                    changeMap(map.getFileName());
+                }
             }
         }
 
