@@ -78,18 +78,10 @@ public class BuildingActivity extends AppCompatActivity {
 
     ArrayList<Line> lines = new ArrayList<Line>();
 
-    int currentMapId; //id zasobu np. R.resources.cd_parter
+    int currentMapResourceId; //id zasobu np. R.resources.cd_parter
     int currentPathMapId; // id aktualnej mapy tablicy pathMaps
     ArrayList<Map> pathMaps; // kolejne mapy wyznaczonej trasy
 
-    int[] images = {R.drawable.kampus,
-            R.drawable.nano_0,
-            R.drawable.nano_1,
-            R.drawable.nano_2,
-            R.drawable.nano_3,
-            R.drawable.nano_4,
-            R.drawable.nano_5
-    };
     HashMap<String, Integer> mapsHash = new HashMap<>();
 
     @Override
@@ -184,8 +176,9 @@ public class BuildingActivity extends AppCompatActivity {
         // ladowanie kampusu
         // for each maps gdzie pole campus jest 1(albo !=, > 0)
         for (Map map : maps) {
-            if (map.getCampus() == 1)
-                currentMapId = mapsHash.get(map.getFileName());
+            if (map.getCampus() == 1) {
+                currentMapResourceId = mapsHash.get(map.getFileName());
+            }
         }
 
         drawMap();
@@ -281,7 +274,7 @@ public class BuildingActivity extends AppCompatActivity {
     }
 
     private void loadImageToContainer(int resourceId) {
-        currentMapId = resourceId;
+        currentMapResourceId = resourceId;
         drawMap();
     }
 
@@ -338,8 +331,8 @@ public class BuildingActivity extends AppCompatActivity {
         currentPathMapId = 0;
         Map a = pathMaps.get(currentPathMapId);
         Log.i(BuildingActivity.class.getSimpleName(), "mapa: " + a.getId());
-        currentMapId = mapsHash.get(a.getFileName());
-        //currentMapId = mapsHash.get(map.getFileName());
+        currentMapResourceId = mapsHash.get(a.getFileName());
+        //currentMapResourceId = mapsHash.get(map.getFileName());
 
         for (Map m : pathMaps) {
             Log.i(BuildingActivity.class.getSimpleName(), "mapy: " + m.getId());
@@ -357,7 +350,7 @@ public class BuildingActivity extends AppCompatActivity {
         ArrayList<MapPoint> currentMapPoints = new ArrayList<MapPoint>();
 
         for (MapPoint mp : route) {
-            if (mapsHash.get(mp.getMap().getFileName()) == currentMapId) {
+            if (mapsHash.get(mp.getMap().getFileName()) == currentMapResourceId) {
                 currentMapPoints.add(mp);
             }
         }
@@ -382,10 +375,10 @@ public class BuildingActivity extends AppCompatActivity {
         container.removeAllViews();
         //((BitmapDrawable)imageView.getDrawable()).getBitmap().recycle();
         //imageView = new TouchImageView(this);
-        Log.i(BuildingActivity.class.getSimpleName(), "currentmapId: " + currentMapId);
-        //imageView.setImageResource(currentMapId);
-        //imageView.setImageBitmap(decodeResource(getResources(), currentMapId));
-        Bitmap m = decodeSampledBitmapFromResource(getResources(), currentMapId, 2000, 2000);
+        Log.i(BuildingActivity.class.getSimpleName(), "currentmapId: " + currentMapResourceId);
+        //imageView.setImageResource(currentMapResourceId);
+        //imageView.setImageBitmap(decodeResource(getResources(), currentMapResourceId));
+        Bitmap m = decodeSampledBitmapFromResource(getResources(), currentMapResourceId, 2000, 2000);
         Log.i(BuildingActivity.class.getSimpleName(), "config: " + m.getConfig());
         imageView.setImageBitmap(m);
         // tworzenie kopii na której rysujemy linie
@@ -436,27 +429,35 @@ public class BuildingActivity extends AppCompatActivity {
     }
 
     public void nextMap(View view) {
-        Log.i(BuildingActivity.class.getSimpleName(), "map id: " + currentMapId);
+        Log.i(BuildingActivity.class.getSimpleName(), "map id: " + currentMapResourceId);
         if (pathMaps != null && currentPathMapId < pathMaps.size() - 1)
             currentPathMapId++;
         else
             return;
 
-        currentMapId = mapsHash.get(pathMaps.get(currentPathMapId).getFileName());
-        Log.i(BuildingActivity.class.getSimpleName(), "map id: " + currentMapId);
+        currentMapResourceId = mapsHash.get(pathMaps.get(currentPathMapId).getFileName());
+        Log.i(BuildingActivity.class.getSimpleName(), "map id: " + currentMapResourceId);
         fillLines();
         drawMap();
     }
 
     public void previousMap(View view) {
-        if (currentMapId > 0)
+        if (currentMapResourceId > 0)
             currentPathMapId--;
         else
             return;
 
-        currentMapId = mapsHash.get(pathMaps.get(currentPathMapId).getFileName());
+        currentMapResourceId = mapsHash.get(pathMaps.get(currentPathMapId).getFileName());
         fillLines();
         drawMap();
+    }
+
+    private Map getCurrentMap(){
+        for(Map map : maps){
+            if(currentMapResourceId == mapsHash.get(map.getFileName()))
+                return map;
+        }
+        return null;
     }
 
     public static Bitmap decodeSampledBitmapFromResource(Resources res, int resId,
