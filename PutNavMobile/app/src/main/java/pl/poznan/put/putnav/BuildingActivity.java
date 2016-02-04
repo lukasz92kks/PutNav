@@ -20,7 +20,6 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
-import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.SeekBar;
@@ -76,13 +75,6 @@ public class BuildingActivity extends AppCompatActivity {
     ImageView imageView = null;
 
     double scale = 0;
-    int idOfCurrentMap = 0;
-
-    Button buttonGoIn; //wejdz do budynku
-    Button buttonAboutBuilding; //o budynku
-    Button buttonSetAsStartPoint;
-
-    Building chosenBuilding;
 
     ArrayList<Line> lines = new ArrayList<Line>();
 
@@ -121,19 +113,6 @@ public class BuildingActivity extends AppCompatActivity {
     public void init() {
 
         container = (FrameLayout) findViewById(R.id.picture_container);
-
-        buttonGoIn = (Button) findViewById(R.id.button5); //wejdz do budynku
-        buttonAboutBuilding = (Button) findViewById(R.id.button9); //o budynku
-        buttonSetAsStartPoint = (Button) findViewById(R.id.button10); // ustaw jako punkt startowy
-
-        buttonGoIn.setEnabled(false);
-        buttonGoIn.setVisibility(View.INVISIBLE);
-        buttonAboutBuilding.setEnabled(false);
-        buttonAboutBuilding.setVisibility(View.INVISIBLE);
-        buttonSetAsStartPoint.setEnabled(false);
-        buttonSetAsStartPoint.setVisibility(View.INVISIBLE);
-
-
 
         verticalSeekBar = (VerticalSeekBar) findViewById(R.id.verticalSeekBar);
         verticalSeekBar.setOnSeekBarChangeListener(listenerSeekbar);
@@ -221,54 +200,16 @@ public class BuildingActivity extends AppCompatActivity {
                     matrix.postTranslate(imageView.getScrollX(), imageView.getScrollY());
                     matrix.mapPoints(coords);
                     Log.i(BuildingActivity.class.getSimpleName(), "X: " + coords[0] + "Y: " + coords[1]);
-                    int x = (int) coords[0];
-                    int y = (int) coords[1];
+                    int x = (int) coords[0] / 2;
+                    int y = (int) coords[1] / 2;
                     double distance = 0;
-                    Log.i(BuildingActivity.class.getSimpleName(), "mapa: " + currentMapId);
-                    boolean hit = false;
-                    if (1 == 1) { // TODO mapa kampusu
-                        for (MapPoint m : mapPoints) {
-                            if (m.getType() == 7) {
-                                distance = Math.sqrt((double) ((x - m.getX()) * (x - m.getX()) + (y - m.getY()) * (y - m.getY())));
-                                if (distance < 30) {
-                                    hit = true;
-                                    Log.i(BuildingActivity.class.getSimpleName(), "distance: " + distance + " " + m.getBuilding().getId());
-                                    chosenBuilding = m.getBuilding();
-                                    buttonSetAsStartPoint.setEnabled(true);
-                                    buttonSetAsStartPoint.setVisibility(View.VISIBLE);
-                                    buttonGoIn.setEnabled(true);
-                                    buttonGoIn.setVisibility(View.VISIBLE);
-                                    buttonAboutBuilding.setEnabled(true);
-                                    buttonAboutBuilding.setVisibility(View.VISIBLE);
-
-                                }
+                    for (MapPoint m : mapPoints) {
+                        if (m.getType() == 7) {
+                            distance = Math.sqrt((double) ((x - m.getX()) * (x - m.getX()) + (y - m.getY()) * (y - m.getY())));
+                            if (distance < 30) {
+                                Log.i(BuildingActivity.class.getSimpleName(), "distance: " + distance + " " + m.getBuilding().getId());
                             }
                         }
-                        if (!hit) {
-                            buttonSetAsStartPoint.setEnabled(false);
-                            buttonSetAsStartPoint.setVisibility(View.INVISIBLE);
-                            buttonGoIn.setEnabled(false);
-                            buttonGoIn.setVisibility(View.INVISIBLE);
-                            buttonAboutBuilding.setEnabled(false);
-                            buttonAboutBuilding.setVisibility(View.INVISIBLE);
-                        }
-                    } else if (1 == 2) { // TODO mapa budynku
-                        for (MapPoint m : mapPoints) {
-                            if (m.getMap().getId() == 11111111) { //TODO id obecnej mapy
-                                if (m.getType() == 3) { // sprawdzamy czy kliknelismy na wyjscie
-                                    distance = Math.sqrt((double) ((x - m.getX()) * (x - m.getX()) + (y - m.getY()) * (y - m.getY())));
-                                    if (distance < 30) {
-                                        goOutside();
-                                    }
-                                } /* else if (m.getType() == 4) { // sprawdzamy czy kliknęliśmy na chody
-                                    distance = Math.sqrt((double) ((x - m.getX()) * (x - m.getX()) + (y - m.getY()) * (y - m.getY())));
-                                    if (distance < 10) { //raczej mała liczba, bo musza byc schody UP i DOWN (czy nie?), wiec zeby sie nie nakladalo
-                                        //zmiana mapy UP lub down  // sprawdzic czy mozna najpierw (parter, lub max pietro)
-                                    }
-                                } */
-                            }
-                        }
-
                     }
                 }
                 return false;
@@ -516,14 +457,6 @@ public class BuildingActivity extends AppCompatActivity {
         currentMapId = mapsHash.get(pathMaps.get(currentPathMapId).getFileName());
         fillLines();
         drawMap();
-    }
-
-    public void goInside() {
-        // zmiana mapy na podstawie chosenBuilding -> domyslnie wybieramy parter tego budynku
-    }
-
-    public void goOutside() {
-        // zmiana mapy na kampus
     }
 
     public static Bitmap decodeSampledBitmapFromResource(Resources res, int resId,
