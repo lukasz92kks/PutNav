@@ -81,19 +81,9 @@
         style="?android:attr/buttonStyleSmall"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="v"
-        android:id="@+id/button4"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true" />
-
-    <Button
-        style="?android:attr/buttonStyleSmall"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
         android:text="dalej"
-        android:id="@+id/button6"
-        android:layout_below="@+id/button7"
+        android:id="@+id/buttonNextMap"
+        android:layout_below="@+id/buttonPreviousMap"
         android:onClick="nextMap" />
 
     <Button
@@ -101,8 +91,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="cofnij"
-        android:id="@+id/button7"
-        android:layout_below="@+id/button8"
+        android:id="@+id/buttonPreviousMap"
+        android:layout_below="@+id/buttonEscapeNavigationMode"
         android:onClick="previousMap" />
     />
 
@@ -111,9 +101,12 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="X"
-        android:id="@+id/button8"
+        android:id="@+id/buttonEscapeNavigationMode"
         android:layout_below="@+id/buttonSearch"
-        android:layout_alignParentLeft="true" />
+        android:layout_alignParentLeft="true"
+        android:enabled="true"
+        android:focusable="false"
+        android:onClick="escapeNavigation"/>
 
     <Button
         style="?android:attr/buttonStyleSmall"

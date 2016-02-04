@@ -18,9 +18,9 @@ public class MapPointsArcs implements Serializable {
     @DatabaseField(columnName = "ToId")
     private int toId;
 
-    //@DatabaseField(foreign = true, columnName = "FromId")
+    //@DatabaseField(foreign = true, columnName = "FromId", foreignAutoRefresh = true, maxForeignAutoRefreshLevel = 2)
     private MapPoint point1; // inna nazwa?
-    //@DatabaseField(foreign = true, columnName = "ToId")
+    //@DatabaseField(foreign = true, columnName = "ToId", foreignAutoRefresh = true, maxForeignAutoRefreshLevel = 2)
     private MapPoint point2;
 
     private double weight;
@@ -29,8 +29,8 @@ public class MapPointsArcs implements Serializable {
 
     public MapPointsArcs(int id, int fromId, int toId) {
         //this.id = id;
-        this.fromId = fromId;
-        this.toId = toId;
+        //this.fromId = fromId;
+        //this.toId = toId;
         //calculateWeight();
     }
 

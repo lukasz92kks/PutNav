@@ -9,7 +9,6 @@ import android.graphics.Color;
 import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.PixelFormat;
-import android.graphics.drawable.BitmapDrawable;
 import android.os.Environment;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -37,8 +36,6 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-
-import javax.microedition.khronos.opengles.GL10;
 
 import pl.poznan.put.putnav.widgets.TouchImageView;
 import pl.poznan.put.putnav.widgets.VerticalSeekBar;
@@ -77,6 +74,7 @@ public class BuildingActivity extends AppCompatActivity {
 
     double scale = 0;
     int idOfCurrentMap = 0;
+    Map currentMap;
 
     Button buttonGoIn; //wejdz do budynku
     Button buttonAboutBuilding; //o budynku
@@ -91,6 +89,15 @@ public class BuildingActivity extends AppCompatActivity {
     ArrayList<Map> pathMaps; // kolejne mapy wyznaczonej trasy
 
     HashMap<String, Integer> mapsHash = new HashMap<>();
+
+    boolean navigationMode = false;
+
+    Button nextMapButton;
+    Button previousMapButton;
+    Button escapeNavigationModeButton;
+    Button floorUpButton;
+    Button floodDownButton;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -135,6 +142,11 @@ public class BuildingActivity extends AppCompatActivity {
 
         verticalSeekBar = (VerticalSeekBar) findViewById(R.id.verticalSeekBar);
         verticalSeekBar.setOnSeekBarChangeListener(listenerSeekbar);
+
+        nextMapButton = (Button) findViewById(R.id.buttonNextMap);
+        previousMapButton = (Button) findViewById(R.id.buttonPreviousMap);
+        escapeNavigationModeButton = (Button) findViewById(R.id.buttonEscapeNavigationMode);
+        navigationModeOff();
 
         for (MapPoint m : mapPoints) {
             lista.add(m);
@@ -196,14 +208,7 @@ public class BuildingActivity extends AppCompatActivity {
 
         // ladowanie kampusu
         // for each maps gdzie pole campus jest 1(albo !=, > 0)
-        for (Map map : maps) {
-            if (map.getCampus() == 1) {
-                currentMapId = mapsHash.get(map.getFileName());
-                idOfCurrentMap = getCurrentMap().getId();
-            }
-        }
-
-        drawMap();
+        goOutsideFunc();
 
         imageView.setOnTouchListener(new View.OnTouchListener() {
             @Override
@@ -220,7 +225,7 @@ public class BuildingActivity extends AppCompatActivity {
                     double distance = 0;
                     Log.i(BuildingActivity.class.getSimpleName(), "mapa: " + currentMapId);
                     boolean hit = false;
-                    if (1 == 1) { // TODO mapa kampusu
+                    if (currentMap.getCampus() == 1) { // TODO mapa kampusu; dobrze?
                         for (MapPoint m : mapPoints) {
                             if (m.getType() == 7) {
                                 distance = Math.sqrt((double) ((x - m.getX()) * (x - m.getX()) + (y - m.getY()) * (y - m.getY())));
@@ -234,7 +239,9 @@ public class BuildingActivity extends AppCompatActivity {
                                     buttonGoIn.setVisibility(View.VISIBLE);
                                     buttonAboutBuilding.setEnabled(true);
                                     buttonAboutBuilding.setVisibility(View.VISIBLE);
-
+                                    break;
+                                }else {
+                                    hit = false;
                                 }
                             }
                         }
@@ -246,13 +253,13 @@ public class BuildingActivity extends AppCompatActivity {
                             buttonAboutBuilding.setEnabled(false);
                             buttonAboutBuilding.setVisibility(View.INVISIBLE);
                         }
-                    } else if (1 == 2) { // TODO mapa budynku
+                    } else if (currentMap.getCampus() == 0) { // TODO mapa budynku; dobrze?
                         for (MapPoint m : mapPoints) {
-                            if (m.getMap().getId() == 11111111) { //TODO id obecnej mapy
-                                if (m.getType() == 3) { // sprawdzamy czy kliknelismy na wyjscie
+                            if (m.getMap().getId() == currentMap.getId()) { //TODO id obecnej mapy; dobrze?
+                                if (m.getType() == 3 && m.getMap() == currentMap) { // sprawdzamy czy kliknelismy na wyjscie
                                     distance = Math.sqrt((double) ((x - m.getX()) * (x - m.getX()) + (y - m.getY()) * (y - m.getY())));
                                     if (distance < 30) {
-                                        goOutside();
+                                        goOutsideFunc();
                                     }
                                 } /* else if (m.getType() == 4) { // sprawdzamy czy kliknęliśmy na chody
                                     distance = Math.sqrt((double) ((x - m.getX()) * (x - m.getX()) + (y - m.getY()) * (y - m.getY())));
@@ -265,6 +272,10 @@ public class BuildingActivity extends AppCompatActivity {
 
                     }
                 }
+
+                if(chosenBuilding != null)
+                    Log.i(BuildingActivity.class.getSimpleName(), "Zaznaczony budynek: " + chosenBuilding.getName());
+
                 return false;
             }
         });
@@ -335,7 +346,7 @@ public class BuildingActivity extends AppCompatActivity {
 
     private void loadImageToContainer(int resourceId) {
         currentMapId = resourceId;
-        idOfCurrentMap = getCurrentMap().getId();
+        currentMap = getCurrentMap();
         drawMap();
     }
 
@@ -392,8 +403,8 @@ public class BuildingActivity extends AppCompatActivity {
         currentPathMapId = 0;
         Map a = pathMaps.get(currentPathMapId);
         Log.i(BuildingActivity.class.getSimpleName(), "mapa: " + a.getId());
-        currentMapId = mapsHash.get(a.getFileName());
-        idOfCurrentMap = getCurrentMap().getId();
+        changeMap(a.getFileName());
+
 
         for (Map m : pathMaps) {
             Log.i(BuildingActivity.class.getSimpleName(), "mapy: " + m.getId());
@@ -403,6 +414,8 @@ public class BuildingActivity extends AppCompatActivity {
         fillLines();
 
         drawMap();
+
+        navigationModeOn();
     }
 
     private void fillLines(){
@@ -496,8 +509,7 @@ public class BuildingActivity extends AppCompatActivity {
         else
             return;
 
-        currentMapId = mapsHash.get(pathMaps.get(currentPathMapId).getFileName());
-        idOfCurrentMap = getCurrentMap().getId();
+        changeMap(pathMaps.get(currentPathMapId).getFileName());
         Log.i(BuildingActivity.class.getSimpleName(), "map id: " + currentMapId);
         fillLines();
         drawMap();
@@ -509,18 +521,35 @@ public class BuildingActivity extends AppCompatActivity {
         else
             return;
 
-        currentMapId = mapsHash.get(pathMaps.get(currentPathMapId).getFileName());
-        idOfCurrentMap = getCurrentMap().getId();
+        changeMap(pathMaps.get(currentPathMapId).getFileName());
         fillLines();
         drawMap();
     }
 
-    public void goInside() {
+    public void goInside(View view) {
         // zmiana mapy na podstawie chosenBuilding -> domyslnie wybieramy parter tego budynku
+        for (Map map : maps) {
+            if (map.getBuildings() == chosenBuilding) {
+                changeMap(map.getFileName());
+            }
+        }
+
+        drawMap();
     }
 
-    public void goOutside() {
+    public void goOutside(View view) {
+        goOutsideFunc();
+    }
+
+    private void goOutsideFunc(){
         // zmiana mapy na kampus
+        for (Map map : maps) {
+            if (map.getCampus() == 1) {
+                changeMap(map.getFileName());
+            }
+        }
+
+        drawMap();
     }
 
     private Map getCurrentMap(){
@@ -529,6 +558,43 @@ public class BuildingActivity extends AppCompatActivity {
                 return map;
         }
         return null;
+    }
+
+    private void navigationModeOn(){
+        navigationMode = true;
+        nextMapButton.setEnabled(true);
+        nextMapButton.setVisibility(View.VISIBLE);
+        previousMapButton.setEnabled(true);
+        previousMapButton.setVisibility(View.VISIBLE);
+        escapeNavigationModeButton.setEnabled(true);
+        escapeNavigationModeButton.setVisibility(View.VISIBLE);
+        //chowamy pasek boczny
+        if(getCurrentMap().getBuildings() != null && getCurrentMap().getBuildings().getNumberOfFloors() > 1) {
+            verticalSeekBar.setEnabled(false);
+            verticalSeekBar.setVisibility(View.VISIBLE);
+        }
+        //schowaj te do wpisywania sal
+    }
+
+    private void navigationModeOff(){
+        navigationMode = false;
+        nextMapButton.setEnabled(false);
+        nextMapButton.setVisibility(View.INVISIBLE);
+        previousMapButton.setEnabled(false);
+        previousMapButton.setVisibility(View.INVISIBLE);
+        escapeNavigationModeButton.setEnabled(false);
+        escapeNavigationModeButton.setVisibility(View.INVISIBLE);
+    }
+
+    public void escapeNavigation(View view){
+        navigationModeOff();
+    }
+
+    private void changeMap(String key){
+        currentMapId = mapsHash.get(key);
+        currentMap = getCurrentMap();
+        if(currentMap.getBuildings() != null)
+            verticalSeekBar.setMaximum(currentMap.getBuildings().getNumberOfFloors() - 1);
     }
 
     public static Bitmap decodeSampledBitmapFromResource(Resources res, int resId,
