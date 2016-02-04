@@ -74,6 +74,8 @@ public class BuildingActivity extends AppCompatActivity {
     VerticalSeekBar verticalSeekBar = null;
     ImageView imageView = null;
 
+    double scale = 0;
+
     ArrayList<Line> lines = new ArrayList<Line>();
 
     int currentMapId; //id zasobu np. R.resources.cd_parter
@@ -326,7 +328,7 @@ public class BuildingActivity extends AppCompatActivity {
         // wypełnienie listy map na ktorych bedzie trasa
         Map lastMap = null;
         for (MapPoint mp : route) {
-            if (lastMap != null && lastMap.getFileName().equals(mp.getMap().getFileName()))
+            if (lastMap != null && lastMap.getFileName().equals(mp.getMap().getFileName()) || mp.getType() == 5)
                 continue;
 
             pathMaps.add(mp.getMap());
@@ -343,13 +345,14 @@ public class BuildingActivity extends AppCompatActivity {
             Log.i(BuildingActivity.class.getSimpleName(), "mapy: " + m.getId());
         }
 
-
+        scale = 1.0;
         fillLines();
 
         drawMap();
     }
 
     private void fillLines(){
+        lines.clear();
         // currentMapPoints - lista punkow na danym piętrze
         ArrayList<MapPoint> currentMapPoints = new ArrayList<MapPoint>();
 
@@ -367,7 +370,7 @@ public class BuildingActivity extends AppCompatActivity {
                 mplast = mp;
                 continue;
             }
-            lines.add(new Line(2*mplast.getX(), 2*mplast.getY(), 2*mp.getX(), 2*mp.getY()));
+            lines.add(new Line((int) (scale * mplast.getX()), (int) (scale * mplast.getY()), (int) (scale * mp.getX()), (int) (scale * mp.getY())));
             mplast = mp;
         }
     }
@@ -409,8 +412,12 @@ public class BuildingActivity extends AppCompatActivity {
 
             float aspect_ratio = ((float) mutableBitmap.getHeight()) / ((float) mutableBitmap.getWidth());
 
-
-            Bitmap scaled = Bitmap.createScaledBitmap(mutableBitmap, (int) (4096), (int) ((4096) * aspect_ratio), true);
+            Bitmap scaled;
+            if (aspect_ratio < 1) {
+                scaled = Bitmap.createScaledBitmap(mutableBitmap, 4096, (int) ((4096) * aspect_ratio), true);
+            } else {
+                scaled = Bitmap.createScaledBitmap(mutableBitmap, (int) (4096.0 / aspect_ratio), 4096, true);
+            }
             /*Bitmap scaledBitmap = Bitmap.createBitmap(mutableBitmap, 0, 0,
                     (int) (4096 * 0.9),
                     (int) ((4096* 0.9) * aspect_ratio));
