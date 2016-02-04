@@ -517,20 +517,19 @@ public class BuildingActivity extends AppCompatActivity {
             return;
 
         changeMap(pathMaps.get(currentPathMapId).getFileName());
-        fillLines();
         drawMap();
     }
 
     public void goInside(View view) {
         // zmiana mapy na podstawie chosenBuilding -> domyslnie wybieramy parter tego budynku
         for (Map map : maps) {
-            if (map.getBuildings() == chosenBuilding) {
+            if (map.getBuildings() != null && map.getBuildings().getName() == chosenBuilding.getName()) {
+                Log.i(BuildingActivity.class.getSimpleName(), "ZNALEZIONY BUDYNEK: " + map.getBuildings().getName());
                 changeMap(map.getFileName());
             }
         }
 
         hideTouchableButtons();
-
         drawMap();
     }
 
