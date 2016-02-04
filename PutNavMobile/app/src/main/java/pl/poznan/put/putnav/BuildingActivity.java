@@ -437,7 +437,7 @@ public class BuildingActivity extends AppCompatActivity {
 
     public void nextMap(View view) {
         Log.i(BuildingActivity.class.getSimpleName(), "map id: " + currentMapId);
-        if (currentPathMapId < pathMaps.size() - 1)
+        if (pathMaps != null && currentPathMapId < pathMaps.size() - 1)
             currentPathMapId++;
         else
             return;
