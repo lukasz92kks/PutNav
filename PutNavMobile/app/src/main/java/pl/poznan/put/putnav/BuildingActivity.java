@@ -246,12 +246,7 @@ public class BuildingActivity extends AppCompatActivity {
                             }
                         }
                         if (!hit) {
-                            buttonSetAsStartPoint.setEnabled(false);
-                            buttonSetAsStartPoint.setVisibility(View.INVISIBLE);
-                            buttonGoIn.setEnabled(false);
-                            buttonGoIn.setVisibility(View.INVISIBLE);
-                            buttonAboutBuilding.setEnabled(false);
-                            buttonAboutBuilding.setVisibility(View.INVISIBLE);
+                            hideTouchableButtons();
                         }
                     } else if (currentMap.getCampus() == 0) { // TODO mapa budynku; dobrze?
                         for (MapPoint m : mapPoints) {
@@ -534,6 +529,8 @@ public class BuildingActivity extends AppCompatActivity {
             }
         }
 
+        hideTouchableButtons();
+
         drawMap();
     }
 
@@ -549,7 +546,18 @@ public class BuildingActivity extends AppCompatActivity {
             }
         }
 
+        hideTouchableButtons();
+
         drawMap();
+    }
+
+    private void hideTouchableButtons(){
+        buttonSetAsStartPoint.setEnabled(false);
+        buttonSetAsStartPoint.setVisibility(View.INVISIBLE);
+        buttonGoIn.setEnabled(false);
+        buttonGoIn.setVisibility(View.INVISIBLE);
+        buttonAboutBuilding.setEnabled(false);
+        buttonAboutBuilding.setVisibility(View.INVISIBLE);
     }
 
     private Map getCurrentMap(){
