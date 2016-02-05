@@ -9,7 +9,7 @@ import java.util.ArrayList;
 
 @DatabaseTable(tableName = "Maps")
 
-public class Map {
+public class Map implements Comparable<Map> {
 
     @DatabaseField(id = true, columnName = "Id")
     private int id;
@@ -17,7 +17,7 @@ public class Map {
     private int floor;
     @DatabaseField(columnName = "Campus")
     private int campus;
-    @DatabaseField(foreign = true, columnName = "Building")
+    @DatabaseField(foreign = true, columnName = "Building", foreignAutoRefresh = true, maxForeignAutoRefreshLevel = 2)
     private Building buildings;
     @DatabaseField(columnName = "FileName")
     private String fileName;
@@ -37,6 +37,11 @@ public class Map {
     public MapPoint addMapPoint(MapPoint point) {
         mapPoints.add(point);
         return point;
+    }
+
+    @Override
+    public int compareTo(Map map){
+        return ((Integer)this.getFloor()).compareTo(((Integer)map.getFloor()));
     }
 
     public void removeMapPoint(MapPoint point) {
