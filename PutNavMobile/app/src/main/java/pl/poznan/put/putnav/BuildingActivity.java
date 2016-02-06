@@ -760,7 +760,7 @@ public class BuildingActivity extends AppCompatActivity {
         //chowamy pasek boczny
         if(getCurrentMap().getBuildings() != null && getCurrentMap().getBuildings().getNumberOfFloors() > 1) {
             verticalSeekBar.setEnabled(false);
-            verticalSeekBar.setVisibility(View.VISIBLE);
+            verticalSeekBar.setVisibility(View.INVISIBLE);
         }
         //schowaj te do wpisywania sal
     }
@@ -773,6 +773,8 @@ public class BuildingActivity extends AppCompatActivity {
         previousMapButton.setVisibility(View.INVISIBLE);
         escapeNavigationModeButton.setEnabled(false);
         escapeNavigationModeButton.setVisibility(View.INVISIBLE);
+        verticalSeekBar.setEnabled(true);
+        verticalSeekBar.setVisibility(View.VISIBLE);
     }
 
     public void escapeNavigation(View view){
