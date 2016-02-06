@@ -11,16 +11,23 @@
         android:background="@color/background_floating_material_dark"
         android:weightSum="1">
 
-        <TextView
-            android:layout_width="fill_parent"
+        <ImageView
+            android:id="@+id/imageView1"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/app_name"
-            android:id="@+id/title"
-            android:layout_gravity="center_horizontal"
-            android:autoText="false"
-            android:textColor="@color/primary_text_default_material_dark"
-            android:textSize="@dimen/abc_text_size_headline_material"
-            android:layout_margin="@dimen/abc_text_size_headline_material"/>
+            android:layout_gravity="center"
+            android:src="@drawable/logo144" />
+
+        <!--<TextView-->
+            <!--android:layout_width="fill_parent"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:text="@string/app_name"-->
+            <!--android:id="@+id/title"-->
+            <!--android:layout_gravity="center_horizontal"-->
+            <!--android:autoText="false"-->
+            <!--android:textColor="@color/primary_text_default_material_dark"-->
+            <!--android:textSize="@dimen/abc_text_size_headline_material"-->
+            <!--android:layout_margin="@dimen/abc_text_size_headline_material"/>-->
 
         <Button
             android:layout_width="fill_parent"
