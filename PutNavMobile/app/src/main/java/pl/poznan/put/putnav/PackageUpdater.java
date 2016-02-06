@@ -1,7 +1,8 @@
 package pl.poznan.put.putnav;
 
+import android.app.ProgressDialog;
+import android.content.Context;
 import android.os.Environment;
-import android.util.Log;
 
 import java.io.*;
 import java.net.*;
@@ -13,14 +14,46 @@ class PackageUpdater extends AsyncTask<URL, Integer, Long> {
     private File appDir = new File(Environment.getExternalStorageDirectory().getAbsolutePath(), "putnavadmin");
     private String packageFilename = "putnavarchive.pna";
 
+    private Context context;
+    private ProgressDialog dialog;
+
+    public PackageUpdater(PreferencesActivity activity) {
+        this.context = context;
+
+        dialog = new ProgressDialog(activity);
+    }
+
     protected Long doInBackground(URL... urls) {
         Long result = download(urls[0]);
+        publishProgress(1);
         extract();
-
+        publishProgress(2);
+        try {
+            Thread.sleep(1000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
         return result;
      }
 
+    @Override
+    protected void onPreExecute() {
+        dialog.setMessage("Pobieranie aktualizacji");
+        dialog.show();
+    }
+
     protected void onPostExecute(Long result) {
+        if (dialog.isShowing()) {
+            dialog.dismiss();
+        }
+    }
+
+    @Override
+    protected void onProgressUpdate(Integer... progress) {
+        if(progress[0] == 1)
+            dialog.setMessage("Instalowanie aktualizacji");
+        else if(progress[0] == 2)
+            dialog.setMessage("Aktualizacja zakonczona");
     }
 
     private Long download(URL url) {

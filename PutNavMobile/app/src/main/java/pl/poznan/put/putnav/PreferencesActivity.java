@@ -1,7 +1,9 @@
 package pl.poznan.put.putnav;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -30,6 +32,16 @@ public class PreferencesActivity extends AppCompatActivity {
     private RadioButton radioButtonEnglish;
     private EditText textViewServer;
     private SharedPreferences sharedPreferences;
+
+    public Context getMainActivityContext() {
+        return mainActivityContext;
+    }
+
+    public void setMainActivityContext(Context mainActivityContext) {
+        this.mainActivityContext = mainActivityContext;
+    }
+
+    private Context mainActivityContext;
 
 
     @Override
@@ -106,9 +118,11 @@ public class PreferencesActivity extends AppCompatActivity {
     }
 
     private void update() {
-        PackageUpdater packageUpdater = new PackageUpdater();
+        //PackageUpdater packageUpdater = new PackageUpdater(getMainActivityContext());
+        //packageUpdater.execute(new URL(textViewServer.getText().toString())); //PutNavArchive%20v0.9.pna
+        PackageUpdater task = new PackageUpdater(PreferencesActivity.this);
         try {
-            packageUpdater.execute(new URL(textViewServer.getText().toString())); //PutNavArchive%20v0.9.pna
+            task.execute(new URL(textViewServer.getText().toString()));
         } catch (MalformedURLException e) {
             e.printStackTrace();
         }
