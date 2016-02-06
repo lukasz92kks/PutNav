@@ -10,4 +10,42 @@
     android:background="@color/background_floating_material_dark"
     android:weightSum="1">
 
+    <ImageView
+        android:id="@+id/imageView1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:src="@drawable/logo144" />
+
+    <TextView
+        android:id="@+id/textView1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:gravity="center"
+        android:textColor="#d6c7d7"
+        android:text="Aplikacja powstała w ramach pracy inżynierskiej na Politechnice Poznańskiej. Autorami są studenci Wydziału Informatyki kierunku informatyka:"
+        android:textSize="20sp" />
+
+    <TextView
+        android:id="@+id/textView2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="30dp"
+        android:layout_gravity="center"
+        android:gravity="center"
+        android:textColor="#d6d7d7"
+        android:text="Krawczyk Łukasz\nMatuszewski Adam\nSteinbrenner Konrad\nWojdanowicz Łukasz"
+        android:textSize="20sp" />
+
+    <TextView
+        android:id="@+id/textView3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:gravity="center"
+        android:textColor="#d6c7d7"
+        android:text="Data wydania: 09.02.2016\nWersja: 1.0"
+        android:textSize="20sp" />
+
 </LinearLayout>

@@ -10,4 +10,24 @@
     android:background="@color/background_floating_material_dark"
     android:weightSum="1">
 
+        <TextView
+            android:id="@+id/textView1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:textColor="#d6c7d7"
+            android:textSize="17sp"
+            android:text="Kampus Politechniki Poznańskiej znajduje na Piotrowie - części Poznania, w osiedlu samorządowym Rataje, pomiędzy Świętym Rochem na południu oraz Berdychowem na północy, przy ulicy o takiej samej nazwie, w pobliżu Ronda Rataje. Zwany jest także Poligrodem i jest on największym zespołem budynków należącym do Politechniki Poznańskiej." />
+
+        <TextView
+            android:id="@+id/textView2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:textColor="#d6c7d7"
+            android:textSize="17sp"
+            android:text="Do kampusu można dojechać korzystając komunikacji miejskiej. Bezpośredni dojazd z dworca PKP Poznań Główny umożliwiają linie tramwajowe 6 oraz 18. Ponadto kursują tutaj linie:\n5,13,16,201(przystanek Politechnika)\n3,4,6,17,27 (przystanek Baraniaka)\n3,4,6,13,18,27,201(przystanek Kórnicka)" />
+
 </LinearLayout>
