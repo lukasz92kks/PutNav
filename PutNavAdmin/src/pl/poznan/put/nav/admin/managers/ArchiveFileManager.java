@@ -58,15 +58,15 @@ public class ArchiveFileManager {
 	}
 
 	public void addImageFile(String fileName) {
-		addFile(destDirectory + File.separator + imageDirectory + File.separator + fileName, FileType.Photo);
+		addFile(destDirectory + "/" + imageDirectory + "/" + fileName, FileType.Photo);
 	}
 	
 	public void addMapFile(String fileName) {
-		addFile(destDirectory + File.separator + mapDirectory + File.separator + fileName, FileType.Map);
+		addFile(destDirectory + "/" + mapDirectory + "/" + fileName, FileType.Map);
 	}
 	
 	public void addDatabase(String fileName) {
-		addFile(destDirectory + File.separator + fileName, FileType.Database);
+		addFile(destDirectory + "/" + fileName, FileType.Database);
 	}
 	
 	private void addFile(String fileName, FileType type) {
@@ -119,7 +119,7 @@ public class ArchiveFileManager {
 			ZipInputStream zip = new ZipInputStream(new FileInputStream(archiveFile));
 			ZipEntry zipEntry = zip.getNextEntry();
 			while(zipEntry != null) {
-				String filePath = destDirectory + File.separator + zipEntry.getName();
+				String filePath = destDirectory + "/" + zipEntry.getName();
 				if(!zipEntry.isDirectory()) {
 					extractFile(zip, filePath);
 				} else {
@@ -156,10 +156,10 @@ public class ArchiveFileManager {
 		dir = new File(destDirectory);
 		if(!dir.exists()) dir.mkdir();
 		
-		dir = new File(destDirectory + File.separator + mapDirectory);
+		dir = new File(destDirectory + "/" + mapDirectory);
 		if(!dir.exists()) dir.mkdir();
 		
-		dir = new File(destDirectory + File.separator + imageDirectory);
+		dir = new File(destDirectory + "/" + imageDirectory);
 		if(!dir.exists()) dir.mkdir();
 	}
 	
