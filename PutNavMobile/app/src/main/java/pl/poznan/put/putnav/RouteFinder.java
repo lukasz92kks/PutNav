@@ -22,13 +22,17 @@ public class RouteFinder implements Serializable {
     ArrayList<MapPoint> findPath(MapPoint start, MapPoint goal) {
 
 
+        boolean goalReached = false;
         ArrayList<MapPoint> path = new ArrayList<MapPoint>();
         start.setDistance(0);
         PriorityQueue<MapPoint> toVisit = new PriorityQueue<MapPoint>();
         toVisit.add(start);
 
-        while (!toVisit.isEmpty()) {
+        while (!toVisit.isEmpty() && !goalReached) {
             MapPoint p = toVisit.poll();
+            if (p.getId() == goal.getId()) {
+                goalReached = true;
+            }
             for (MapPointsArcs currentEdge : p.getEdges()) {
                 double newDistance = p.getDistance() + currentEdge.getWeight();
                 if (newDistance < currentEdge.getPoint2().getDistance()) {
@@ -41,7 +45,7 @@ public class RouteFinder implements Serializable {
             }
         }
 
-        for (MapPoint m = goal; m.getPrevious() != null; m = m.getPrevious()) {
+        for (MapPoint m = goal; m != null; m = m.getPrevious()) {
             path.add(m);
         }
 

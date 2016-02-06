@@ -48,5 +48,22 @@
             android:layout_gravity="center_horizontal"
             android:layout_margin="@dimen/abc_text_size_menu_material"/>
 
+        <Button
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:text="Wskazówki"
+            android:id="@+id/buttonHelp"
+            android:layout_gravity="center_horizontal"
+            android:layout_margin="@dimen/abc_text_size_menu_material" />
+
+        <Button
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:text="O autorach"
+            android:id="@+id/buttonAboutAuthors"
+            android:layout_gravity="center_horizontal|right"
+            android:layout_margin="@dimen/abc_text_size_menu_material" />
+
     </LinearLayout>
 
