@@ -101,7 +101,7 @@ public class VerticalSeekBar extends SeekBar {
 
     public synchronized void setMaximum(int maximum) {
         setMax(maximum);
-        if(maximum == 0){
+        if(maximum <= 0){
             this.setVisibility(View.INVISIBLE);
         }else{
             this.setVisibility(View.VISIBLE);

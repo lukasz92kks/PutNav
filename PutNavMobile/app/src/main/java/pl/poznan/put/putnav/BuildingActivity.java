@@ -1,7 +1,6 @@
 package pl.poznan.put.putnav;
 
 import android.content.SharedPreferences;
-import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -9,9 +8,7 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Matrix;
 import android.graphics.Paint;
-import android.graphics.Path;
 import android.graphics.PixelFormat;
-import android.graphics.Point;
 import android.os.Environment;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -85,18 +82,11 @@ public class BuildingActivity extends AppCompatActivity {
 
     Building chosenBuilding;
 
-    int x = 0;
-    int y = 0;
-
-    Path path;
-
     ArrayList<Line> lines = new ArrayList<Line>();
 
     int currentMapId; //id zasobu np. R.resources.cd_parter
     int currentPathMapId; // id aktualnej mapy tablicy pathMaps
     ArrayList<Map> pathMaps; // kolejne mapy wyznaczonej trasy
-    MapPoint secondPointOnMap;
-    MapPoint lastPointOnMap;
 
     HashMap<String, Integer> mapsHash = new HashMap<>();
 
@@ -105,32 +95,19 @@ public class BuildingActivity extends AppCompatActivity {
     Button nextMapButton;
     Button previousMapButton;
     Button escapeNavigationModeButton;
-
-    /*
-    @Override
-    public void onConfigurationChanged(Configuration newConfig) {
-        Log.i(BuildingActivity.class.getSimpleName(), "rotacja");
-        super.onConfigurationChanged(newConfig);
-
-
-        if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
-            setContentView(R.layout.activity_building);
-
-        } else {
-            setContentView(R.layout.activity_building);
-        }
-    }
-    */
+    Button floorUpButton;
+    Button floodDownButton;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_building);
-        imageView = new TouchImageView(this);
         loadDb();
         init();
         getWindow().setFormat(PixelFormat.RGB_565);
+
+        Log.i(BuildingActivity.class.getSimpleName(), "ile budynkow: " + Integer.toString(buildings.size()));
     }
 
     public void loadPreferences() {
@@ -233,63 +210,6 @@ public class BuildingActivity extends AppCompatActivity {
         // for each maps gdzie pole campus jest 1(albo !=, > 0)
         goOutsideFunc();
 
-        imageView.setOnLongClickListener(new View.OnLongClickListener() {
-            @Override
-            public boolean onLongClick(View v) {
-                double distance = 0;
-                Log.i(BuildingActivity.class.getSimpleName(), "mapa: " + currentMapId);
-                boolean hit = false;
-                if (currentMap.getCampus() == 1) { // TODO mapa kampusu; dobrze?
-                    for (MapPoint m : mapPoints) {
-                        if (m.getType() == 7) {
-                            distance = Math.sqrt((double) ((x - m.getX()) * (x - m.getX()) + (y - m.getY()) * (y - m.getY())));
-                            if (distance < 30) {
-                                hit = true;
-                                Log.i(BuildingActivity.class.getSimpleName(), "distance: " + distance + " " + m.getBuilding().getId());
-                                chosenBuilding = m.getBuilding();
-                                buttonSetAsStartPoint.setEnabled(true);
-                                buttonSetAsStartPoint.setVisibility(View.VISIBLE);
-                                buttonGoIn.setEnabled(true);
-                                buttonGoIn.setVisibility(View.VISIBLE);
-                                buttonAboutBuilding.setEnabled(true);
-                                buttonAboutBuilding.setVisibility(View.VISIBLE);
-                                break;
-                            } else {
-                                hit = false;
-                            }
-                        }
-                    }
-                    if (!hit) {
-                        hideTouchableButtons();
-                    }
-                } else if (currentMap.getCampus() == 0) { // TODO mapa budynku; dobrze?
-                    for (MapPoint m : mapPoints) {
-                        if (m.getMap().getId() == currentMap.getId()) {
-                            Log.i(BuildingActivity.class.getSimpleName(), "1111");
-                            //TODO id obecnej mapy; dobrze?
-                            if (m.getType() == 3 && m.getMap().getId() == currentMap.getId()) { // sprawdzamy czy kliknelismy na wyjscie
-                                Log.i(BuildingActivity.class.getSimpleName(), "22222");
-                                distance = Math.sqrt((double) ((x - m.getX()) * (x - m.getX()) + (y - m.getY()) * (y - m.getY())));
-                                if (distance < 50) {
-                                    Log.i(BuildingActivity.class.getSimpleName(), "wychodze na kampus");
-                                    goOutsideFunc();
-                                }
-                            } /* else if (m.getType() == 4) { // sprawdzamy czy kliknęliśmy na chody
-                                    distance = Math.sqrt((double) ((x - m.getX()) * (x - m.getX()) + (y - m.getY()) * (y - m.getY())));
-                                    if (distance < 10) { //raczej mała liczba, bo musza byc schody UP i DOWN (czy nie?), wiec zeby sie nie nakladalo
-                                        //zmiana mapy UP lub down  // sprawdzic czy mozna najpierw (parter, lub max pietro)
-                                    }
-                                } */
-                        }
-                    }
-
-                }
-
-
-                return false;
-            }
-        });
-
         imageView.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
@@ -300,9 +220,8 @@ public class BuildingActivity extends AppCompatActivity {
                     matrix.postTranslate(imageView.getScrollX(), imageView.getScrollY());
                     matrix.mapPoints(coords);
                     Log.i(BuildingActivity.class.getSimpleName(), "X: " + coords[0] + "Y: " + coords[1]);
-                    x = (int) coords[0];
-                    y = (int) coords[1];
-                    /*
+                    int x = (int) coords[0];
+                    int y = (int) coords[1];
                     double distance = 0;
                     Log.i(BuildingActivity.class.getSimpleName(), "mapa: " + currentMapId);
                     boolean hit = false;
@@ -321,7 +240,7 @@ public class BuildingActivity extends AppCompatActivity {
                                     buttonAboutBuilding.setEnabled(true);
                                     buttonAboutBuilding.setVisibility(View.VISIBLE);
                                     break;
-                                } else {
+                                }else {
                                     hit = false;
                                 }
                             }
@@ -331,14 +250,10 @@ public class BuildingActivity extends AppCompatActivity {
                         }
                     } else if (currentMap.getCampus() == 0) { // TODO mapa budynku; dobrze?
                         for (MapPoint m : mapPoints) {
-                            if (m.getMap().getId() == currentMap.getId()) {
-                                Log.i(BuildingActivity.class.getSimpleName(), "1111");
-                                //TODO id obecnej mapy; dobrze?
-                                if (m.getType() == 3 && m.getMap().getId() == currentMap.getId()) { // sprawdzamy czy kliknelismy na wyjscie
-                                    Log.i(BuildingActivity.class.getSimpleName(), "22222");
+                            if (m.getMap().getId() == currentMap.getId()) { //TODO id obecnej mapy; dobrze?
+                                if (m.getType() == 3 && m.getMap() == currentMap) { // sprawdzamy czy kliknelismy na wyjscie
                                     distance = Math.sqrt((double) ((x - m.getX()) * (x - m.getX()) + (y - m.getY()) * (y - m.getY())));
-                                    if (distance < 50) {
-                                        Log.i(BuildingActivity.class.getSimpleName(), "wychodze na kampus");
+                                    if (distance < 30) {
                                         goOutsideFunc();
                                     }
                                 } /* else if (m.getType() == 4) { // sprawdzamy czy kliknęliśmy na chody
@@ -346,13 +261,15 @@ public class BuildingActivity extends AppCompatActivity {
                                     if (distance < 10) { //raczej mała liczba, bo musza byc schody UP i DOWN (czy nie?), wiec zeby sie nie nakladalo
                                         //zmiana mapy UP lub down  // sprawdzic czy mozna najpierw (parter, lub max pietro)
                                     }
-                                }
+                                } */
                             }
                         }
 
                     }
-                */
                 }
+
+                if(chosenBuilding != null)
+                    Log.i(BuildingActivity.class.getSimpleName(), "Zaznaczony budynek: " + chosenBuilding.getName());
 
                 return false;
             }
@@ -363,15 +280,11 @@ public class BuildingActivity extends AppCompatActivity {
     private void loadDb() {
         db = OpenHelperManager.getHelper(this, DatabaseHandler.class);
         try {
-            Log.i(BuildingActivity.class.getSimpleName(), "1. mappointy");
+
             mapPoints = new ArrayList<>(db.getMapPointDao().queryForAll());
-            Log.i(BuildingActivity.class.getSimpleName(), "2. mappointacrs");
             mapPointsArcs = new ArrayList<>(db.getMapPointsArcsDao().queryForAll());
-            Log.i(BuildingActivity.class.getSimpleName(), "3. budynki");
             buildings = new ArrayList<>(db.getBuildingDao().queryForAll());
-            Log.i(BuildingActivity.class.getSimpleName(), "4. sale");
             rooms = new ArrayList<>(db.getRoomDao().queryForAll());
-            Log.i(BuildingActivity.class.getSimpleName(), "5. mapy");
             maps = new ArrayList<>(db.getMapDao().queryForAll());
             //buildings = new ArrayList<>(db.getBuildingDao().queryForAll());
 
@@ -406,14 +319,12 @@ public class BuildingActivity extends AppCompatActivity {
             mapsHash.put(maps.get(26).getFileName(), R.drawable.el_pietro_7);
             mapsHash.put(maps.get(27).getFileName(), R.drawable.el_pietro_8);
 
-            Log.i(BuildingActivity.class.getSimpleName(), "przed krawedziami");
             //dla każdej krawędzi przeliczamy wagi
             for (MapPointsArcs mpa : mapPointsArcs) {
                 mpa.setPoint1(mapPoints);
                 mpa.setPoint2(mapPoints);
                 mpa.calculateWeight(false);
             }
-            Log.i(BuildingActivity.class.getSimpleName(), "po krawedziach");
 
 
             for(MapPoint mp : mapPoints) {
@@ -444,11 +355,11 @@ public class BuildingActivity extends AppCompatActivity {
 
     public void reversePlaces(View view) {
         String tmpFrom = aCTVFrom.getText().toString();
+
+        //aCTVFrom.setText("Z: " + aCTVTo.getText().toString());
+
         aCTVFrom.setText(aCTVTo.getText().toString());
         aCTVTo.setText(tmpFrom);
-        MapPoint tmpMapPoint = mapPointFrom;
-        mapPointFrom = mapPointTo;
-        mapPointTo = tmpMapPoint;
     }
 
     public void searchPath(View view) {
@@ -508,139 +419,28 @@ public class BuildingActivity extends AppCompatActivity {
         ArrayList<MapPoint> currentMapPoints = new ArrayList<MapPoint>();
 
         for (MapPoint mp : route) {
-            //Log.i(BuildingActivity.class.getSimpleName(), "id: " + mp.getId());
             if (mapsHash.get(mp.getMap().getFileName()) == currentMapId) {
                 currentMapPoints.add(mp);
             }
         }
-        if (currentMapPoints.size() > 1) {
-            secondPointOnMap = currentMapPoints.get(1);
-        }
+
         // zmienna pomocnicza do foreach-a do wyznaczenia linii z p1 do p2
         MapPoint mplast = null;
 
         for (MapPoint mp : currentMapPoints) {
-
             if (mplast == null) {
                 mplast = mp;
                 continue;
             }
-
             lines.add(new Line((int) (scale * mplast.getX()), (int) (scale * mplast.getY()), (int) (scale * mp.getX()), (int) (scale * mp.getY())));
             mplast = mp;
         }
-        lastPointOnMap = mplast;
-
-    }
-
-    public double[] quadraticEquationRoot(double a, double b, double c) {
-        double root1, root2;
-        root1 = (-b + Math.sqrt(b * b - 4 * a * c)) / (2 * a);
-        root2 = (-b - Math.sqrt(b * b - 4 * a * c)) / (2 * a);
-        return new double[]{root1, root2};
-    }
-
-    public double[] getFactors(MapPoint mp1, MapPoint mp2) {
-        double x1 = (double) mp1.getX();
-        double y1 = (double) mp1.getY();
-        double x2 = (double) mp2.getX();
-        double y2 = (double) mp2.getY();
-        double tmpY = y2 - y1;
-        double tmpX = x2 - x1;
-        double a = tmpY / tmpX;
-        double b = y1 - x1 * a;
-
-        return new double[]{a, b};
-    }
-
-    public void buildTriangleStart(MapPoint mp1, MapPoint mp2) {
-
-        double[] factors1 = getFactors(mp1, mp2);
-        double x1 = (double) mp1.getX();
-        double y1 = (double) mp1.getY();
-        double[] roots1 = quadraticEquationRoot(
-                1.0 + factors1[0] * factors1[0],
-                -2 * x1 + 2 * factors1[0] * factors1[1] - 2 * factors1[0] * y1,
-                x1 * x1 + y1 * y1 + factors1[1] * factors1[1] - 2 * y1 * factors1[1] - 3000);
-        double xt0 = 0;
-        if (mp1.getX() > mp2.getX()) {
-            xt0 = Math.min(roots1[0], roots1[1]);
-        } else {
-            xt0 = Math.max(roots1[0], roots1[1]);
-        }
-        double yt0 = xt0 * factors1[0] + factors1[1];
-        if (factors1[0] == 0) {
-            factors1[0] += 0.00000001;
-        }
-        double[] factors2 = {-1 / factors1[0], y1 + 1 / factors1[0] * x1};
-        double[] roots2 = quadraticEquationRoot(
-                1.0 + factors2[0] * factors2[0],
-                -2 * x1 + 2 * factors2[0] * factors2[1] - 2 * factors2[0] * y1,
-                x1 * x1 + y1 * y1 + factors2[1] * factors2[1] - 2 * y1 * factors2[1] - 500);
-        double xt1 = Math.max(roots2[0], roots2[1]);
-        double xt2 = Math.min(roots2[0], roots2[1]);
-        double yt1 = xt1 * factors2[0] + factors2[1];
-        double yt2 = xt2 * factors2[0] + factors2[1];
-
-        Point a = new Point((int) xt0, (int) yt0);
-        Point b = new Point((int) xt1, (int) yt1);
-        Point c = new Point((int) xt2, (int) yt2);
-        path = new Path();
-        path.setFillType(Path.FillType.EVEN_ODD);
-        path.moveTo(a.x, a.y);
-        path.lineTo(b.x, b.y);
-        path.lineTo(c.x, c.y);
-        path.lineTo(a.x, a.y);
-        path.close();
-
-    }
-
-    public void buildTriangleStop(MapPoint mp1, MapPoint mp2) {
-
-        double[] factors1 = getFactors(mp2, mp1);
-        double x1 = (double) mp2.getX();
-        double y1 = (double) mp2.getY();
-        double[] roots1 = quadraticEquationRoot(
-                1.0 + factors1[0] * factors1[0],
-                -2 * x1 + 2 * factors1[0] * factors1[1] - 2 * factors1[0] * y1,
-                x1 * x1 + y1 * y1 + factors1[1] * factors1[1] - 2 * y1 * factors1[1] - 3000);
-        double xt0 = 0;
-        if (mp1.getX() < mp2.getX()) {
-            xt0 = Math.max(roots1[0], roots1[1]);
-        } else {
-            xt0 = Math.min(roots1[0], roots1[1]);
-        }
-        double yt0 = xt0 * factors1[0] + factors1[1];
-        if (factors1[0] == 0) {
-            factors1[0] += 0.00000001;
-        }
-        double[] factors2 = {-1 / factors1[0], y1 + 1 / factors1[0] * x1};   // - +
-        double[] roots2 = quadraticEquationRoot(
-                1.0 + factors2[0] * factors2[0],
-                -2 * x1 + 2 * factors2[0] * factors2[1] - 2 * factors2[0] * y1,
-                x1 * x1 + y1 * y1 + factors2[1] * factors2[1] - 2 * y1 * factors2[1] - 500);
-        double xt1 = Math.max(roots2[0], roots2[1]);
-        double xt2 = Math.min(roots2[0], roots2[1]);
-        double yt1 = xt1 * factors2[0] + factors2[1];
-        double yt2 = xt2 * factors2[0] + factors2[1];
-
-        Point a = new Point((int) xt0, (int) yt0);
-        Point b = new Point((int) xt1, (int) yt1);
-        Point c = new Point((int) xt2, (int) yt2);
-        path = new Path();
-        path.setFillType(Path.FillType.EVEN_ODD);
-        path.moveTo(a.x, a.y);
-        path.lineTo(b.x, b.y);
-        path.lineTo(c.x, c.y);
-        path.lineTo(a.x, a.y);
-        path.close();
-
     }
 
     // rysowanie tego co jest w tablicy (ArrayList<MapPoint>) route
     private void drawMap(){
 
-        //imageView = new TouchImageView(this);
+        imageView = new TouchImageView(this);
         container.removeAllViews();
         //((BitmapDrawable)imageView.getDrawable()).getBitmap().recycle();
         //imageView = new TouchImageView(this);
@@ -669,24 +469,6 @@ public class BuildingActivity extends AppCompatActivity {
         for (Line line : lines) {
             canvasCopy.drawLine(line.getStartX(),line.getStartY(), line.getStopX(), line.getStopY(), paint);
         }
-
-        paint.setStyle(Paint.Style.FILL_AND_STROKE);
-        paint.setAntiAlias(true);
-
-
-        if (secondPointOnMap != null || lastPointOnMap != null) {
-            if (secondPointOnMap != null || secondPointOnMap.getPrevious() != null || lastPointOnMap.getPrevious() != null || lastPointOnMap != null) {
-                buildTriangleStart(secondPointOnMap.getPrevious(), secondPointOnMap);
-                canvasCopy.drawPath(path, paint);
-
-                buildTriangleStop(lastPointOnMap.getPrevious(), lastPointOnMap);
-                canvasCopy.drawPath(path, paint);
-            }
-        }
-
-
-
-
 
         if (mutableBitmap.getHeight() > 4096 || mutableBitmap.getWidth() > 4096) {
 
@@ -735,7 +517,6 @@ public class BuildingActivity extends AppCompatActivity {
             return;
 
         changeMap(pathMaps.get(currentPathMapId).getFileName());
-        fillLines();
         drawMap();
     }
 
@@ -743,7 +524,12 @@ public class BuildingActivity extends AppCompatActivity {
         // zmiana mapy na podstawie chosenBuilding -> domyslnie wybieramy parter tego budynku
         for (Map map : maps) {
             if (map.getBuildings() != null) {
-                if (map.getBuildings() != null && map.getBuildings().getId() == chosenBuilding.getId() && map.getFloor() == 0) {
+                Log.i(BuildingActivity.class.getSimpleName(), "mapa z fora: " + map.getBuildings().getId());
+                Log.i(BuildingActivity.class.getSimpleName(), "mapa z fora: " + map.getBuildings().getName());
+
+                Log.i(BuildingActivity.class.getSimpleName(), "wybrany: " + chosenBuilding.getName());
+                if (map.getBuildings() != null && map.getBuildings().getId() == chosenBuilding.getId()) {
+                    Log.i(BuildingActivity.class.getSimpleName(), "ZNALEZIONY BUDYNEK: " + map.getBuildings().getName());
                     changeMap(map.getFileName());
                 }
             }
@@ -757,20 +543,17 @@ public class BuildingActivity extends AppCompatActivity {
         goOutsideFunc();
     }
 
-    private void goOutsideFunc() {
-
+    private void goOutsideFunc(){
+        // zmiana mapy na kampus
         for (Map map : maps) {
             if (map.getCampus() == 1) {
                 changeMap(map.getFileName());
-                Log.i(BuildingActivity.class.getSimpleName(), "wychodze ");
             }
-            }
-
+        }
 
         hideTouchableButtons();
-        drawMap();
 
-        // zmiana mapy na kampus
+        drawMap();
     }
 
     private void hideTouchableButtons(){
@@ -957,8 +740,7 @@ public class BuildingActivity extends AppCompatActivity {
             //załadowanie nowego obrazka o ile nastąpiła zmiana piętra
 
             int number = seekBar.getProgress();
-            // TODO: stworzyc tablice z mapami pieter danego budynku i wyswietlic
-            //loadImageToContainer(mapResourceId);
+            loadImageToContainer(number);
         }
 
     };
