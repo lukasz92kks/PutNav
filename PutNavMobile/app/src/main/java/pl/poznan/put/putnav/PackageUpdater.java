@@ -1,7 +1,6 @@
 package pl.poznan.put.putnav;
 
 import android.app.ProgressDialog;
-import android.content.Context;
 import android.os.Environment;
 
 import java.io.*;
@@ -13,13 +12,9 @@ class PackageUpdater extends AsyncTask<URL, Integer, Long> {
 
     private File appDir = new File(Environment.getExternalStorageDirectory().getAbsolutePath(), "putnavadmin");
     private String packageFilename = "putnavarchive.pna";
-
-    private Context context;
     private ProgressDialog dialog;
 
     public PackageUpdater(PreferencesActivity activity) {
-        this.context = context;
-
         dialog = new ProgressDialog(activity);
     }
 
@@ -80,7 +75,6 @@ class PackageUpdater extends AsyncTask<URL, Integer, Long> {
             int count;
             while ((count = input.read(data)) != -1) {
                 total += count;
-                //publishProgress(""+(int)((total*100)/lenghtOfFile));
                 output.write(data, 0, count);
             }
             output.flush();

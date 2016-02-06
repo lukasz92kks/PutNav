@@ -33,17 +33,6 @@ public class PreferencesActivity extends AppCompatActivity {
     private EditText textViewServer;
     private SharedPreferences sharedPreferences;
 
-    public Context getMainActivityContext() {
-        return mainActivityContext;
-    }
-
-    public void setMainActivityContext(Context mainActivityContext) {
-        this.mainActivityContext = mainActivityContext;
-    }
-
-    private Context mainActivityContext;
-
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -118,8 +107,6 @@ public class PreferencesActivity extends AppCompatActivity {
     }
 
     private void update() {
-        //PackageUpdater packageUpdater = new PackageUpdater(getMainActivityContext());
-        //packageUpdater.execute(new URL(textViewServer.getText().toString())); //PutNavArchive%20v0.9.pna
         PackageUpdater task = new PackageUpdater(PreferencesActivity.this);
         try {
             task.execute(new URL(textViewServer.getText().toString()));

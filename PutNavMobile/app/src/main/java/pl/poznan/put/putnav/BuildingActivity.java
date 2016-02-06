@@ -30,7 +30,9 @@ import com.j256.ormlite.android.apptools.OpenHelperManager;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.RandomAccessFile;
 import java.nio.MappedByteBuffer;
 import java.nio.channels.FileChannel;
@@ -63,6 +65,8 @@ public class BuildingActivity extends AppCompatActivity {
     ArrayList<Building> buildings = new ArrayList<>();
     List<Object> lista = new ArrayList<>();
 
+    String appDir = new File(Environment.getExternalStorageDirectory().getAbsolutePath(), "putnavadmin").getAbsolutePath();
+    String mapsDir = new File(Environment.getExternalStorageDirectory().getAbsolutePath(), "putnavadmin/maps").getAbsolutePath();
     private SharedPreferences sharedPreferences;
     private static final String PREFERENCES_NAME = "appPreferences";
     private static final String PREFERENCE_DISABLED = "disabled";
@@ -94,9 +98,10 @@ public class BuildingActivity extends AppCompatActivity {
 
     int currentMapId; //id zasobu np. R.resources.cd_parter
     int currentPathMapId; // id aktualnej mapy tablicy pathMaps
+    String currentMapFile;
     ArrayList<Map> pathMaps; // kolejne mapy wyznaczonej trasy
 
-    HashMap<String, Integer> mapsHash = new HashMap<>();
+    //HashMap<String, Integer> mapsHash = new HashMap<>();
 
     boolean navigationMode = false;
 
@@ -111,6 +116,7 @@ public class BuildingActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_building);
+
         imageView = new TouchImageView(this);
         loadDb();
         init();
@@ -289,6 +295,21 @@ public class BuildingActivity extends AppCompatActivity {
 
     }
 
+    private void CopyRAWtoSDCard(int id, String path) throws IOException {
+        InputStream in = getResources().openRawResource(id);
+        FileOutputStream out = new FileOutputStream(path);
+        byte[] buff = new byte[1024];
+        int read = 0;
+        try {
+            while ((read = in.read(buff)) > 0) {
+                out.write(buff, 0, read);
+            }
+        } finally {
+            in.close();
+            out.close();
+        }
+    }
+
     private void loadDb() {
         db = OpenHelperManager.getHelper(this, DatabaseHandler.class);
         try {
@@ -302,7 +323,48 @@ public class BuildingActivity extends AppCompatActivity {
 
 
             //TODO:tymczasowy hash z mapami zastapic normalnym wczytywaniem z pliku
-            mapsHash.put(maps.get(0).getFileName(), R.drawable.bt_1_pietro);
+
+            File dir = new File(appDir);
+            if(!dir.exists()) {
+                dir.mkdir();
+                Log.i(BuildingActivity.class.getSimpleName(), "mkdir " + dir + " exists " + dir.exists());
+                dir = new File(mapsDir);
+                dir.mkdir();
+                Log.i(BuildingActivity.class.getSimpleName(), "mkdir " + dir  + " exists " + dir.exists());
+                try {
+                    CopyRAWtoSDCard(R.drawable.bt_1_pietro, new File(mapsDir, maps.get(0).getFileName()).getAbsolutePath());
+                    CopyRAWtoSDCard(R.drawable.bt_parter, new File(mapsDir, maps.get(1).getFileName()).getAbsolutePath());
+                    CopyRAWtoSDCard(R.drawable.bt_2_pietro, new File(mapsDir, maps.get(2).getFileName()).getAbsolutePath());
+                    CopyRAWtoSDCard(R.drawable.cw_parter, new File(mapsDir, maps.get(3).getFileName()).getAbsolutePath());
+                    CopyRAWtoSDCard(R.drawable.cw_1_pietro, new File(mapsDir, maps.get(4).getFileName()).getAbsolutePath());
+                    CopyRAWtoSDCard(R.drawable.kampus, new File(mapsDir, maps.get(5).getFileName()).getAbsolutePath());
+                    CopyRAWtoSDCard(R.drawable.bl_parter, new File(mapsDir, maps.get(6).getFileName()).getAbsolutePath());
+                    CopyRAWtoSDCard(R.drawable.bl_pietro_1, new File(mapsDir, maps.get(7).getFileName()).getAbsolutePath());
+                    CopyRAWtoSDCard(R.drawable.bl_pietro_2, new File(mapsDir, maps.get(8).getFileName()).getAbsolutePath());
+                    CopyRAWtoSDCard(R.drawable.bl_przyziemie, new File(mapsDir, maps.get(9).getFileName()).getAbsolutePath());
+                    CopyRAWtoSDCard(R.drawable.bm_parter, new File(mapsDir, maps.get(10).getFileName()).getAbsolutePath());
+                    CopyRAWtoSDCard(R.drawable.bm_pietro_1, new File(mapsDir, maps.get(11).getFileName()).getAbsolutePath());
+                    CopyRAWtoSDCard(R.drawable.bm_pietro_2, new File(mapsDir, maps.get(12).getFileName()).getAbsolutePath());
+                    CopyRAWtoSDCard(R.drawable.bm_pietro_3, new File(mapsDir, maps.get(13).getFileName()).getAbsolutePath());
+                    CopyRAWtoSDCard(R.drawable.bm_pietro_4, new File(mapsDir, maps.get(14).getFileName()).getAbsolutePath());
+                    CopyRAWtoSDCard(R.drawable.bm_pietro_5, new File(mapsDir, maps.get(15).getFileName()).getAbsolutePath());
+                    CopyRAWtoSDCard(R.drawable.bm_pietro_6, new File(mapsDir, maps.get(16).getFileName()).getAbsolutePath());
+                    CopyRAWtoSDCard(R.drawable.bm_pietro_7, new File(mapsDir, maps.get(17).getFileName()).getAbsolutePath());
+                    CopyRAWtoSDCard(R.drawable.bm_pietro_8, new File(mapsDir, maps.get(18).getFileName()).getAbsolutePath());
+                    CopyRAWtoSDCard(R.drawable.el_parter, new File(mapsDir, maps.get(19).getFileName()).getAbsolutePath());
+                    CopyRAWtoSDCard(R.drawable.el_pietro_1, new File(mapsDir, maps.get(20).getFileName()).getAbsolutePath());
+                    CopyRAWtoSDCard(R.drawable.el_pietro_2, new File(mapsDir, maps.get(21).getFileName()).getAbsolutePath());
+                    CopyRAWtoSDCard(R.drawable.el_pietro_3, new File(mapsDir, maps.get(22).getFileName()).getAbsolutePath());
+                    CopyRAWtoSDCard(R.drawable.el_pietro_4, new File(mapsDir, maps.get(23).getFileName()).getAbsolutePath());
+                    CopyRAWtoSDCard(R.drawable.el_pietro_5, new File(mapsDir, maps.get(24).getFileName()).getAbsolutePath());
+                    CopyRAWtoSDCard(R.drawable.el_pietro_6, new File(mapsDir, maps.get(25).getFileName()).getAbsolutePath());
+                    CopyRAWtoSDCard(R.drawable.el_pietro_7, new File(mapsDir, maps.get(26).getFileName()).getAbsolutePath());
+                    CopyRAWtoSDCard(R.drawable.el_pietro_8, new File(mapsDir, maps.get(27).getFileName()).getAbsolutePath());
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+            /*mapsHash.put(maps.get(0).getFileName(), R.drawable.bt_1_pietro);
             mapsHash.put(maps.get(1).getFileName(), R.drawable.bt_parter);
             mapsHash.put(maps.get(2).getFileName(), R.drawable.bt_2_pietro);
             mapsHash.put(maps.get(3).getFileName(), R.drawable.cw_parter);
@@ -329,7 +391,7 @@ public class BuildingActivity extends AppCompatActivity {
             mapsHash.put(maps.get(24).getFileName(), R.drawable.el_pietro_5);
             mapsHash.put(maps.get(25).getFileName(), R.drawable.el_pietro_6);
             mapsHash.put(maps.get(26).getFileName(), R.drawable.el_pietro_7);
-            mapsHash.put(maps.get(27).getFileName(), R.drawable.el_pietro_8);
+            mapsHash.put(maps.get(27).getFileName(), R.drawable.el_pietro_8);*/
 
             //dla każdej krawędzi przeliczamy wagi
             for (MapPointsArcs mpa : mapPointsArcs) {
@@ -431,7 +493,7 @@ public class BuildingActivity extends AppCompatActivity {
         ArrayList<MapPoint> currentMapPoints = new ArrayList<MapPoint>();
 
         for (MapPoint mp : route) {
-            if (mapsHash.get(mp.getMap().getFileName()) == currentMapId) {
+            if (mp.getMap().getId() == currentMapId) {
                 currentMapPoints.add(mp);
             }
         }
@@ -604,7 +666,9 @@ public class BuildingActivity extends AppCompatActivity {
         Log.i(BuildingActivity.class.getSimpleName(), "currentmapId: " + currentMapId);
         //imageView.setImageResource(currentMapId);
         //imageView.setImageBitmap(decodeResource(getResources(), currentMapId));
-        Bitmap m = decodeSampledBitmapFromResource(getResources(), currentMapId, 2000, 2000);
+        //Bitmap m = decodeSampledBitmapFromResource(getResources(), currentMapId, 2000, 2000);     // DLA HASH MAP
+        BitmapFactory.Options bmOptions = new BitmapFactory.Options();
+        Bitmap m = BitmapFactory.decodeFile(currentMapFile ,bmOptions);
         Log.i(BuildingActivity.class.getSimpleName(), "config: " + m.getConfig());
         imageView.setImageBitmap(m);
         // tworzenie kopii na której rysujemy linie
@@ -726,7 +790,6 @@ public class BuildingActivity extends AppCompatActivity {
             }
         }
         verticalSeekBar.setMaximum(0);
-
         hideTouchableButtons();
 
         drawMap();
@@ -743,7 +806,7 @@ public class BuildingActivity extends AppCompatActivity {
 
     private Map getCurrentMap(){
         for(Map map : maps){
-            if(currentMapId == mapsHash.get(map.getFileName()))
+            if(currentMapId == map.getId())
                 return map;
         }
         return null;
@@ -783,9 +846,15 @@ public class BuildingActivity extends AppCompatActivity {
 
     private void changeMap(String key){
         Map oldMap = currentMap;
-        currentMapId = mapsHash.get(key);
+        for(Map map : maps) {
+            if(map.getFileName().equals(key)) {
+                currentMapId = map.getId();
+                Log.i(BuildingActivity.class.getSimpleName(), key);
+                break;
+            }
+        }
         currentMap = getCurrentMap();
-
+        currentMapFile = new File(mapsDir, currentMap.getFileName()).getAbsolutePath();
         // ustawienia suwaka po zmianie budynku
 
         // wychodzimy z budynku do kampusu
