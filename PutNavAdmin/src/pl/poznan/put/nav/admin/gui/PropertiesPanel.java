@@ -163,7 +163,7 @@ public class PropertiesPanel extends JPanel {
 		mapsPanel.add(mapLabel);
 		mapsPanel.add(mapsComboBox);
 		
-		JLabel floorLabel = new JLabel("Numer pietra: ");
+		JLabel floorLabel = new JLabel("Numer piêtra: ");
 		floorTextField = new JTextField(3);
 		JPanel floorPanel = new JPanel();
 		floorPanel.setLayout(new BoxLayout(floorPanel, BoxLayout.LINE_AXIS));
@@ -175,7 +175,7 @@ public class PropertiesPanel extends JPanel {
 		//mapBox.setPreferredSize(new Dimension(220, 150));
 		mapBox.setPreferredSize(new Dimension(220, 125));
 		mapBox.setLayout(new BoxLayout(mapBox, BoxLayout.Y_AXIS));
-		mapBox.setBorder(BorderFactory.createTitledBorder("Wybor mapy"));
+		mapBox.setBorder(BorderFactory.createTitledBorder("Wybór mapy"));
 		mapBox.add(campusPanel);
 		mapBox.add(buildingsPanel);
 		mapBox.add(mapsPanel);
@@ -201,7 +201,7 @@ public class PropertiesPanel extends JPanel {
 		addressPanel.add(addressLabel);
 		addressPanel.add(addressTextField);
 		
-		JLabel floorsLabel = new JLabel("Liczba pieter: ");
+		JLabel floorsLabel = new JLabel("Liczba piêter: ");
 		numOfFloorsTextField = new JTextField(3);
 		numOfFloorsTextField.setEnabled(false);
 		JPanel floorsPanel = new JPanel();
@@ -222,7 +222,7 @@ public class PropertiesPanel extends JPanel {
 			}
 		});
 		
-		JButton departmentsButton = new JButton("Wydzialy...");
+		JButton departmentsButton = new JButton("Wydzia³y...");
 		departmentsButton.setPreferredSize(new Dimension(200, 25));
 		departmentsButton.addActionListener(new ActionListener() {
 			@Override
@@ -239,7 +239,7 @@ public class PropertiesPanel extends JPanel {
 					}
 					BuildingDepartmentsPanel panel = new BuildingDepartmentsPanel();
 					int result = JOptionPane.showConfirmDialog(null, panel, 
-				       "Wydzialy", JOptionPane.OK_CANCEL_OPTION, 1, new ImageIcon(Main.class.getResource("/resources/building.png")));
+				       "Wydzia³y", JOptionPane.OK_CANCEL_OPTION, 1, new ImageIcon(Main.class.getResource("/resources/building.png")));
 					
 					if(result == JOptionPane.YES_OPTION) {
 						building.setDepartments(panel.getIncludedDepartments());
@@ -247,7 +247,7 @@ public class PropertiesPanel extends JPanel {
 				}
 			}
 		});
-		JButton photosButton = new JButton("Zdjecia...");
+		JButton photosButton = new JButton("Zdjêcia...");
 		photosButton.setPreferredSize(new Dimension(200, 25));
 		photosButton.addActionListener(new ActionListener() {
 			@Override

@@ -84,7 +84,7 @@ public class MapsManagerFrame extends JFrame {
 				}
 			}
 		});
-		JButton delButton = new JButton("Usun");
+		JButton delButton = new JButton("Usuñ");
 		delButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -101,7 +101,7 @@ public class MapsManagerFrame extends JFrame {
 						loadData();
 						em.addMapToRemove(map);
 					} else {
-						JOptionPane.showMessageDialog(null, "Nie mozna usunac mapy. Najpierw usun wszystkie punkty z mapy.", "Uwaga", JOptionPane.WARNING_MESSAGE);
+						JOptionPane.showMessageDialog(null, "Nie mo¿na usun¹æ mapy. Najpierw usuñ wszystkie punkty z mapy.", "Uwaga", JOptionPane.WARNING_MESSAGE);
 					}
 				}
 			}

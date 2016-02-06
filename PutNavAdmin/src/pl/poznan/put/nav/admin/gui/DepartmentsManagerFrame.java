@@ -45,7 +45,7 @@ public class DepartmentsManagerFrame extends JFrame {
 		addButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				String result = JOptionPane.showInputDialog(null, "Nazwa wydzialu:");
+				String result = JOptionPane.showInputDialog(null, "Nazwa wydzia³u:");
 				System.out.println(result);
 				if(result != null && !result.isEmpty()) {
 					Department department = new Department();
@@ -55,7 +55,7 @@ public class DepartmentsManagerFrame extends JFrame {
 				}
 			}
 		});
-		JButton delButton = new JButton("Usun");
+		JButton delButton = new JButton("Usuñ");
 		delButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {

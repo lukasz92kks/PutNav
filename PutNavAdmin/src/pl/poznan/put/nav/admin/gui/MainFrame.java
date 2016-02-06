@@ -1,12 +1,14 @@
 package pl.poznan.put.nav.admin.gui;
 
 import java.awt.BorderLayout;
+import java.awt.ScrollPane;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Locale;
 
 import javax.swing.ImageIcon;
 import javax.swing.JFileChooser;
@@ -15,7 +17,9 @@ import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
+import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
+import javax.swing.UIManager;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
 import pl.poznan.put.nav.admin.Main;
@@ -39,6 +43,16 @@ public class MainFrame extends JFrame {
 	public MainFrame() {
 		System.out.println("MainFrame");
 		this.setTitle("PutNavAdmin");
+		Locale.setDefault(new Locale("pl_PL"));
+		UIManager.put("OptionPane.cancelButtonText", "Anuluj");
+	    UIManager.put("OptionPane.noButtonText", "Nie");
+	    UIManager.put("OptionPane.okButtonText", "Ok");
+	    UIManager.put("OptionPane.yesButtonText", "Tak");
+	    UIManager.put("FileChooser.cancelButtonText", "Anuluj");
+	    UIManager.put("FileChooser.saveButtonText", "Wybierz");
+	    UIManager.put("FileChooser.cancelButtonMnemonic", "Anuluj wybieranie");
+	    UIManager.put("FileChooser.openButtonMnemonic", "Otwórz plik");
+	    UIManager.put("FileChooser.openDialogTitleText", "Otwórz plik");
 		this.setIconImage(new ImageIcon(Main.class.getResource("/resources/logo192.png")).getImage());
 		this.setExtendedState(MAXIMIZED_BOTH);
 		this.setLayout(new BorderLayout());
@@ -75,7 +89,7 @@ public class MainFrame extends JFrame {
 			}
 		});
 		//JMenuItem saveAsMenuItem = new JMenuItem("Zapisz jako...");
-		JMenuItem exitMenuItem =  new JMenuItem("Zakoncz");
+		JMenuItem exitMenuItem =  new JMenuItem("Zakoñcz");
 		exitMenuItem.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -88,29 +102,29 @@ public class MainFrame extends JFrame {
 		fileMenu.add(exitMenuItem);
 		
 		JMenu editMenu = new JMenu("Edycja");
-		JMenuItem deleteAllPoints = new JMenuItem("Usun wszystkie punkty");
+		JMenuItem deleteAllPoints = new JMenuItem("Usuñ wszystkie punkty");
 		deleteAllPoints.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				deleteAllPointsAction();
 			}
 		});
-		JMenu manageMenuItem = new JMenu("Zarzadzaj");
-		JMenuItem manageBuildingsMenuItem = new JMenuItem("Zarzadzaj budynkami");
+		JMenu manageMenuItem = new JMenu("Zarz¹dzaj");
+		JMenuItem manageBuildingsMenuItem = new JMenuItem("Zarz¹dzaj budynkami");
 		manageBuildingsMenuItem.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				manageBuildingsItemAction();
 			}
 		});
-		JMenuItem manageMapsMenuItem = new JMenuItem("Zarzadzaj mapami");
+		JMenuItem manageMapsMenuItem = new JMenuItem("Z¹rzadzaj mapami");
 		manageMapsMenuItem.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				manageMapsItemAction();
 			}
 		});
-		JMenuItem manageDepartmentsMenuItem = new JMenuItem("Zarzadzaj wydzialami");
+		JMenuItem manageDepartmentsMenuItem = new JMenuItem("Z¹rzadzaj wydzia³ami");
 		manageDepartmentsMenuItem.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -132,6 +146,7 @@ public class MainFrame extends JFrame {
 	
 	private void openMenuItemAction() {
 		JFileChooser fileChooser = new JFileChooser();
+		fileChooser.setApproveButtonText("Wybierz");
 		fileChooser.setCurrentDirectory(new File(System.getProperty("user.dir")));
 		fileChooser.setFileFilter(new FileNameExtensionFilter("PNA Put Nav Archive file", "pna"));
 		
@@ -204,7 +219,7 @@ public class MainFrame extends JFrame {
 	}
 	
 	private void deleteAllPointsAction() {
-		int result = JOptionPane.showConfirmDialog(null, "Usunac wszystkie punkty z mapy?", "", JOptionPane.YES_NO_OPTION);
+		int result = JOptionPane.showConfirmDialog(null, "Usun¹æ wszystkie punkty z mapy?", "", JOptionPane.YES_NO_OPTION);
 		if(result == JOptionPane.YES_OPTION) {
 			EntitiesManager em = AppFactory.getEntitiesManager();
 			em.getActiveMap().getMapPoints().clear();
@@ -215,7 +230,7 @@ public class MainFrame extends JFrame {
 	private void closeAppAction() {
 		EntitiesManager em = AppFactory.getEntitiesManager();
 		if(em.getActiveBuilding() != null || em.getActiveMap() != null) {
-			int result = JOptionPane.showConfirmDialog(null, "Zapisac zmiany przed zamknieciem?", "", JOptionPane.YES_NO_OPTION);
+			int result = JOptionPane.showConfirmDialog(null, "Zapisaæ zmiany przed wyjœciem?", "", JOptionPane.YES_NO_OPTION);
 			if(result == JOptionPane.YES_OPTION) {
 				saveMenuItemAction();
 			}

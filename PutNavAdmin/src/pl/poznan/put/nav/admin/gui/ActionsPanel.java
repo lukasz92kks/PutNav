@@ -51,6 +51,19 @@ public class ActionsPanel extends JPanel {
 		addRoomPointButton = new JButton(new ImageIcon(Main.class.getResource("/resources/room.png")));
 		deletePointButton = new JButton(new ImageIcon(Main.class.getResource("/resources/delete.png")));
 		
+		addPointsConnectionButton.setToolTipText("Po³¹cz punkty");
+		deletePointsConnectionButton.setToolTipText("Usuñ po³¹czenie punktów");
+		addFloorsConnectionButton.setToolTipText("Po³¹cz piêtra");
+		deleteFloorsConnectionButton.setToolTipText("Usuñ po³¹czenie piêter");
+		addBuildingPointButton.setToolTipText("Dodaj budynek");
+		addNaviPointButton.setToolTipText("Dodaj punkt nawigacyjny");
+		addDoorPointButton.setToolTipText("Dodaj drzwi wewnêtrzne");
+		addLiftPointButton.setToolTipText("Dodaj windê");
+		addStairsPointButton.setToolTipText("Dodaj schody");
+		addOutdoorPointButton.setToolTipText("Dodaj drzwi zewnêtrzne");
+		addRoomPointButton.setToolTipText("Dodaj pomieszczenie");
+		deletePointButton.setToolTipText("Usuñ punkt");
+		
 		addActionListener(addPointsConnectionButton, MapPanelModes.EDIT_POINTS_CONNECTIONS, -1);
 		addActionListener(deletePointsConnectionButton, MapPanelModes.REMOVE_POINTS_CONNECTIONS, -1);
 		addActionListener(addFloorsConnectionButton, MapPanelModes.EDIT_FLOORS_CONNECTIONS, -1);

@@ -40,7 +40,7 @@ public class BuildingsManagerFrame extends JFrame {
 	}
 	
 	private JPanel createButtonPanel() {
-		JButton delButton = new JButton("Usun");
+		JButton delButton = new JButton("Usuñ");
 		delButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
