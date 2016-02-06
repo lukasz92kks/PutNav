@@ -118,4 +118,15 @@ public class MainActivity extends Activity {
         startActivity(new Intent(this, PreferencesActivity.class));
     }
 
+    public void openCampusActivity(View view) {
+        startActivity(new Intent(this, CampusActivity.class));
+    }
+
+    public void openTipsActivity(View view) {
+        startActivity(new Intent(this, TipsActivity.class));
+    }
+
+    public void openAuthorsActivity(View view) {
+        startActivity(new Intent(this, AuthorsActivity.class));
+    }
 }

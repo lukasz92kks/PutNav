@@ -53,7 +53,8 @@
             android:text="O Poligrodzie"
             android:id="@+id/button3"
             android:layout_gravity="center_horizontal"
-            android:layout_margin="@dimen/abc_text_size_menu_material"/>
+            android:layout_margin="@dimen/abc_text_size_menu_material"
+            android:onClick="openCampusActivity"/>
 
         <Button
             android:layout_width="fill_parent"
@@ -61,7 +62,8 @@
             android:text="Wskazówki"
             android:id="@+id/buttonHelp"
             android:layout_gravity="center_horizontal"
-            android:layout_margin="@dimen/abc_text_size_menu_material" />
+            android:layout_margin="@dimen/abc_text_size_menu_material"
+            android:onClick="openTipsActivity"/>
 
         <Button
             android:layout_width="fill_parent"
@@ -70,7 +72,8 @@
             android:text="O autorach"
             android:id="@+id/buttonAboutAuthors"
             android:layout_gravity="center_horizontal|right"
-            android:layout_margin="@dimen/abc_text_size_menu_material" />
+            android:layout_margin="@dimen/abc_text_size_menu_material"
+            android:onClick="openAuthorsActivity"/>
 
     </LinearLayout>
 

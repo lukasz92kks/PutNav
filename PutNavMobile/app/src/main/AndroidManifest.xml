@@ -1,20 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="pl.poznan.put.putnav">
-
+    package="pl.poznan.put.putnav" >
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
 
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
-        android:theme="@style/AppTheme">
+        android:theme="@style/AppTheme" >
         <activity
             android:name=".MainActivity"
-            android:label="@string/app_name">
+            android:label="@string/app_name" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -23,11 +22,23 @@
         </activity>
         <activity
             android:name=".BuildingActivity"
-            android:configChanges="orientation|screenSize|keyboardHidden"></activity>
+            android:configChanges="orientation|screenSize|keyboardHidden" />
         <activity
             android:name=".PreferencesActivity"
             android:label="@string/title_activity_preferences"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".CampusActivity"
+            android:label="@string/title_activity_campus"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".AuthorsActivity"
+            android:label="@string/title_activity_authors"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".TipsActivity"
+            android:label="@string/title_activity_tips"
+            android:theme="@style/AppTheme.NoActionBar" />
     </application>
 
 </manifest>

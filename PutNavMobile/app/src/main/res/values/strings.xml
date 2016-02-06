@@ -9,4 +9,7 @@
     <string name="save">Zapisz</string>
     <string name="polish">Polski</string>
     <string name="english">English</string>
+    <string name="title_activity_campus">CampusActivity</string>
+    <string name="title_activity_authors">AuthorsActivity</string>
+    <string name="title_activity_tips">TipsActivity</string>
 </resources>
