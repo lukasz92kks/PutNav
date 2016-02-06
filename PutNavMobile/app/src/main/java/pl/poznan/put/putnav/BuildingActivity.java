@@ -668,7 +668,8 @@ public class BuildingActivity extends AppCompatActivity {
         //imageView.setImageBitmap(decodeResource(getResources(), currentMapId));
         //Bitmap m = decodeSampledBitmapFromResource(getResources(), currentMapId, 2000, 2000);     // DLA HASH MAP
         BitmapFactory.Options bmOptions = new BitmapFactory.Options();
-        Bitmap m = BitmapFactory.decodeFile(currentMapFile ,bmOptions);
+        bmOptions.inPreferredConfig = Bitmap.Config.RGB_565;
+        Bitmap m = BitmapFactory.decodeFile(currentMapFile, bmOptions);
         Log.i(BuildingActivity.class.getSimpleName(), "config: " + m.getConfig());
         imageView.setImageBitmap(m);
         // tworzenie kopii na której rysujemy linie
