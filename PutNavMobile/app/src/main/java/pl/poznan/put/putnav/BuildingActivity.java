@@ -8,7 +8,9 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Matrix;
 import android.graphics.Paint;
+import android.graphics.Path;
 import android.graphics.PixelFormat;
+import android.graphics.Point;
 import android.os.Environment;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -34,6 +36,7 @@ import java.nio.MappedByteBuffer;
 import java.nio.channels.FileChannel;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 
@@ -56,6 +59,7 @@ public class BuildingActivity extends AppCompatActivity {
     ArrayList<MapPoint> route;
     ArrayList<Room> rooms;
     ArrayList<Map> maps;
+    List<Map> currentBuildingMaps;
     ArrayList<Building> buildings = new ArrayList<>();
     List<Object> lista = new ArrayList<>();
 
@@ -75,6 +79,10 @@ public class BuildingActivity extends AppCompatActivity {
     double scale = 0;
     int idOfCurrentMap = 0;
     Map currentMap;
+    Path path;
+
+    MapPoint secondPointOnMap;
+    MapPoint lastPointOnMap;
 
     Button buttonGoIn; //wejdz do budynku
     Button buttonAboutBuilding; //o budynku
@@ -103,6 +111,7 @@ public class BuildingActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_building);
+        imageView = new TouchImageView(this);
         loadDb();
         init();
         getWindow().setFormat(PixelFormat.RGB_565);
@@ -155,6 +164,8 @@ public class BuildingActivity extends AppCompatActivity {
         for (Room r : rooms) {
             lista.add(r);
         }
+
+        currentBuildingMaps = new ArrayList<>();
 
         ArrayAdapter<Object> adapter = new ArrayAdapter<Object>(
                 this, android.R.layout.simple_dropdown_item_1line, lista);
@@ -251,8 +262,9 @@ public class BuildingActivity extends AppCompatActivity {
                     } else if (currentMap.getCampus() == 0) { // TODO mapa budynku; dobrze?
                         for (MapPoint m : mapPoints) {
                             if (m.getMap().getId() == currentMap.getId()) { //TODO id obecnej mapy; dobrze?
-                                if (m.getType() == 3 && m.getMap() == currentMap) { // sprawdzamy czy kliknelismy na wyjscie
+                                if (m.getType() == 3 && m.getMap().getId() == currentMap.getId()) { // sprawdzamy czy kliknelismy na wyjscie
                                     distance = Math.sqrt((double) ((x - m.getX()) * (x - m.getX()) + (y - m.getY()) * (y - m.getY())));
+                                    Log.i(BuildingActivity.class.getSimpleName(), "dist: " + distance);
                                     if (distance < 30) {
                                         goOutsideFunc();
                                     }
@@ -355,11 +367,11 @@ public class BuildingActivity extends AppCompatActivity {
 
     public void reversePlaces(View view) {
         String tmpFrom = aCTVFrom.getText().toString();
-
-        //aCTVFrom.setText("Z: " + aCTVTo.getText().toString());
-
         aCTVFrom.setText(aCTVTo.getText().toString());
         aCTVTo.setText(tmpFrom);
+        MapPoint tmp = mapPointFrom;
+        mapPointFrom = mapPointTo;
+        mapPointTo = tmp;
     }
 
     public void searchPath(View view) {
@@ -435,12 +447,157 @@ public class BuildingActivity extends AppCompatActivity {
             lines.add(new Line((int) (scale * mplast.getX()), (int) (scale * mplast.getY()), (int) (scale * mp.getX()), (int) (scale * mp.getY())));
             mplast = mp;
         }
+        lastPointOnMap = mplast;
+        if (currentMapPoints.size() > 1) {
+            secondPointOnMap = currentMapPoints.get(1);
+        }
+    }
+
+    public double[] quadraticEquationRoot(double a, double b, double c) {
+        double root1, root2;
+        root1 = (-b + Math.sqrt(b * b - 4 * a * c)) / (2 * a);
+        root2 = (-b - Math.sqrt(b * b - 4 * a * c)) / (2 * a);
+        return new double[]{root1, root2};
+    }
+
+    public double[] getFactors(MapPoint mp1, MapPoint mp2) {
+        double x1 = (double) mp1.getX();
+        double y1 = (double) mp1.getY();
+        double x2 = (double) mp2.getX();
+        double y2 = (double) mp2.getY();
+        double tmpY = y2 - y1;
+        double tmpX = x2 - x1;
+        double a = tmpY / tmpX;
+        double b = y1 - x1 * a;
+
+        return new double[]{a, b};
+    }
+
+    public void buildTriangleStart(MapPoint mp1, MapPoint mp2) {
+
+        Point a;
+        Point b;
+        Point c;
+
+        if (mp1.getX() == mp2.getX()) {
+            if (mp2.getY() > mp1.getY()) {
+                a = new Point(mp2.getX(), mp1.getY() + 55);
+                b = new Point(mp2.getX() - 22, mp1.getY());
+                c = new Point(mp2.getX() + 22, mp1.getY());
+            } else {
+                a = new Point(mp2.getX(), mp1.getY() - 55);
+                b = new Point(mp2.getX() - 22, mp1.getY());
+                c = new Point(mp2.getX() + 22, mp1.getY());
+            }
+
+        } else {
+
+            double[] factors1 = getFactors(mp1, mp2);
+            double x1 = (double) mp1.getX();
+            double y1 = (double) mp1.getY();
+            double[] roots1 = quadraticEquationRoot(
+                    1.0 + factors1[0] * factors1[0],
+                    -2 * x1 + 2 * factors1[0] * factors1[1] - 2 * factors1[0] * y1,
+                    x1 * x1 + y1 * y1 + factors1[1] * factors1[1] - 2 * y1 * factors1[1] - 3000);
+            double xt0 = 0;
+            if (mp1.getX() > mp2.getX()) {
+                xt0 = Math.min(roots1[0], roots1[1]);
+            } else {
+                xt0 = Math.max(roots1[0], roots1[1]);
+            }
+            double yt0 = xt0 * factors1[0] + factors1[1];
+            if (factors1[0] == 0) {
+                factors1[0] += 0.00000001;
+            }
+            double[] factors2 = {-1 / factors1[0], y1 + 1 / factors1[0] * x1};
+            double[] roots2 = quadraticEquationRoot(
+                    1.0 + factors2[0] * factors2[0],
+                    -2 * x1 + 2 * factors2[0] * factors2[1] - 2 * factors2[0] * y1,
+                    x1 * x1 + y1 * y1 + factors2[1] * factors2[1] - 2 * y1 * factors2[1] - 500);
+            double xt1 = Math.max(roots2[0], roots2[1]);
+            double xt2 = Math.min(roots2[0], roots2[1]);
+            double yt1 = xt1 * factors2[0] + factors2[1];
+            double yt2 = xt2 * factors2[0] + factors2[1];
+
+            a = new Point((int) xt0, (int) yt0);
+            b = new Point((int) xt1, (int) yt1);
+            c = new Point((int) xt2, (int) yt2);
+        }
+        path = new Path();
+        path.setFillType(Path.FillType.EVEN_ODD);
+        path.moveTo(a.x, a.y);
+        path.lineTo(b.x, b.y);
+        path.lineTo(c.x, c.y);
+        path.lineTo(a.x, a.y);
+        path.close();
+    }
+
+
+    public void buildTriangleStop(MapPoint mp1, MapPoint mp2) {
+
+        Point a;
+        Point b;
+        Point c;
+
+        if (mp1.getX() == mp2.getX()) {
+            if (mp2.getY() > mp1.getY()) {
+                a = new Point(mp2.getX(), mp2.getY() + 33);
+                b = new Point(mp2.getX() - 22, mp2.getY());
+                c = new Point(mp2.getX() + 22, mp2.getY());
+            } else {
+                a = new Point(mp2.getX(), mp2.getY() - 33);
+                b = new Point(mp2.getX() - 22, mp2.getY());
+                c = new Point(mp2.getX() + 22, mp2.getY());
+            }
+
+        } else {
+
+            double[] factors1 = getFactors(mp2, mp1);
+            double x1 = (double) mp2.getX();
+            double y1 = (double) mp2.getY();
+            double[] roots1 = quadraticEquationRoot(
+                    1.0 + factors1[0] * factors1[0],
+                    -2 * x1 + 2 * factors1[0] * factors1[1] - 2 * factors1[0] * y1,
+                    x1 * x1 + y1 * y1 + factors1[1] * factors1[1] - 2 * y1 * factors1[1] - 3000);
+            double xt0 = 0;
+            if (mp1.getX() < mp2.getX()) {
+                xt0 = Math.max(roots1[0], roots1[1]);
+            } else {
+                xt0 = Math.min(roots1[0], roots1[1]);
+            }
+            double yt0 = xt0 * factors1[0] + factors1[1];
+            if (factors1[0] == 0) {
+                factors1[0] += 0.00000001;
+            }
+            double[] factors2 = {-1 / factors1[0], y1 + 1 / factors1[0] * x1};   // - +
+            double[] roots2 = quadraticEquationRoot(
+                    1.0 + factors2[0] * factors2[0],
+                    -2 * x1 + 2 * factors2[0] * factors2[1] - 2 * factors2[0] * y1,
+                    x1 * x1 + y1 * y1 + factors2[1] * factors2[1] - 2 * y1 * factors2[1] - 500);
+            double xt1 = Math.max(roots2[0], roots2[1]);
+            double xt2 = Math.min(roots2[0], roots2[1]);
+            double yt1 = xt1 * factors2[0] + factors2[1];
+            double yt2 = xt2 * factors2[0] + factors2[1];
+            a = new Point((int) xt0, (int) yt0);
+            b = new Point((int) xt1, (int) yt1);
+            c = new Point((int) xt2, (int) yt2);
+        }
+
+        path = new Path();
+        path.setFillType(Path.FillType.EVEN_ODD);
+        path.moveTo(a.x, a.y);
+        path.lineTo(b.x, b.y);
+        path.lineTo(c.x, c.y);
+        path.lineTo(a.x, a.y);
+        path.close();
+
+
     }
 
     // rysowanie tego co jest w tablicy (ArrayList<MapPoint>) route
     private void drawMap(){
 
-        imageView = new TouchImageView(this);
+        //imageView = new TouchImageView(this);
         container.removeAllViews();
         //((BitmapDrawable)imageView.getDrawable()).getBitmap().recycle();
         //imageView = new TouchImageView(this);
@@ -468,6 +625,20 @@ public class BuildingActivity extends AppCompatActivity {
         // nakładanie linii na obrazek
         for (Line line : lines) {
             canvasCopy.drawLine(line.getStartX(),line.getStartY(), line.getStopX(), line.getStopY(), paint);
+        }
+
+        paint.setStyle(Paint.Style.FILL_AND_STROKE);
+        paint.setAntiAlias(true);
+
+
+        if (secondPointOnMap != null || lastPointOnMap != null) {
+            if (secondPointOnMap != null || secondPointOnMap.getPrevious() != null || lastPointOnMap.getPrevious() != null || lastPointOnMap != null) {
+                buildTriangleStart(secondPointOnMap.getPrevious(), secondPointOnMap);
+                canvasCopy.drawPath(path, paint);
+
+                buildTriangleStop(lastPointOnMap.getPrevious(), lastPointOnMap);
+                canvasCopy.drawPath(path, paint);
+            }
         }
 
         if (mutableBitmap.getHeight() > 4096 || mutableBitmap.getWidth() > 4096) {
@@ -517,6 +688,7 @@ public class BuildingActivity extends AppCompatActivity {
             return;
 
         changeMap(pathMaps.get(currentPathMapId).getFileName());
+        fillLines(); //sprawdzic
         drawMap();
     }
 
@@ -528,7 +700,9 @@ public class BuildingActivity extends AppCompatActivity {
                 Log.i(BuildingActivity.class.getSimpleName(), "mapa z fora: " + map.getBuildings().getName());
 
                 Log.i(BuildingActivity.class.getSimpleName(), "wybrany: " + chosenBuilding.getName());
-                if (map.getBuildings() != null && map.getBuildings().getId() == chosenBuilding.getId()) {
+                // TODO: aktualnie włączna mape gdzie floor = 0 (czyli czasem zamiast parteru, przyziemie)
+                // trzeba wykorzystać mapPoint sąsiadujący z drzwiami wejściowymi i tam tam getMap()
+                if (map.getBuildings() != null && map.getBuildings().getId() == chosenBuilding.getId() && map.getFloor() == 0) {
                     Log.i(BuildingActivity.class.getSimpleName(), "ZNALEZIONY BUDYNEK: " + map.getBuildings().getName());
                     changeMap(map.getFileName());
                 }
@@ -544,12 +718,14 @@ public class BuildingActivity extends AppCompatActivity {
     }
 
     private void goOutsideFunc(){
+        Log.i(BuildingActivity.class.getSimpleName(), "wychodze ");
         // zmiana mapy na kampus
         for (Map map : maps) {
             if (map.getCampus() == 1) {
                 changeMap(map.getFileName());
             }
         }
+        verticalSeekBar.setMaximum(0);
 
         hideTouchableButtons();
 
@@ -604,10 +780,37 @@ public class BuildingActivity extends AppCompatActivity {
     }
 
     private void changeMap(String key){
+        Map oldMap = currentMap;
         currentMapId = mapsHash.get(key);
         currentMap = getCurrentMap();
-        if(currentMap.getBuildings() != null)
+
+        // ustawienia suwaka po zmianie budynku
+
+        // wychodzimy z budynku do kampusu
+        // jeżeli oldMap.getBuilding jest nullem, tzn ze nastąpiła wejście do budynku z kampusu) i drugi
+        // warunek nie powinien być sprawdzany (oldMap.getBuildings().getId() -> nullPointerExeption)
+        // jeżeli nie jest nullem to można spokojnie sprawdzać drugi warunek(przejście BT <-> CW)
+        if (currentMap.getCampus() == 1) {
+            verticalSeekBar.setMaximum(0);
+            currentBuildingMaps.clear();
+        } else if (oldMap.getBuildings() == null || oldMap.getBuildings().getId() != currentMap.getBuildings().getId()) {
+            currentBuildingMaps.clear();
+
             verticalSeekBar.setMaximum(currentMap.getBuildings().getNumberOfFloors() - 1);
+            Log.i(BuildingActivity.class.getSimpleName(), "ILOSC PIĘTER BUDYNKU: " + currentMap.getBuildings().getNumberOfFloors());
+
+            for (Map map : maps) {
+                if (map.getBuildings() != null && map.getBuildings().getId() == currentMap.getBuildings().getId()) {
+                    currentBuildingMaps.add(map);
+                    Log.i(BuildingActivity.class.getSimpleName(), "Dodanie mapy do tablicy: " + map.getFileName());
+                }
+            }
+
+            //sortowanie wg pięter
+
+            Collections.sort(currentBuildingMaps);
+
+        }
     }
 
     public static Bitmap decodeSampledBitmapFromResource(Resources res, int resId,
@@ -738,9 +941,9 @@ public class BuildingActivity extends AppCompatActivity {
         @Override
         public void onStopTrackingTouch(SeekBar seekBar) {
             //załadowanie nowego obrazka o ile nastąpiła zmiana piętra
-
-            int number = seekBar.getProgress();
-            loadImageToContainer(number);
+            changeMap(currentBuildingMaps.get(seekBar.getProgress()).getFileName());
+            drawMap();
+            Log.i(BuildingActivity.class.getSimpleName(), "Zmiana piętra na: " + seekBar.getProgress());
         }
 
     };
