@@ -15,7 +15,7 @@ public class Room {
     private String name;
     @DatabaseField(columnName = "Function")
     private String function;
-    //@DatabaseField
+    @DatabaseField(columnName = "Floor")
     private int floor;
     //@DatabaseField(foreign = true)
     private Building building;

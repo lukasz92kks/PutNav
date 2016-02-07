@@ -94,6 +94,8 @@ public class BuildingActivity extends AppCompatActivity {
 
     Building chosenBuilding;
 
+    String wc = new String("WC");
+
     ArrayList<Line> lines = new ArrayList<Line>();
 
     int currentMapId; //id zasobu np. R.resources.cd_parter
@@ -164,12 +166,19 @@ public class BuildingActivity extends AppCompatActivity {
         navigationModeOff();
 
         for (MapPoint m : mapPoints) {
+            if (m.getType() == 6) {
+                Log.i(BuildingActivity.class.getSimpleName(), "id : " + m.getRoom().getId());
+                Log.i(BuildingActivity.class.getSimpleName(), "name: " + m.getRoom().getName());
+                Log.i(BuildingActivity.class.getSimpleName(), "funkcja: " + m.getRoom().getFunction());
+                Log.i(BuildingActivity.class.getSimpleName(), "floor: " + m.getRoom().getFloor());
+            }
             lista.add(m);
         }
 
         for (Room r : rooms) {
             lista.add(r);
         }
+
 
         currentBuildingMaps = new ArrayList<>();
 
@@ -710,11 +719,22 @@ public class BuildingActivity extends AppCompatActivity {
 
         // bitmapa z ikona drzwi
         Bitmap outDoorsBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.drzwi);
+        Bitmap wcBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.wc);
+        Bitmap buildingBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.drzwi); // TODO zmienić obrazek
+
         // typ 3 -> outdoors
-        for (MapPoint mapPoint : mapPoints){
-            if(mapPoint.getType() == 3 && currentMap.getId() == mapPoint.getMap().getId()){
-                canvasCopy.drawBitmap(outDoorsBitmap, mapPoint.getX(), mapPoint.getY(), null);
-                Log.i(BuildingActivity.class.getSimpleName(), "Rysuję drzwi : X = " + mapPoint.getX() + ", Y = " + mapPoint.getY());
+        for (MapPoint mapPoint : mapPoints) {
+            if (currentMap.getId() == mapPoint.getMap().getId()) {
+                if (mapPoint.getType() == 3) {
+                    canvasCopy.drawBitmap(outDoorsBitmap, mapPoint.getX() - outDoorsBitmap.getWidth() / 2, mapPoint.getY() - outDoorsBitmap.getHeight() / 2, null);
+                    Log.i(BuildingActivity.class.getSimpleName(), "Rysuję drzwi : X = " + mapPoint.getX() + ", Y = " + mapPoint.getY());
+                } else if (mapPoint.getType() == 6 && mapPoint.getRoom().getFunction().equals(wc)) {
+                    canvasCopy.drawBitmap(wcBitmap, mapPoint.getX() - wcBitmap.getWidth() / 2, mapPoint.getY() - wcBitmap.getHeight() / 2, null);
+                    Log.i(BuildingActivity.class.getSimpleName(), "Rysuję kibel : X = " + mapPoint.getX() + ", Y = " + mapPoint.getY());
+                } else if (mapPoint.getBuilding() != null) {
+                    canvasCopy.drawBitmap(buildingBitmap, mapPoint.getX() - buildingBitmap.getWidth() / 2, mapPoint.getY() - buildingBitmap.getHeight() / 2, null);
+                    Log.i(BuildingActivity.class.getSimpleName(), "Rysuję kibel : X = " + mapPoint.getX() + ", Y = " + mapPoint.getY());
+                }
             }
         }
 

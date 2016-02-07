@@ -1,11 +1,8 @@
 package pl.poznan.put.putnav;
 
-import android.widget.Toast;
-
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.List;
 import java.util.PriorityQueue;
 
 public class RouteFinder implements Serializable {

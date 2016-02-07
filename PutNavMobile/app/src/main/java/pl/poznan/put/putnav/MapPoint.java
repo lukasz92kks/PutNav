@@ -22,7 +22,7 @@ public class MapPoint implements Comparable<MapPoint>, Serializable {
     private Map map;
     @DatabaseField (foreign = true, columnName = "Building", foreignAutoRefresh = true, maxForeignAutoRefreshLevel = 2)
     private Building building;
-    @DatabaseField (foreign = true, columnName = "Room")
+    @DatabaseField(foreign = true, columnName = "Room", foreignAutoRefresh = true)
     private Room room;
 
     private double distance;
