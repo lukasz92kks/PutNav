@@ -692,6 +692,7 @@ public class BuildingActivity extends AppCompatActivity {
         //Bitmap m = decodeSampledBitmapFromResource(getResources(), currentMapId, 2000, 2000);     // DLA HASH MAP
         BitmapFactory.Options bmOptions = new BitmapFactory.Options();
         bmOptions.inPreferredConfig = Bitmap.Config.RGB_565;
+        bmOptions.inMutable = true;
         Bitmap m = BitmapFactory.decodeFile(currentMapFile, bmOptions);
         Log.i(BuildingActivity.class.getSimpleName(), "config: " + m.getConfig());
         imageView.setImageBitmap(m);
@@ -700,10 +701,10 @@ public class BuildingActivity extends AppCompatActivity {
         //Bitmap lineOnBmp = ((BitmapDrawable)imageView.getDrawable()).getBitmap();
         //Bitmap copy = Bitmap.createBitmap(lineOnBmp);
         //Bitmap mutableBitmap = copy.copy(Bitmap.Config.RGB_565, true);
-        Bitmap mutableBitmap = convertToMutable(m);
-        Log.i(BuildingActivity.class.getSimpleName(), "config : " + mutableBitmap.getConfig());
+        //Bitmap mutableBitmap = convertToMutable(m);
+        Log.i(BuildingActivity.class.getSimpleName(), "config : " + m.getConfig());
 
-        Canvas canvasCopy = new Canvas(mutableBitmap);
+        Canvas canvasCopy = new Canvas(m);
 
         // właściwości linii
         Paint paint = new Paint();
@@ -765,15 +766,15 @@ public class BuildingActivity extends AppCompatActivity {
         }
 
 
-        if (mutableBitmap.getHeight() > 4096 || mutableBitmap.getWidth() > 4096) {
+        if (m.getHeight() > 4096 || m.getWidth() > 4096) {
 
-            float aspect_ratio = ((float) mutableBitmap.getHeight()) / ((float) mutableBitmap.getWidth());
+            float aspect_ratio = ((float) m.getHeight()) / ((float) m.getWidth());
 
             Bitmap scaled;
             if (aspect_ratio < 1) {
-                scaled = Bitmap.createScaledBitmap(mutableBitmap, 4096, (int) ((4096) * aspect_ratio), true);
+                scaled = Bitmap.createScaledBitmap(m, 4096, (int) ((4096) * aspect_ratio), true);
             } else {
-                scaled = Bitmap.createScaledBitmap(mutableBitmap, (int) (4096.0 / aspect_ratio), 4096, true);
+                scaled = Bitmap.createScaledBitmap(m, (int) (4096.0 / aspect_ratio), 4096, true);
             }
             /*Bitmap scaledBitmap = Bitmap.createBitmap(mutableBitmap, 0, 0,
                     (int) (4096 * 0.9),
@@ -784,7 +785,7 @@ public class BuildingActivity extends AppCompatActivity {
 
             imageView.setImageBitmap(scaled);
         } else {
-            imageView.setImageBitmap(mutableBitmap);
+            imageView.setImageBitmap(m);
         }
 
 
