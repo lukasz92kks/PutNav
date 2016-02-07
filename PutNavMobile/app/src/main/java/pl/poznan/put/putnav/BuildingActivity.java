@@ -457,6 +457,8 @@ public class BuildingActivity extends AppCompatActivity {
         MapPoint tmp = mapPointFrom;
         mapPointFrom = mapPointTo;
         mapPointTo = tmp;
+
+
     }
 
     public void searchPath(View view) {
@@ -464,14 +466,14 @@ public class BuildingActivity extends AppCompatActivity {
         // null ewentialnie jakis obiekt ktory zwraca db jak nie znajdzie (jeśli to nie null)
         if(mapPointFrom == null || mapPointTo == null) return;
 
-        mapPoints = new ArrayList<>(originMapPoints); //usunięcie śmieci po poprzednim wyszukiwaniu
-        //ew. w ten sposób:
-        /*
+        //mapPoints = new ArrayList<>(originMapPoints); //Złe!!!
+
+
         for (MapPoint m : mapPoints){
             m.setPrevious(null);
             m.setDistance(Double.longBitsToDouble(0x7ff0000000000000L));
         }
-        */
+
         lines.clear();
         routeFinder = new RouteFinder(mapPoints, mapPointsArcs);
         pathMaps = new ArrayList<>();
