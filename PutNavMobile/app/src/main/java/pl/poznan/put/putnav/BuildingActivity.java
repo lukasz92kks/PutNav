@@ -103,6 +103,8 @@ public class BuildingActivity extends AppCompatActivity {
     String currentMapFile;
     ArrayList<Map> pathMaps; // kolejne mapy wyznaczonej trasy
 
+    Map chosenMap;
+
     //HashMap<String, Integer> mapsHash = new HashMap<>();
 
     boolean navigationMode = false;
@@ -166,12 +168,6 @@ public class BuildingActivity extends AppCompatActivity {
         navigationModeOff();
 
         for (MapPoint m : mapPoints) {
-            if (m.getType() == 6) {
-                Log.i(BuildingActivity.class.getSimpleName(), "id : " + m.getRoom().getId());
-                Log.i(BuildingActivity.class.getSimpleName(), "name: " + m.getRoom().getName());
-                Log.i(BuildingActivity.class.getSimpleName(), "funkcja: " + m.getRoom().getFunction());
-                Log.i(BuildingActivity.class.getSimpleName(), "floor: " + m.getRoom().getFloor());
-            }
             lista.add(m);
         }
 
@@ -251,7 +247,7 @@ public class BuildingActivity extends AppCompatActivity {
                     double distance = 0;
                     Log.i(BuildingActivity.class.getSimpleName(), "mapa: " + currentMapId);
                     boolean hit = false;
-                    if (currentMap.getCampus() == 1) { // TODO mapa kampusu; dobrze?
+                    if (currentMap.getCampus() == 1) { // mapa kampusu
                         for (MapPoint m : mapPoints) {
                             if (m.getType() == 7) {
                                 distance = Math.sqrt((double) ((x - m.getX()) * (x - m.getX()) + (y - m.getY()) * (y - m.getY())));
@@ -274,16 +270,34 @@ public class BuildingActivity extends AppCompatActivity {
                         if (!hit) {
                             hideTouchableButtons();
                         }
-                    } else if (currentMap.getCampus() == 0) { // TODO mapa budynku; dobrze?
+                    } else if (currentMap.getCampus() == 0) { // mapa budynku
                         for (MapPoint m : mapPoints) {
                             if (m.getMap().getId() == currentMap.getId()) { //TODO id obecnej mapy; dobrze?
-                                if (m.getType() == 3 && m.getMap().getId() == currentMap.getId()) { // sprawdzamy czy kliknelismy na wyjscie
+                                if (m.getType() == 3) { // sprawdzamy czy kliknelismy na wyjscie
                                     distance = Math.sqrt((double) ((x - m.getX()) * (x - m.getX()) + (y - m.getY()) * (y - m.getY())));
                                     Log.i(BuildingActivity.class.getSimpleName(), "dist: " + distance);
                                     if (distance < 30) {
                                         goOutsideFunc();
                                     }
-                                } /* else if (m.getType() == 4) { // sprawdzamy czy kliknęliśmy na chody
+                                } else if (m.getType() == 2) {
+                                    distance = Math.sqrt((double) ((x - m.getX()) * (x - m.getX()) + (y - m.getY()) * (y - m.getY())));
+                                    if (distance < 30) {
+                                        ArrayList<MapPointsArcs> edges = m.getEdges();
+                                        for (MapPointsArcs mpa : edges) {
+                                            if (mpa.getPoint1().getMap().getId() != mpa.getPoint2().getMap().getId()) {
+                                                if (mpa.getPoint1().getId() == m.getId()) {
+                                                    chosenMap = mpa.getPoint2().getMap();
+                                                } else {
+                                                    chosenMap = mpa.getPoint1().getMap();
+                                                }
+                                                //Log.i(BuildingActivity.class.getSimpleName(), "Rysuję drzwi : X = " + mapPoint.getX() + ", Y = " + mapPoint.getY());
+                                            }
+                                        }
+                                        changeBuilding();
+                                    }
+                                }
+
+                                 /* else if (m.getType() == 4) { // sprawdzamy czy kliknęliśmy na chody
                                     distance = Math.sqrt((double) ((x - m.getX()) * (x - m.getX()) + (y - m.getY()) * (y - m.getY())));
                                     if (distance < 10) { //raczej mała liczba, bo musza byc schody UP i DOWN (czy nie?), wiec zeby sie nie nakladalo
                                         //zmiana mapy UP lub down  // sprawdzic czy mozna najpierw (parter, lub max pietro)
@@ -721,6 +735,7 @@ public class BuildingActivity extends AppCompatActivity {
         Bitmap outDoorsBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.drzwi);
         Bitmap wcBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.wc);
         Bitmap buildingBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.drzwi); // TODO zmienić obrazek
+        Bitmap liftBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.winda);
 
         // typ 3 -> outdoors
         for (MapPoint mapPoint : mapPoints) {
@@ -731,9 +746,20 @@ public class BuildingActivity extends AppCompatActivity {
                 } else if (mapPoint.getType() == 6 && mapPoint.getRoom().getFunction().equals(wc)) {
                     canvasCopy.drawBitmap(wcBitmap, mapPoint.getX() - wcBitmap.getWidth() / 2, mapPoint.getY() - wcBitmap.getHeight() / 2, null);
                     Log.i(BuildingActivity.class.getSimpleName(), "Rysuję kibel : X = " + mapPoint.getX() + ", Y = " + mapPoint.getY());
+                } else if (mapPoint.getType() == 5) {
+                    canvasCopy.drawBitmap(liftBitmap, mapPoint.getX() - liftBitmap.getWidth() / 2, mapPoint.getY() - liftBitmap.getHeight() / 2, null);
+                    Log.i(BuildingActivity.class.getSimpleName(), "Rysuję windę : X = " + mapPoint.getX() + ", Y = " + mapPoint.getY());
+                } else if (mapPoint.getType() == 2) { //drzwi pomiedzy budynkami
+                    ArrayList<MapPointsArcs> edges = mapPoint.getEdges();
+                    for (MapPointsArcs mpa : edges) {
+                        if (mpa.getPoint1().getMap().getId() != mpa.getPoint2().getMap().getId()) {
+                            canvasCopy.drawBitmap(outDoorsBitmap, mapPoint.getX() - outDoorsBitmap.getWidth() / 2, mapPoint.getY() - outDoorsBitmap.getHeight() / 2, null);
+                            Log.i(BuildingActivity.class.getSimpleName(), "Rysuję drzwi : X = " + mapPoint.getX() + ", Y = " + mapPoint.getY());
+                        }
+                    }
                 } else if (mapPoint.getBuilding() != null) {
                     canvasCopy.drawBitmap(buildingBitmap, mapPoint.getX() - buildingBitmap.getWidth() / 2, mapPoint.getY() - buildingBitmap.getHeight() / 2, null);
-                    Log.i(BuildingActivity.class.getSimpleName(), "Rysuję kibel : X = " + mapPoint.getX() + ", Y = " + mapPoint.getY());
+                    Log.i(BuildingActivity.class.getSimpleName(), "Rysuję budynek : X = " + mapPoint.getX() + ", Y = " + mapPoint.getY());
                 }
             }
         }
@@ -790,7 +816,30 @@ public class BuildingActivity extends AppCompatActivity {
         drawMap();
     }
 
+    public void changeBuilding() {
+        for (Map map : maps) {
+            if (map.getBuildings() != null) {
+                Log.i(BuildingActivity.class.getSimpleName(), "mapa z fora: " + map.getBuildings().getId());
+                Log.i(BuildingActivity.class.getSimpleName(), "wybrany: " + chosenBuilding.getName());
+                // TODO: aktualnie włączna mape gdzie floor = 0 (czyli czasem zamiast parteru, przyziemie)
+                // trzeba wykorzystać mapPoint sąsiadujący z drzwiami wejściowymi i tam tam getMap()
+                if (map.getId() == chosenMap.getId()) {
+                    Log.i(BuildingActivity.class.getSimpleName(), "ZNALEZIONY BUDYNEK: " + map.getBuildings().getName());
+                    changeMap(map.getFileName());
+                }
+            }
+        }
+
+        hideTouchableButtons();
+        drawMap();
+    }
+
     public void goInside(View view) {
+        goInsideFunc();
+    }
+
+    public void goInsideFunc() {
+        Log.i(BuildingActivity.class.getSimpleName(), "..........................................");
         // zmiana mapy na podstawie chosenBuilding -> domyslnie wybieramy parter tego budynku
         for (Map map : maps) {
             if (map.getBuildings() != null) {
@@ -809,6 +858,7 @@ public class BuildingActivity extends AppCompatActivity {
 
         hideTouchableButtons();
         drawMap();
+
     }
 
     public void goOutside(View view) {
