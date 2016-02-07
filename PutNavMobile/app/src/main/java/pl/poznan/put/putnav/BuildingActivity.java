@@ -706,6 +706,19 @@ public class BuildingActivity extends AppCompatActivity {
             }
         }
 
+        // TODO: trzeba wyskalowac + na kampusie sie nie pojawiaja
+
+        // bitmapa z ikona drzwi
+        Bitmap outDoorsBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.drzwi);
+        // typ 3 -> outdoors
+        for (MapPoint mapPoint : mapPoints){
+            if(mapPoint.getType() == 3 && currentMap.getId() == mapPoint.getMap().getId()){
+                canvasCopy.drawBitmap(outDoorsBitmap, mapPoint.getX(), mapPoint.getY(), null);
+                Log.i(BuildingActivity.class.getSimpleName(), "Rysuję drzwi : X = " + mapPoint.getX() + ", Y = " + mapPoint.getY());
+            }
+        }
+
+
         if (mutableBitmap.getHeight() > 4096 || mutableBitmap.getWidth() > 4096) {
 
             float aspect_ratio = ((float) mutableBitmap.getHeight()) / ((float) mutableBitmap.getWidth());
