@@ -60,6 +60,8 @@ public class BuildingActivity extends AppCompatActivity {
     ArrayList<MapPoint> mapPoints;
     ArrayList<MapPoint> originMapPoints;
     ArrayList<MapPointsArcs> mapPointsArcs;
+    ArrayList<Photo> photos;
+    ArrayList<Department> departments;
 
     RouteFinder routeFinder;
     ArrayList<MapPoint> route;
@@ -71,6 +73,7 @@ public class BuildingActivity extends AppCompatActivity {
 
     String appDir = new File(Environment.getExternalStorageDirectory().getAbsolutePath(), "putnavadmin").getAbsolutePath();
     String mapsDir = new File(Environment.getExternalStorageDirectory().getAbsolutePath(), "putnavadmin/maps").getAbsolutePath();
+    String imagesDir = new File(Environment.getExternalStorageDirectory().getAbsolutePath(), "putnavadmin/images").getAbsolutePath();
     private SharedPreferences sharedPreferences;
     private static final String PREFERENCES_NAME = "appPreferences";
     private static final String PREFERENCE_DISABLED = "disabled";
@@ -108,6 +111,7 @@ public class BuildingActivity extends AppCompatActivity {
     ArrayList<Map> pathMaps; // kolejne mapy wyznaczonej trasy
 
     Map chosenMap;
+    Building selectedBuilding;
 
     //HashMap<String, Integer> mapsHash = new HashMap<>();
 
@@ -267,6 +271,7 @@ public class BuildingActivity extends AppCompatActivity {
                                     buttonGoIn.setVisibility(View.VISIBLE);
                                     buttonAboutBuilding.setEnabled(true);
                                     buttonAboutBuilding.setVisibility(View.VISIBLE);
+                                    selectedBuilding = m.getBuilding();
                                     break;
                                 }else {
                                     hit = false;
@@ -348,6 +353,8 @@ public class BuildingActivity extends AppCompatActivity {
             buildings = new ArrayList<>(db.getBuildingDao().queryForAll());
             rooms = new ArrayList<>(db.getRoomDao().queryForAll());
             maps = new ArrayList<>(db.getMapDao().queryForAll());
+            photos = new ArrayList<>(db.getPhotoDao().queryForAll());
+            departments = new ArrayList<>(db.getDepartmentDao().queryForAll());
             //buildings = new ArrayList<>(db.getBuildingDao().queryForAll());
 
 
@@ -450,38 +457,57 @@ public class BuildingActivity extends AppCompatActivity {
 
     public String getDepartments() {
         String s = new String("Wydziały:\n");
-        for (Department d : chosenBuilding.getDepartments()) {
-            s += d.getName();
-        }
+        /*for (Department d : departments) {
+            for(Building b : d.getBuildings()) {
+                if (b.getId() == selectedBuilding.getId())
+                    s += d.getName();
+            }
+        }*/
 
         return s;
     }
 
     public void aboutBuilding(View view) {
-        LayoutInflater layoutInflater = (LayoutInflater) getBaseContext().getSystemService(LAYOUT_INFLATER_SERVICE);
-        View popupView = layoutInflater.inflate(R.layout.popup_about_building, null);
-        final PopupWindow popupWindow = new PopupWindow(
-                popupView,
-                LayoutParams.WRAP_CONTENT,
-                LayoutParams.WRAP_CONTENT);
-        TextView textViewBuilding = (TextView) popupView.findViewById(R.id.textViewBuilding);
-        textViewBuilding.setText(getDepartments());
+        if(selectedBuilding != null) {
+            LayoutInflater layoutInflater = (LayoutInflater) getBaseContext().getSystemService(LAYOUT_INFLATER_SERVICE);
+            View popupView = layoutInflater.inflate(R.layout.popup_about_building, null);
+            final PopupWindow popupWindow = new PopupWindow(
+                    popupView,
+                    LayoutParams.WRAP_CONTENT,
+                    LayoutParams.WRAP_CONTENT);
+            TextView textViewBuilding = (TextView) popupView.findViewById(R.id.textViewBuilding);
+            textViewBuilding.setText(selectedBuilding.getName() + "\n" + selectedBuilding.getAddress() + "\n" + getDepartments());
 
-        Button btnDismiss = (Button) popupView.findViewById(R.id.buttonClose);
-        ImageView imageViewBuilding = (ImageView) popupView.findViewById(R.id.imageViewBuilding);
-        Bitmap buildingBitmap;
-        //TODO utworzyć bitmapę!
-        //imageViewBuilding.setImageBitmap(buildingBitmap);
-        btnDismiss.setOnClickListener(new Button.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                popupWindow.dismiss();
+            Button btnDismiss = (Button) popupView.findViewById(R.id.buttonClose);
+            ImageView imageViewBuilding = (ImageView) popupView.findViewById(R.id.imageViewBuilding);
+
+            Bitmap buildingBitmap = null;
+            BitmapFactory.Options bmOptions = new BitmapFactory.Options();
+            bmOptions.inPreferredConfig = Bitmap.Config.RGB_565;
+            bmOptions.inMutable = true;
+            String photoFile = null;
+            for(Photo photo : photos) {
+                if(photo.getBuilding().getId() == selectedBuilding.getId())
+                    photoFile = photo.getFile();
             }
-        });
+            if(photoFile != null) {
+                File file = new File(imagesDir, photoFile);
+                Log.i(BuildingActivity.class.getSimpleName(), file.getAbsolutePath() + " " + file.exists());
+                buildingBitmap = BitmapFactory.decodeFile(file.getAbsolutePath(), bmOptions);
+                imageViewBuilding.setImageBitmap(buildingBitmap);
+            }
 
-        popupWindow.showAtLocation(view, Gravity.CENTER, 0, 0);
-        popupWindow.setFocusable(true);
-        popupWindow.update();
+            btnDismiss.setOnClickListener(new Button.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    popupWindow.dismiss();
+                }
+            });
+
+            popupWindow.showAtLocation(view, Gravity.CENTER, 0, 0);
+            popupWindow.setFocusable(true);
+            popupWindow.update();
+        }
     }
 
 

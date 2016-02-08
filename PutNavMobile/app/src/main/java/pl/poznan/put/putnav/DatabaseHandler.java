@@ -28,6 +28,7 @@ public class DatabaseHandler extends OrmLiteSqliteOpenHelper {
     private Dao<Department, Integer> departmentDao = null;
     private Dao<Room, Integer> roomDao = null;
     private Dao<Map, Integer> mapDao = null;
+    private Dao<Photo, Integer> photoDao = null;
 
 
     public DatabaseHandler(Context context) throws SQLException {
@@ -123,4 +124,10 @@ public class DatabaseHandler extends OrmLiteSqliteOpenHelper {
         return mapDao;
     }
 
+    public Dao<Photo, Integer> getPhotoDao() throws SQLException {
+        if (photoDao == null) {
+            photoDao = getDao(Photo.class);
+        }
+        return photoDao;
+    }
 }
