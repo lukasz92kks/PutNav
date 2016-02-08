@@ -1,10 +1,16 @@
 package pl.poznan.put.putnav;
 
+import com.j256.ormlite.field.DatabaseField;
+import com.j256.ormlite.table.DatabaseTable;
+
 import java.util.ArrayList;
 
+@DatabaseTable(tableName = "Departments")
 public class Department {
 
+    @DatabaseField(id = true, columnName = "Id")
     private int id;
+    @DatabaseField(id = true, columnName = "Name")
     private String name;
     private ArrayList<Building> buildings = new ArrayList<Building>();
 

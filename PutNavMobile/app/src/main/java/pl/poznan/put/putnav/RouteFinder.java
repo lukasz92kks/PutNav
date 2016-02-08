@@ -1,5 +1,7 @@
 package pl.poznan.put.putnav;
 
+import android.util.Log;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -18,7 +20,7 @@ public class RouteFinder implements Serializable {
 
     ArrayList<MapPoint> findPath(MapPoint start, MapPoint goal) {
 
-
+        long startTime = System.currentTimeMillis();
         boolean goalReached = false;
         ArrayList<MapPoint> path = new ArrayList<MapPoint>();
         start.setDistance(0);
@@ -47,6 +49,9 @@ public class RouteFinder implements Serializable {
         }
 
         Collections.reverse(path);
+
+        long endTime = System.currentTimeMillis();
+        Log.i(RouteFinder.class.getSimpleName(), "czas wyznaczania trasy: " + (endTime - startTime) + "ms");
         return path;
 
     }

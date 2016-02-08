@@ -23,7 +23,7 @@ public class Building {
     private ArrayList<Map> maps = new ArrayList<Map>();
     private ArrayList<Room> rooms = new ArrayList<Room>();
     private ArrayList<MapPoint> mapPoints = new ArrayList<MapPoint>();
-    private ArrayList<ImageView> images = new ArrayList<ImageView>();
+    private ArrayList<Photo> images = new ArrayList<Photo>();
 
     public Building() {}
 
@@ -75,7 +75,7 @@ public class Building {
         mapPoints.remove(mapPoint);
     }
 
-    public ImageView addImage(ImageView image) {
+    public Photo addImage(Photo image) {
         images.add(image);
         return image;
     }
@@ -140,11 +140,11 @@ public class Building {
         this.mapPoints = mapPoints;
     }
 
-    public ArrayList<ImageView> getImages() {
+    public ArrayList<Photo> getImages() {
         return images;
     }
 
-    public void setImages(ArrayList<ImageView> images) {
+    public void setImages(ArrayList<Photo> images) {
         this.images = images;
     }
 
