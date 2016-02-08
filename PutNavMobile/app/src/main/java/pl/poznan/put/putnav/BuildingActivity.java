@@ -78,11 +78,16 @@ public class BuildingActivity extends AppCompatActivity {
 
     Matrix matrix = new Matrix();
 
+
+    //TODO delete those matrices
+    Matrix tmpMatrix;
+    Matrix tmp2Matrix;
+
     MapPoint mapPointFrom;
     MapPoint mapPointTo;
 
     VerticalSeekBar verticalSeekBar = null;
-    ImageView imageView = null;
+    TouchImageView imageView = null;
 
     double scale = 0;
     int idOfCurrentMap = 0;
@@ -106,6 +111,7 @@ public class BuildingActivity extends AppCompatActivity {
     int currentPathMapId; // id aktualnej mapy tablicy pathMaps
     String currentMapFile;
     ArrayList<Map> pathMaps; // kolejne mapy wyznaczonej trasy
+    ArrayList<MapPoint> currentMapPoints;
 
     Map chosenMap;
 
@@ -550,7 +556,7 @@ public class BuildingActivity extends AppCompatActivity {
     private void fillLines(){
         lines.clear();
         // currentMapPoints - lista punkow na danym piętrze
-        ArrayList<MapPoint> currentMapPoints = new ArrayList<MapPoint>();
+        currentMapPoints = new ArrayList<MapPoint>();
 
         for (MapPoint mp : route) {
             if (mp.getMap().getId() == currentMapId) {
@@ -830,6 +836,16 @@ public class BuildingActivity extends AppCompatActivity {
             aboutCurrentMap.setText("Budynek: " + currentMap.getBuilding().getName()
                     + "\n Piętro: " + currentMap.getFloor());
         }
+        if (currentMapPoints != null) {
+            Log.i(BuildingActivity.class.getSimpleName(), "X: " + currentMapPoints.get(0).getX() + " Y: " + currentMapPoints.get(0).getY());
+            imageView.setZoom(2.0f, currentMapPoints.get(0).getX(), currentMapPoints.get(0).getY());
+
+        } else {
+            Log.i(BuildingActivity.class.getSimpleName(), "centruję na 1000,1000");
+            imageView.setZoom(2.0f, 1000, 1000);
+
+        }
+
 
         container.addView(imageView);
 
@@ -863,7 +879,7 @@ public class BuildingActivity extends AppCompatActivity {
         for (Map map : maps) {
             if (map.getBuilding() != null) {
                 Log.i(BuildingActivity.class.getSimpleName(), "mapa z fora: " + map.getBuilding().getId());
-                Log.i(BuildingActivity.class.getSimpleName(), "wybrany: " + chosenBuilding.getName());
+                //Log.i(BuildingActivity.class.getSimpleName(), "wybrany: " + chosenBuilding.getName());
                 // TODO: aktualnie włączna mape gdzie floor = 0 (czyli czasem zamiast parteru, przyziemie)
                 // trzeba wykorzystać mapPoint sąsiadujący z drzwiami wejściowymi i tam tam getMap()
                 if (map.getId() == chosenMap.getId()) {
