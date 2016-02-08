@@ -122,7 +122,8 @@
         android:layout_below="@+id/button10"
         android:text="O budynku"
         android:id="@+id/button9"
-        android:layout_gravity="center_horizontal|bottom" />
+        android:layout_gravity="center_horizontal|bottom"
+        android:onClick="aboutBuilding" />
 
 
     <Button

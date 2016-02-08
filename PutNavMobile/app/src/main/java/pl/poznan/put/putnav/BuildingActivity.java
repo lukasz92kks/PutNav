@@ -15,6 +15,8 @@ import android.os.Environment;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MotionEvent;
 import android.view.View;
@@ -24,8 +26,10 @@ import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.PopupWindow;
 import android.widget.SeekBar;
 import android.widget.TextView;
+import android.view.ViewGroup.LayoutParams;
 
 import com.j256.ormlite.android.apptools.OpenHelperManager;
 
@@ -444,13 +448,42 @@ public class BuildingActivity extends AppCompatActivity {
         drawMap();
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu;
-        //this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_main, menu);
-        return true;
+    public String getDepartments() {
+        String s = new String("Wydziały:\n");
+        for (Department d : chosenBuilding.getDepartments()) {
+            s += d.getName();
+        }
+
+        return s;
     }
+
+    public void aboutBuilding(View view) {
+        LayoutInflater layoutInflater = (LayoutInflater) getBaseContext().getSystemService(LAYOUT_INFLATER_SERVICE);
+        View popupView = layoutInflater.inflate(R.layout.popup_about_building, null);
+        final PopupWindow popupWindow = new PopupWindow(
+                popupView,
+                LayoutParams.WRAP_CONTENT,
+                LayoutParams.WRAP_CONTENT);
+        TextView textViewBuilding = (TextView) popupView.findViewById(R.id.textViewBuilding);
+        textViewBuilding.setText(getDepartments());
+
+        Button btnDismiss = (Button) popupView.findViewById(R.id.buttonClose);
+        ImageView imageViewBuilding = (ImageView) popupView.findViewById(R.id.imageViewBuilding);
+        Bitmap buildingBitmap;
+        //TODO utworzyć bitmapę!
+        //imageViewBuilding.setImageBitmap(buildingBitmap);
+        btnDismiss.setOnClickListener(new Button.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                popupWindow.dismiss();
+            }
+        });
+
+        popupWindow.showAtLocation(view, Gravity.CENTER, 0, 0);
+        popupWindow.setFocusable(true);
+        popupWindow.update();
+    }
+
 
     public void reversePlaces(View view) {
         String tmpFrom = aCTVFrom.getText().toString();
