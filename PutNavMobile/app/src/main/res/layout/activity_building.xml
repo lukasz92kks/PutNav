@@ -12,129 +12,177 @@
         android:layout_height="fill_parent"
         android:layout_alignParentTop="true"
         android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true">
+        android:layout_alignParentEnd="true"
+        android:layout_marginTop="50dp">
 
     </FrameLayout>
 
-    <Button
-        style="?android:attr/buttonStyleSmall"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentRight="true"
-        android:layout_marginBottom="0dp"
-        android:text="Odwróć"
-        android:id="@+id/buttonRevert"
-        android:onClick="reversePlaces"/>
 
-    <Button
-        style="?android:attr/buttonStyleSmall"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentRight="true"
-        android:layout_marginTop="0dp"
-        android:layout_below="@+id/buttonRevert"
-        android:text="Wyszukaj"
-        android:id="@+id/buttonSearch"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:onClick="searchPath"/>
-
-    <pl.poznan.put.putnav.widgets.VerticalSeekBar
-        android:id="@+id/verticalSeekBar"
-        android:layout_width="wrap_content"
+    <FrameLayout
+        android:id="@+id/navigation_on_container"
+        android:layout_width="fill_parent"
         android:layout_height="fill_parent"
-        android:layout_gravity="bottom"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true"
-        android:layout_marginTop="75dp"
-        android:layout_marginBottom="60dp" />
+        android:visibility="invisible">
 
-    <AutoCompleteTextView
+        <TextView
+            style="?android:attr/buttonStyleSmall"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:layout_marginLeft="5dp"
+            android:background="#FFFFFF"
+            android:text="@string/current_path"
+            android:id="@+id/textViewCurrentPath"
+            android:layout_marginRight="10dp" />
+
+        <TextView
+            android:layout_width="fill_parent"
+            android:layout_height="23dp"
+            android:layout_marginTop="5dp"
+            android:layout_marginLeft="110dp"
+            android:layout_marginRight="50dp"
+            android:background="#FFFFFF"
+            android:id="@+id/textViewCurrentPathFrom" />
+
+        <TextView
+            android:layout_width="fill_parent"
+            android:layout_height="23dp"
+            android:layout_marginTop="30dp"
+            android:layout_marginLeft="110dp"
+            android:layout_marginRight="50dp"
+            android:background="#FFFFFF"
+            android:id="@+id/textViewCurrentPathTo" />
+
+        <ImageButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/buttonEscapeNavigationMode"
+            android:layout_gravity="end|top"
+            android:layout_marginTop="10dp"
+            android:layout_marginRight="5dp"
+            android:src="@drawable/krzyzyk"
+            android:background="@null"
+            android:onClick="escapeNavigation"/>
+
+        <ImageButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/buttonPreviousMap"
+            android:layout_gravity="left|center_vertical"
+            android:layout_marginLeft="5dp"
+            android:src="@drawable/strzalka_l"
+            android:background="@null"
+            android:onClick="previousMap" />
+
+        <ImageButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/buttonNextMap"
+            android:layout_gravity="right|center_vertical"
+            android:layout_marginRight="5dp"
+            android:src="@drawable/strzalka_p"
+            android:background="@null"
+            android:onClick="nextMap"/>
+
+    </FrameLayout>
+
+    <FrameLayout
+        android:id="@+id/navigation_off_container"
         android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:text=""
-        android:id="@+id/autoCompleteTextView1"
-        android:singleLine="true"
-        android:completionThreshold="1"
-        android:background="@color/background_floating_material_light"
-        android:layout_alignParentTop="true"
-        android:layout_marginBottom="2dp"
-        android:layout_toLeftOf="@+id/buttonRevert"
-        android:layout_toStartOf="@+id/buttonRevert" />
+        android:layout_height="fill_parent"
+        android:visibility="visible">
+
+        <pl.poznan.put.putnav.widgets.VerticalSeekBar
+            android:id="@+id/verticalSeekBar"
+            android:layout_width="wrap_content"
+            android:layout_height="fill_parent"
+            android:layout_gravity="right|bottom"
+            android:layout_marginTop="70dp"
+            android:layout_marginBottom="70dp"
+            android:layout_marginRight="5dp" />
+
+        <AutoCompleteTextView
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:text=""
+            android:id="@+id/autoCompleteTextView1"
+            android:singleLine="true"
+            android:completionThreshold="1"
+            android:background="@color/background_floating_material_light"
+            android:layout_marginBottom="2dp"
+            android:layout_marginRight="100dp" />
 
 
-    <AutoCompleteTextView
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:text=""
-        android:id="@+id/autoCompleteTextView2"
-        android:completionThreshold="1"
-        android:background="@color/background_floating_material_light"
-        android:layout_below="@+id/autoCompleteTextView1"
-        android:layout_toLeftOf="@+id/buttonRevert"
-        android:layout_toStartOf="@+id/buttonRevert" />
+        <AutoCompleteTextView
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:text=""
+            android:id="@+id/autoCompleteTextView2"
+            android:completionThreshold="1"
+            android:background="@color/background_floating_material_light"
+            android:layout_marginTop="25dp"
+            android:layout_marginRight="100dp" />
 
-    <Button
-        style="?android:attr/buttonStyleSmall"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="dalej"
-        android:id="@+id/buttonNextMap"
-        android:layout_below="@+id/buttonPreviousMap"
-        android:onClick="nextMap" />
+        <ImageButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/buttonSearch"
+            android:src="@drawable/odwroc"
+            android:background="@null"
+            android:onClick="reversePlaces"
+            android:layout_gravity="right|top"
+            android:layout_marginRight="55dp"
+            android:layout_marginTop="5dp"/>
 
-    <Button
-        style="?android:attr/buttonStyleSmall"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="cofnij"
-        android:id="@+id/buttonPreviousMap"
-        android:layout_below="@+id/buttonEscapeNavigationMode"
-        android:onClick="previousMap" />
-    />
+        <ImageButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/buttonRevert"
+            android:background="@null"
+            android:onClick="searchPath"
+            android:layout_gravity="right|top"
+            android:layout_marginRight="7dp"
+            android:layout_marginTop="5dp"
+            android:src="@drawable/lupa" />
 
-    <Button
-        style="?android:attr/buttonStyleSmall"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="X"
-        android:id="@+id/buttonEscapeNavigationMode"
-        android:layout_below="@+id/buttonSearch"
-        android:layout_alignParentLeft="true"
-        android:enabled="true"
-        android:focusable="false"
-        android:onClick="escapeNavigation"/>
+    </FrameLayout>
 
-    <Button
-        style="?android:attr/buttonStyleSmall"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="start z:"
-        android:layout_below="@+id/button6"
-        android:id="@+id/button10"
-        android:layout_gravity="right|bottom" />
+    <RelativeLayout
+        android:layout_width="150dp"
+        android:layout_height="80dp"
+        android:id="@+id/touchable_menu_container"
+        android:layout_marginTop="50dp"
+        android:visibility="invisible">
 
-    <Button
-        style="?android:attr/buttonStyleSmall"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/button10"
-        android:text="O budynku"
-        android:id="@+id/button9"
-        android:layout_gravity="center_horizontal|bottom"
-        android:onClick="aboutBuilding" />
+        <ImageButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:id="@+id/buttonInfo"
+            android:src="@drawable/info"
+            android:background="@null"
+            android:onClick="aboutBuilding"/>
 
+        <ImageButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="50dp"
+            android:id="@+id/buttonGoInside"
+            android:src="@drawable/drzwi"
+            android:onClick="goInside"
+            android:background="@null"/>
 
-    <Button
-        style="?android:attr/buttonStyleSmall"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Wejdź"
-        android:id="@+id/button5"
-        android:layout_below="@+id/button9"
-        android:layout_gravity="left|bottom"
-        android:onClick="goInside" />
+        <ImageButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:layout_marginLeft="100dp"
+            android:id="@+id/buttonStart"
+            android:src="@drawable/start"
+            android:background="@null"/>
+
+    </RelativeLayout>
+
 
     <TextView
         style="?android:attr/buttonStyleSmall"

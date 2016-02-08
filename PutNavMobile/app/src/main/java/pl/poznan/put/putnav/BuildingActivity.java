@@ -27,6 +27,7 @@ import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.PopupWindow;
+import android.widget.RelativeLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
 import android.view.ViewGroup.LayoutParams;
@@ -55,6 +56,10 @@ public class BuildingActivity extends AppCompatActivity {
     AutoCompleteTextView aCTVFrom;
     AutoCompleteTextView aCTVTo;
     FrameLayout container;
+    FrameLayout navigationModeOnContainer;
+    FrameLayout navigationModeOffContainer;
+    RelativeLayout touchableMenuContainer;
+
 
     DatabaseHandler db;
     ArrayList<MapPoint> mapPoints;
@@ -100,10 +105,6 @@ public class BuildingActivity extends AppCompatActivity {
     MapPoint secondPointOnMap;
     MapPoint lastPointOnMap;
 
-    Button buttonGoIn; //wejdz do budynku
-    Button buttonAboutBuilding; //o budynku
-    Button buttonSetAsStartPoint;
-
     Building chosenBuilding;
 
     String wc = new String("WC");
@@ -122,12 +123,6 @@ public class BuildingActivity extends AppCompatActivity {
     //HashMap<String, Integer> mapsHash = new HashMap<>();
 
     boolean navigationMode = false;
-
-    Button nextMapButton;
-    Button previousMapButton;
-    Button escapeNavigationModeButton;
-    Button floorUpButton;
-    Button floodDownButton;
 
     TextView aboutCurrentMap;
 
@@ -154,20 +149,10 @@ public class BuildingActivity extends AppCompatActivity {
     }
 
     public void init() {
-
-
         container = (FrameLayout) findViewById(R.id.picture_container);
-
-        buttonGoIn = (Button) findViewById(R.id.button5); //wejdz do budynku
-        buttonAboutBuilding = (Button) findViewById(R.id.button9); //o budynku
-        buttonSetAsStartPoint = (Button) findViewById(R.id.button10); // ustaw jako punkt startowy
-
-        buttonGoIn.setEnabled(false);
-        buttonGoIn.setVisibility(View.INVISIBLE);
-        buttonAboutBuilding.setEnabled(false);
-        buttonAboutBuilding.setVisibility(View.INVISIBLE);
-        buttonSetAsStartPoint.setEnabled(false);
-        buttonSetAsStartPoint.setVisibility(View.INVISIBLE);
+        navigationModeOnContainer = (FrameLayout) findViewById(R.id.navigation_on_container);
+        navigationModeOffContainer = (FrameLayout) findViewById(R.id.navigation_off_container);
+        touchableMenuContainer = (RelativeLayout) findViewById(R.id.touchable_menu_container);
 
         verticalSeekBar = (VerticalSeekBar) findViewById(R.id.verticalSeekBar);
         verticalSeekBar.setOnSeekBarChangeListener(listenerSeekbar);
@@ -178,9 +163,6 @@ public class BuildingActivity extends AppCompatActivity {
         verticalSeekBar = (VerticalSeekBar) findViewById(R.id.verticalSeekBar);
         verticalSeekBar.setOnSeekBarChangeListener(listenerSeekbar);
 
-        nextMapButton = (Button) findViewById(R.id.buttonNextMap);
-        previousMapButton = (Button) findViewById(R.id.buttonPreviousMap);
-        escapeNavigationModeButton = (Button) findViewById(R.id.buttonEscapeNavigationMode);
         navigationModeOff();
 
         for (MapPoint m : mapPoints) {
@@ -271,12 +253,13 @@ public class BuildingActivity extends AppCompatActivity {
                                     hit = true;
                                     Log.i(BuildingActivity.class.getSimpleName(), "distance: " + distance + " " + m.getBuilding().getId());
                                     chosenBuilding = m.getBuilding();
-                                    buttonSetAsStartPoint.setEnabled(true);
+                                    /*buttonSetAsStartPoint.setEnabled(true);
                                     buttonSetAsStartPoint.setVisibility(View.VISIBLE);
                                     buttonGoIn.setEnabled(true);
                                     buttonGoIn.setVisibility(View.VISIBLE);
                                     buttonAboutBuilding.setEnabled(true);
-                                    buttonAboutBuilding.setVisibility(View.VISIBLE);
+                                    buttonAboutBuilding.setVisibility(View.VISIBLE);*/
+                                    touchableMenuContainer.setVisibility(View.VISIBLE);
                                     selectedBuilding = m.getBuilding();
                                     break;
                                 }else {
@@ -744,8 +727,6 @@ public class BuildingActivity extends AppCompatActivity {
         path.lineTo(c.x, c.y);
         path.lineTo(a.x, a.y);
         path.close();
-
-
     }
 
     // rysowanie tego co jest w tablicy (ArrayList<MapPoint>) route
@@ -803,6 +784,8 @@ public class BuildingActivity extends AppCompatActivity {
 
         // bitmapa z ikona drzwi
         Bitmap outDoorsBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.drzwi);
+        // TODO: na ikonce budynku w kampusie uzyc tej ikonki
+        Bitmap clickBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.click);
         Bitmap wcBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.wc);
         Bitmap buildingBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.drzwi); // TODO zmienić obrazek
         Bitmap liftBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.winda);
@@ -965,12 +948,15 @@ public class BuildingActivity extends AppCompatActivity {
     }
 
     private void hideTouchableButtons(){
+        /*
         buttonSetAsStartPoint.setEnabled(false);
         buttonSetAsStartPoint.setVisibility(View.INVISIBLE);
         buttonGoIn.setEnabled(false);
         buttonGoIn.setVisibility(View.INVISIBLE);
         buttonAboutBuilding.setEnabled(false);
         buttonAboutBuilding.setVisibility(View.INVISIBLE);
+        */
+        touchableMenuContainer.setVisibility(View.INVISIBLE);
     }
 
     private Map getCurrentMap(){
@@ -983,7 +969,7 @@ public class BuildingActivity extends AppCompatActivity {
 
     private void navigationModeOn(){
         navigationMode = true;
-        nextMapButton.setEnabled(true);
+        /*nextMapButton.setEnabled(true);
         nextMapButton.setVisibility(View.VISIBLE);
         previousMapButton.setEnabled(true);
         previousMapButton.setVisibility(View.VISIBLE);
@@ -993,20 +979,28 @@ public class BuildingActivity extends AppCompatActivity {
         if (getCurrentMap().getBuilding() != null && getCurrentMap().getBuilding().getNumberOfFloors() > 1) {
             verticalSeekBar.setEnabled(false);
             verticalSeekBar.setVisibility(View.INVISIBLE);
-        }
+        }*/
+        navigationModeOnContainer.setVisibility(View.VISIBLE);
+        navigationModeOffContainer.setVisibility(View.INVISIBLE);
+
         //schowaj te do wpisywania sal
     }
 
     private void navigationModeOff(){
         navigationMode = false;
-        nextMapButton.setEnabled(false);
+        /*nextMapButton.setEnabled(false);
         nextMapButton.setVisibility(View.INVISIBLE);
         previousMapButton.setEnabled(false);
         previousMapButton.setVisibility(View.INVISIBLE);
         escapeNavigationModeButton.setEnabled(false);
         escapeNavigationModeButton.setVisibility(View.INVISIBLE);
         verticalSeekBar.setEnabled(true);
-        verticalSeekBar.setVisibility(View.VISIBLE);
+        verticalSeekBar.setVisibility(View.VISIBLE);*/
+
+        navigationModeOffContainer.setVisibility(View.VISIBLE);
+        navigationModeOnContainer.setVisibility(View.INVISIBLE);
+
+        //funkcja czyszcząca trase
         lines.clear();
         //TODO currentmapy ITP też wyczyścić!
     }

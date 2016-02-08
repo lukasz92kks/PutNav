@@ -13,4 +13,5 @@
     <string name="title_activity_authors">AuthorsActivity</string>
     <string name="title_activity_tips">TipsActivity</string>
     <string name="title_activity_about_building">aboutBuildingActivity</string>
+    <string name="current_path">Obecna trasa:</string>
 </resources>
