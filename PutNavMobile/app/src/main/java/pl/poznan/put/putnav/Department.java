@@ -10,7 +10,7 @@ public class Department {
 
     @DatabaseField(id = true, columnName = "Id")
     private int id;
-    @DatabaseField(id = true, columnName = "Name")
+    @DatabaseField(columnName = "Name")
     private String name;
     private ArrayList<Building> buildings = new ArrayList<Building>();
 
