@@ -135,5 +135,18 @@
         android:layout_gravity="left|bottom"
         android:onClick="goInside" />
 
+    <TextView
+        style="?android:attr/buttonStyleSmall"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_marginTop="0dp"
+        android:background="#FFFFFF"
+        android:text="Obecna mapa: "
+        android:id="@+id/textViewCurrentMap"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
+
 
 </RelativeLayout>

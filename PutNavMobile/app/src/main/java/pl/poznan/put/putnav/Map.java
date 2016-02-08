@@ -18,7 +18,7 @@ public class Map implements Comparable<Map> {
     @DatabaseField(columnName = "Campus")
     private int campus;
     @DatabaseField(foreign = true, columnName = "Building", foreignAutoRefresh = true, maxForeignAutoRefreshLevel = 2)
-    private Building buildings;
+    private Building building;
     @DatabaseField(columnName = "FileName")
     private String fileName;
 
@@ -80,12 +80,12 @@ public class Map implements Comparable<Map> {
         this.floor = floor;
     }
 
-    public Building getBuildings() {
-        return buildings;
+    public Building getBuilding() {
+        return building;
     }
 
-    public void setBuildings(Building buildings) {
-        this.buildings = buildings;
+    public void setBuilding(Building building) {
+        this.building = building;
     }
 
     public int getCampus() {

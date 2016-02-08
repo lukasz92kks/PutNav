@@ -25,6 +25,7 @@ import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.SeekBar;
+import android.widget.TextView;
 
 import com.j256.ormlite.android.apptools.OpenHelperManager;
 
@@ -39,7 +40,6 @@ import java.nio.channels.FileChannel;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 
 import pl.poznan.put.putnav.widgets.TouchImageView;
@@ -115,11 +115,14 @@ public class BuildingActivity extends AppCompatActivity {
     Button floorUpButton;
     Button floodDownButton;
 
+    TextView aboutCurrentMap;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_building);
+        aboutCurrentMap = (TextView) findViewById(R.id.textViewCurrentMap);
 
         imageView = new TouchImageView(this);
         loadDb();
@@ -138,6 +141,7 @@ public class BuildingActivity extends AppCompatActivity {
 
     public void init() {
 
+
         container = (FrameLayout) findViewById(R.id.picture_container);
 
         buttonGoIn = (Button) findViewById(R.id.button5); //wejdz do budynku
@@ -150,8 +154,6 @@ public class BuildingActivity extends AppCompatActivity {
         buttonAboutBuilding.setVisibility(View.INVISIBLE);
         buttonSetAsStartPoint.setEnabled(false);
         buttonSetAsStartPoint.setVisibility(View.INVISIBLE);
-
-
 
         verticalSeekBar = (VerticalSeekBar) findViewById(R.id.verticalSeekBar);
         verticalSeekBar.setOnSeekBarChangeListener(listenerSeekbar);
@@ -697,14 +699,14 @@ public class BuildingActivity extends AppCompatActivity {
         bmOptions.inMutable = true;
         Bitmap m = BitmapFactory.decodeFile(currentMapFile, bmOptions);
         Log.i(BuildingActivity.class.getSimpleName(), "config: " + m.getConfig());
-        imageView.setImageBitmap(m);
+        //imageView.setImageBitmap(m); <---- po co już teraz?
         // tworzenie kopii na której rysujemy linie
 
         //Bitmap lineOnBmp = ((BitmapDrawable)imageView.getDrawable()).getBitmap();
         //Bitmap copy = Bitmap.createBitmap(lineOnBmp);
         //Bitmap mutableBitmap = copy.copy(Bitmap.Config.RGB_565, true);
         //Bitmap mutableBitmap = convertToMutable(m);
-        Log.i(BuildingActivity.class.getSimpleName(), "config : " + m.getConfig());
+        //Log.i(BuildingActivity.class.getSimpleName(), "config : " + m.getConfig());
 
         Canvas canvasCopy = new Canvas(m);
 
@@ -789,7 +791,12 @@ public class BuildingActivity extends AppCompatActivity {
         } else {
             imageView.setImageBitmap(m);
         }
-
+        if (currentMap.getBuilding() == null) {
+            aboutCurrentMap.setText("Kampus Piotrowo");
+        } else {
+            aboutCurrentMap.setText("Budynek: " + currentMap.getBuilding().getName()
+                    + "\n Piętro: " + currentMap.getFloor());
+        }
 
         container.addView(imageView);
 
@@ -821,13 +828,13 @@ public class BuildingActivity extends AppCompatActivity {
 
     public void changeBuilding() {
         for (Map map : maps) {
-            if (map.getBuildings() != null) {
-                Log.i(BuildingActivity.class.getSimpleName(), "mapa z fora: " + map.getBuildings().getId());
+            if (map.getBuilding() != null) {
+                Log.i(BuildingActivity.class.getSimpleName(), "mapa z fora: " + map.getBuilding().getId());
                 Log.i(BuildingActivity.class.getSimpleName(), "wybrany: " + chosenBuilding.getName());
                 // TODO: aktualnie włączna mape gdzie floor = 0 (czyli czasem zamiast parteru, przyziemie)
                 // trzeba wykorzystać mapPoint sąsiadujący z drzwiami wejściowymi i tam tam getMap()
                 if (map.getId() == chosenMap.getId()) {
-                    Log.i(BuildingActivity.class.getSimpleName(), "ZNALEZIONY BUDYNEK: " + map.getBuildings().getName());
+                    Log.i(BuildingActivity.class.getSimpleName(), "ZNALEZIONY BUDYNEK: " + map.getBuilding().getName());
                     changeMap(map.getFileName());
                 }
             }
@@ -845,15 +852,15 @@ public class BuildingActivity extends AppCompatActivity {
         Log.i(BuildingActivity.class.getSimpleName(), "..........................................");
         // zmiana mapy na podstawie chosenBuilding -> domyslnie wybieramy parter tego budynku
         for (Map map : maps) {
-            if (map.getBuildings() != null) {
-                Log.i(BuildingActivity.class.getSimpleName(), "mapa z fora: " + map.getBuildings().getId());
-                Log.i(BuildingActivity.class.getSimpleName(), "mapa z fora: " + map.getBuildings().getName());
+            if (map.getBuilding() != null) {
+                Log.i(BuildingActivity.class.getSimpleName(), "mapa z fora: " + map.getBuilding().getId());
+                Log.i(BuildingActivity.class.getSimpleName(), "mapa z fora: " + map.getBuilding().getName());
 
                 Log.i(BuildingActivity.class.getSimpleName(), "wybrany: " + chosenBuilding.getName());
                 // TODO: aktualnie włączna mape gdzie floor = 0 (czyli czasem zamiast parteru, przyziemie)
                 // trzeba wykorzystać mapPoint sąsiadujący z drzwiami wejściowymi i tam tam getMap()
-                if (map.getBuildings() != null && map.getBuildings().getId() == chosenBuilding.getId() && map.getFloor() == 0) {
-                    Log.i(BuildingActivity.class.getSimpleName(), "ZNALEZIONY BUDYNEK: " + map.getBuildings().getName());
+                if (map.getBuilding() != null && map.getBuilding().getId() == chosenBuilding.getId() && map.getFloor() == 0) {
+                    Log.i(BuildingActivity.class.getSimpleName(), "ZNALEZIONY BUDYNEK: " + map.getBuilding().getName());
                     changeMap(map.getFileName());
                 }
             }
@@ -908,7 +915,7 @@ public class BuildingActivity extends AppCompatActivity {
         escapeNavigationModeButton.setEnabled(true);
         escapeNavigationModeButton.setVisibility(View.VISIBLE);
         //chowamy pasek boczny
-        if(getCurrentMap().getBuildings() != null && getCurrentMap().getBuildings().getNumberOfFloors() > 1) {
+        if (getCurrentMap().getBuilding() != null && getCurrentMap().getBuilding().getNumberOfFloors() > 1) {
             verticalSeekBar.setEnabled(false);
             verticalSeekBar.setVisibility(View.INVISIBLE);
         }
@@ -925,6 +932,8 @@ public class BuildingActivity extends AppCompatActivity {
         escapeNavigationModeButton.setVisibility(View.INVISIBLE);
         verticalSeekBar.setEnabled(true);
         verticalSeekBar.setVisibility(View.VISIBLE);
+        lines.clear();
+        //TODO currentmapy ITP też wyczyścić!
     }
 
     public void escapeNavigation(View view){
@@ -946,19 +955,19 @@ public class BuildingActivity extends AppCompatActivity {
 
         // wychodzimy z budynku do kampusu
         // jeżeli oldMap.getBuilding jest nullem, tzn ze nastąpiła wejście do budynku z kampusu) i drugi
-        // warunek nie powinien być sprawdzany (oldMap.getBuildings().getId() -> nullPointerExeption)
+        // warunek nie powinien być sprawdzany (oldMap.getBuilding().getId() -> nullPointerExeption)
         // jeżeli nie jest nullem to można spokojnie sprawdzać drugi warunek(przejście BT <-> CW)
         if (currentMap.getCampus() == 1) {
             verticalSeekBar.setMaximum(0);
             currentBuildingMaps.clear();
-        } else if (oldMap.getBuildings() == null || oldMap.getBuildings().getId() != currentMap.getBuildings().getId()) {
+        } else if (oldMap.getBuilding() == null || oldMap.getBuilding().getId() != currentMap.getBuilding().getId()) {
             currentBuildingMaps.clear();
 
-            verticalSeekBar.setMaximum(currentMap.getBuildings().getNumberOfFloors() - 1);
-            Log.i(BuildingActivity.class.getSimpleName(), "ILOSC PIĘTER BUDYNKU: " + currentMap.getBuildings().getNumberOfFloors());
+            verticalSeekBar.setMaximum(currentMap.getBuilding().getNumberOfFloors() - 1);
+            Log.i(BuildingActivity.class.getSimpleName(), "ILOSC PIĘTER BUDYNKU: " + currentMap.getBuilding().getNumberOfFloors());
 
             for (Map map : maps) {
-                if (map.getBuildings() != null && map.getBuildings().getId() == currentMap.getBuildings().getId()) {
+                if (map.getBuilding() != null && map.getBuilding().getId() == currentMap.getBuilding().getId()) {
                     currentBuildingMaps.add(map);
                     Log.i(BuildingActivity.class.getSimpleName(), "Dodanie mapy do tablicy: " + map.getFileName());
                 }
