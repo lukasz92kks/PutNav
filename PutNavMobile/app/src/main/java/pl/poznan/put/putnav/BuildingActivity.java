@@ -11,6 +11,8 @@ import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.PixelFormat;
 import android.graphics.Point;
+import android.graphics.PointF;
+import android.graphics.drawable.Drawable;
 import android.os.Environment;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -25,6 +27,7 @@ import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.FrameLayout;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.PopupWindow;
 import android.widget.RelativeLayout;
@@ -75,6 +78,9 @@ public class BuildingActivity extends AppCompatActivity {
     List<Map> currentBuildingMaps;
     ArrayList<Building> buildings = new ArrayList<>();
     List<Object> lista = new ArrayList<>();
+
+    ImageButton buttonPreviousMap;
+    ImageButton buttonNextMap;
 
     String appDir = new File(Environment.getExternalStorageDirectory().getAbsolutePath(), "putnavadmin").getAbsolutePath();
     String mapsDir = new File(Environment.getExternalStorageDirectory().getAbsolutePath(), "putnavadmin/maps").getAbsolutePath();
@@ -153,6 +159,8 @@ public class BuildingActivity extends AppCompatActivity {
         navigationModeOnContainer = (FrameLayout) findViewById(R.id.navigation_on_container);
         navigationModeOffContainer = (FrameLayout) findViewById(R.id.navigation_off_container);
         touchableMenuContainer = (RelativeLayout) findViewById(R.id.touchable_menu_container);
+        buttonNextMap = (ImageButton) findViewById(R.id.buttonNextMap);
+        buttonPreviousMap = (ImageButton) findViewById(R.id.buttonPreviousMap);
 
         verticalSeekBar = (VerticalSeekBar) findViewById(R.id.verticalSeekBar);
         verticalSeekBar.setOnSeekBarChangeListener(listenerSeekbar);
@@ -560,6 +568,8 @@ public class BuildingActivity extends AppCompatActivity {
         drawMap();
 
         navigationModeOn();
+        buttonPreviousMap.setVisibility(View.INVISIBLE);
+        buttonPreviousMap.setEnabled(false);
     }
 
     private void fillLines(){
@@ -854,6 +864,8 @@ public class BuildingActivity extends AppCompatActivity {
             imageView.setZoom(2.0f, 1000, 1000);
 
         }
+        PointF a = imageView.getScrollPosition();
+        Log.i(BuildingActivity.class.getSimpleName(), "x: " + a.x + " y: " + a.y);
 
 
         container.addView(imageView);
@@ -870,6 +882,13 @@ public class BuildingActivity extends AppCompatActivity {
         changeMap(pathMaps.get(currentPathMapId).getFileName());
         Log.i(BuildingActivity.class.getSimpleName(), "map id: " + currentMapId);
         fillLines();
+        buttonPreviousMap.setVisibility(View.VISIBLE);
+        buttonPreviousMap.setEnabled(true);
+        if (currentPathMapId == pathMaps.size() - 1) {
+            buttonNextMap.setVisibility(View.INVISIBLE);
+            buttonNextMap.setEnabled(false);
+        }
+
         drawMap();
     }
 
@@ -878,7 +897,12 @@ public class BuildingActivity extends AppCompatActivity {
             currentPathMapId--;
         else
             return;
-
+        buttonPreviousMap.setVisibility(View.VISIBLE);
+        buttonPreviousMap.setEnabled(true);
+        if (currentPathMapId == 0) {
+            buttonNextMap.setVisibility(View.INVISIBLE);
+            buttonNextMap.setEnabled(false);
+        }
         changeMap(pathMaps.get(currentPathMapId).getFileName());
         fillLines(); //sprawdzic
         drawMap();
@@ -981,6 +1005,7 @@ public class BuildingActivity extends AppCompatActivity {
             verticalSeekBar.setVisibility(View.INVISIBLE);
         }*/
         navigationModeOnContainer.setVisibility(View.VISIBLE);
+        //navigationModeOnContainer.
         navigationModeOffContainer.setVisibility(View.INVISIBLE);
 
         //schowaj te do wpisywania sal
