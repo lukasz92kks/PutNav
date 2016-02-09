@@ -27,6 +27,7 @@ public class MapPoint implements Comparable<MapPoint>, Serializable {
 
     private double distance;
     private MapPoint previous;
+    boolean deactivated;
 
     private ArrayList<MapPoint> successors = new ArrayList<MapPoint>();	  // lista nastepnikow
     private ArrayList<MapPointsArcs> edges = new ArrayList<MapPointsArcs>(); //lista krawedzi wychodzacych z danego wierzcholka
@@ -43,6 +44,7 @@ public class MapPoint implements Comparable<MapPoint>, Serializable {
 
     public MapPoint() {
         this.distance = Double.longBitsToDouble(0x7ff0000000000000L);
+        deactivated = false;
     }
 
     public MapPoint(int id, int x, int y, int type) {

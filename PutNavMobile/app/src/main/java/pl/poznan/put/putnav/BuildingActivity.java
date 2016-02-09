@@ -82,6 +82,12 @@ public class BuildingActivity extends AppCompatActivity {
     ImageButton buttonPreviousMap;
     ImageButton buttonNextMap;
 
+    ImageButton buttonActivate;
+    ImageButton buttonDeactivate;
+    ImageButton exitBuilding;
+
+    TextView currentPath;
+
     String appDir = new File(Environment.getExternalStorageDirectory().getAbsolutePath(), "putnavadmin").getAbsolutePath();
     String mapsDir = new File(Environment.getExternalStorageDirectory().getAbsolutePath(), "putnavadmin/maps").getAbsolutePath();
     String imagesDir = new File(Environment.getExternalStorageDirectory().getAbsolutePath(), "putnavadmin/images").getAbsolutePath();
@@ -102,6 +108,12 @@ public class BuildingActivity extends AppCompatActivity {
 
     VerticalSeekBar verticalSeekBar = null;
     TouchImageView imageView = null;
+
+    double imageScale1 = 1;
+    double imageScale2 = 1;
+    double imageScale3 = 1;
+    double imageScale4 = 1;
+    double imageScale5 = 1;
 
     double scale = 0;
     int idOfCurrentMap = 0;
@@ -161,6 +173,15 @@ public class BuildingActivity extends AppCompatActivity {
         touchableMenuContainer = (RelativeLayout) findViewById(R.id.touchable_menu_container);
         buttonNextMap = (ImageButton) findViewById(R.id.buttonNextMap);
         buttonPreviousMap = (ImageButton) findViewById(R.id.buttonPreviousMap);
+        buttonActivate = (ImageButton) findViewById(R.id.activate_door);
+        buttonDeactivate = (ImageButton) findViewById(R.id.deactivate_door);
+        exitBuilding = (ImageButton) findViewById(R.id.exitBuilding);
+        currentPath = (TextView) findViewById(R.id.textViewCurrentPath);
+        currentPath.setText("Z: 611 BM\nDO: 8 CW");
+
+        exitBuilding.setVisibility(View.INVISIBLE);
+        buttonActivate.setVisibility(View.INVISIBLE);
+        buttonDeactivate.setVisibility(View.INVISIBLE);
 
         verticalSeekBar = (VerticalSeekBar) findViewById(R.id.verticalSeekBar);
         verticalSeekBar.setOnSeekBarChangeListener(listenerSeekbar);
@@ -454,6 +475,8 @@ public class BuildingActivity extends AppCompatActivity {
 
     public String getDepartments() {
         String s = new String("Wydziały:\n");
+        s += "Wydział Informatyki\n";
+        s += "Wydział Budowy Maszyn i Zarządzania";
         /*for (Department d : departments) {
             for(Building b : d.getBuildings()) {
                 if (b.getId() == selectedBuilding.getId())
@@ -791,14 +814,19 @@ public class BuildingActivity extends AppCompatActivity {
         }
 
         // TODO: trzeba wyskalowac + na kampusie sie nie pojawiaja
-
+        imageScale2 = 3.0;
+        imageScale3 = 2.0;
         // bitmapa z ikona drzwi
-        Bitmap outDoorsBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.drzwi);
+        Bitmap outDoorsBitmap1 = BitmapFactory.decodeResource(getResources(), R.drawable.drzwi);
+        Bitmap outDoorsBitmap = Bitmap.createScaledBitmap(outDoorsBitmap1, (int) (outDoorsBitmap1.getWidth() / imageScale1), (int) (outDoorsBitmap1.getHeight() / imageScale1), false);
         // TODO: na ikonce budynku w kampusie uzyc tej ikonki
         Bitmap clickBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.click);
-        Bitmap wcBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.wc);
+        Bitmap wcBitmap1 = BitmapFactory.decodeResource(getResources(), R.drawable.wc);
+        Bitmap wcBitmap = Bitmap.createScaledBitmap(wcBitmap1, (int) (wcBitmap1.getWidth() / imageScale3), (int) (wcBitmap1.getHeight() / imageScale3), false);
+
         Bitmap buildingBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.drzwi); // TODO zmienić obrazek
-        Bitmap liftBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.winda);
+        Bitmap liftBitmap1 = BitmapFactory.decodeResource(getResources(), R.drawable.winda);
+        Bitmap liftBitmap = Bitmap.createScaledBitmap(liftBitmap1, (int) (liftBitmap1.getWidth() / imageScale2), (int) (liftBitmap1.getHeight() / imageScale2), false);
 
         // typ 3 -> outdoors
         for (MapPoint mapPoint : mapPoints) {
@@ -853,7 +881,7 @@ public class BuildingActivity extends AppCompatActivity {
             aboutCurrentMap.setText("Kampus Piotrowo");
         } else {
             aboutCurrentMap.setText("Budynek: " + currentMap.getBuilding().getName()
-                    + "\n Piętro: " + currentMap.getFloor());
+                    + "\n Piętro: " + (currentMap.getFloor()));
         }
         if (currentMapPoints != null) {
             Log.i(BuildingActivity.class.getSimpleName(), "X: " + currentMapPoints.get(0).getX() + " Y: " + currentMapPoints.get(0).getY());
@@ -1007,6 +1035,8 @@ public class BuildingActivity extends AppCompatActivity {
         navigationModeOnContainer.setVisibility(View.VISIBLE);
         //navigationModeOnContainer.
         navigationModeOffContainer.setVisibility(View.INVISIBLE);
+        aCTVFrom.setVisibility(View.INVISIBLE);
+        aCTVTo.setVisibility(View.INVISIBLE);
 
         //schowaj te do wpisywania sal
     }
@@ -1024,6 +1054,8 @@ public class BuildingActivity extends AppCompatActivity {
 
         navigationModeOffContainer.setVisibility(View.VISIBLE);
         navigationModeOnContainer.setVisibility(View.INVISIBLE);
+        aCTVFrom.setVisibility(View.VISIBLE);
+        aCTVTo.setVisibility(View.VISIBLE);
 
         //funkcja czyszcząca trase
         lines.clear();

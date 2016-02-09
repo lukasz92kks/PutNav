@@ -13,25 +13,33 @@
     <CheckBox
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
+        android:layout_marginTop="50dp"
         android:text="@string/disabled_person"
+        android:textSize="30dp"
+        android:layout_marginLeft="30dp"
+        android:gravity="center"
         android:id="@+id/checkBox1" />
 
     <RadioGroup
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="50dp"
         android:layout_gravity="center_horizontal">
 
         <RadioButton
             android:id="@+id/radio_polish"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:textSize="30dp"
             android:text="@string/polish" />
         //android:onClick="onRadioButtonClicked"/>
 
         <RadioButton
             android:id="@+id/radio_english"
+
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:textSize="30dp"
             android:text="@string/english" />
         //android:onClick="onRadioButtonClicked"/>
 

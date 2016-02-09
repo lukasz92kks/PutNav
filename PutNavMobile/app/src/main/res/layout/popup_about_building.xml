@@ -3,10 +3,12 @@
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:gravity="top"
     android:background="@android:color/background_light">
 
     <ImageView
         android:id="@+id/imageViewBuilding"
+        android:layout_marginTop="0dp"
         android:layout_width="300dp"
         android:layout_height="300dp"
         android:layout_gravity="center"
@@ -21,6 +23,6 @@
         android:id="@+id/buttonClose"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:text="Close" />
+        android:text="Zamknij" />
 
 </LinearLayout>

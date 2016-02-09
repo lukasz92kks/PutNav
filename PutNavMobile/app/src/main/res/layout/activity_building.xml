@@ -26,7 +26,7 @@
 
         <TextView
             style="?android:attr/buttonStyleSmall"
-            android:layout_width="wrap_content"
+            android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="5dp"
             android:layout_marginLeft="5dp"
@@ -150,6 +150,34 @@
     <RelativeLayout
         android:layout_width="150dp"
         android:layout_height="80dp"
+        android:id="@+id/door_deactivate_container"
+        android:layout_marginTop="50dp"
+        android:visibility="visible">
+
+        <ImageButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:id="@+id/deactivate_door"
+            android:src="@drawable/x"
+            android:background="@null"
+            android:onClick="deactivateDoor" />
+
+        <ImageButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:id="@+id/activate_door"
+            android:src="@drawable/ok"
+            android:background="@null"
+            android:onClick="activateDoor" />
+
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="150dp"
+        android:layout_height="80dp"
         android:id="@+id/touchable_menu_container"
         android:layout_marginTop="50dp"
         android:visibility="invisible">
@@ -183,13 +211,47 @@
 
     </RelativeLayout>
 
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@null"
+        android:visibility="visible"
+        android:gravity="bottom">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginRight="50dp"
+            android:text="5"
+            android:gravity="center"
+            android:visibility="invisible"
+            android:textColor="#0000FF"
+            android:textSize="200dp" />
+
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="50dp"
+        android:layout_height="match_parent"
+        android:background="@null"
+        android:gravity="bottom">
+
+        <ImageButton
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:background="@null"
+            android:id="@+id/exitBuilding"
+            android:src="@drawable/drzwi" />
+
+    </RelativeLayout>
 
     <TextView
         style="?android:attr/buttonStyleSmall"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:layout_marginTop="0dp"
+        android:layout_marginLeft="50dp"
         android:background="#FFFFFF"
         android:text="Obecna mapa: "
         android:id="@+id/textViewCurrentMap"
