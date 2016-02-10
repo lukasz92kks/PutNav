@@ -64,6 +64,7 @@ public class BuildingActivity extends AppCompatActivity {
     FrameLayout navigationModeOnContainer;
     FrameLayout navigationModeOffContainer;
     RelativeLayout touchableMenuContainer;
+    RelativeLayout doorDeactivateContainer;
 
 
     DatabaseHandler db;
@@ -140,13 +141,13 @@ public class BuildingActivity extends AppCompatActivity {
     Map chosenMap;
     Building selectedBuilding;
 
+    MapPoint chosenMapPoint;
+
     //HashMap<String, Integer> mapsHash = new HashMap<>();
 
     boolean navigationMode = false;
 
     TextView aboutCurrentMap;
-
-    Context context;
 
 
     @Override
@@ -154,6 +155,7 @@ public class BuildingActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_building);
         aboutCurrentMap = (TextView) findViewById(R.id.textViewCurrentMap);
+        aboutCurrentMap.setVisibility(View.INVISIBLE);
         loadPreferences();
 
         imageView = new TouchImageView(this);
@@ -183,11 +185,12 @@ public class BuildingActivity extends AppCompatActivity {
         buttonDeactivate = (ImageButton) findViewById(R.id.deactivate_door);
         exitBuilding = (ImageButton) findViewById(R.id.exitBuilding);
         currentPath = (TextView) findViewById(R.id.textViewCurrentPath);
-        currentPath.setText("Z: 611 BM\nDO: 8 CW");
+        doorDeactivateContainer = (RelativeLayout) findViewById(R.id.door_deactivate_container);
 
         exitBuilding.setVisibility(View.INVISIBLE);
         buttonActivate.setVisibility(View.INVISIBLE);
-        buttonDeactivate.setVisibility(View.INVISIBLE);
+        //buttonDeactivate.setVisibility(View.INVISIBLE);
+
 
         verticalSeekBar = (VerticalSeekBar) findViewById(R.id.verticalSeekBar);
         verticalSeekBar.setOnSeekBarChangeListener(listenerSeekbar);
@@ -308,11 +311,22 @@ public class BuildingActivity extends AppCompatActivity {
                     } else if (currentMap.getCampus() == 0) { // mapa budynku
                         for (MapPoint m : mapPoints) {
                             if (m.getMap().getId() == currentMap.getId()) { //TODO id obecnej mapy; dobrze?
-                                if (m.getType() == 3) { // sprawdzamy czy kliknelismy na wyjscie
+                                if (m.getType() == 3 || m.getType() == 5) { // sprawdzamy czy kliknelismy na wyjscie lub winde
                                     distance = Math.sqrt((double) ((x - m.getX()) * (x - m.getX()) + (y - m.getY()) * (y - m.getY())));
                                     Log.i(BuildingActivity.class.getSimpleName(), "dist: " + distance);
                                     if (distance < 30) {
-                                        goOutsideFunc();
+                                        hit = true;
+                                        chosenMapPoint = m;
+                                        Log.i(BuildingActivity.class.getSimpleName(), "czy aktywny: " + m.getIsDeactivated());
+                                        if (m.getIsDeactivated()) {
+                                            Log.i(BuildingActivity.class.getSimpleName(), "pokazuje1...");
+                                            buttonActivate.setVisibility(View.VISIBLE);
+                                            buttonActivate.setEnabled(true);
+                                        } else {
+                                            Log.i(BuildingActivity.class.getSimpleName(), "pokazuje2...");
+                                            buttonDeactivate.setVisibility(View.VISIBLE);
+                                            buttonDeactivate.setEnabled(true);
+                                        }
                                     }
                                 } else if (m.getType() == 2) {
                                     distance = Math.sqrt((double) ((x - m.getX()) * (x - m.getX()) + (y - m.getY()) * (y - m.getY())));
@@ -340,7 +354,10 @@ public class BuildingActivity extends AppCompatActivity {
                                 } */
                             }
                         }
-
+                        if (!hit) {
+                            Log.i(BuildingActivity.class.getSimpleName(), "pudło");
+                            hideActivateButtons();
+                        }
                     }
                 }
 
@@ -351,6 +368,29 @@ public class BuildingActivity extends AppCompatActivity {
             }
         });
 
+    }
+
+    public void deactivateMapPoint(View view) {
+        for (MapPoint m : mapPoints) {
+            if (m.getId() == chosenMapPoint.getId()) {
+                m.setIsDeactivated(true);
+            }
+        }
+
+    }
+
+    public void activateMapPoint(View view) {
+        for (MapPoint m : mapPoints) {
+            if (m.getId() == chosenMapPoint.getId()) {
+                m.setIsDeactivated(false);
+            }
+        }
+
+    }
+
+    public void hideActivateButtons() {
+        doorDeactivateContainer.setVisibility(View.INVISIBLE);
+        doorDeactivateContainer.setEnabled(false);
     }
 
     private void CopyRAWtoSDCard(int id, String path) throws IOException {
@@ -599,6 +639,8 @@ public class BuildingActivity extends AppCompatActivity {
         navigationModeOn();
         buttonPreviousMap.setVisibility(View.INVISIBLE);
         buttonPreviousMap.setEnabled(false);
+        String sCurrentRoute = new String("Z: " + mapPointFrom + "\nDO: " + mapPointTo.toString());
+        currentPath.setText(sCurrentRoute);
     }
 
     private void fillLines(){
@@ -984,6 +1026,8 @@ public class BuildingActivity extends AppCompatActivity {
 
         hideTouchableButtons();
         drawMap();
+        exitBuilding.setEnabled(true);
+        exitBuilding.setVisibility(View.VISIBLE);
 
     }
 
@@ -1003,6 +1047,8 @@ public class BuildingActivity extends AppCompatActivity {
         hideTouchableButtons();
 
         drawMap();
+        exitBuilding.setEnabled(false);
+        exitBuilding.setVisibility(View.INVISIBLE);
     }
 
     private void hideTouchableButtons(){
@@ -1043,6 +1089,8 @@ public class BuildingActivity extends AppCompatActivity {
         navigationModeOffContainer.setVisibility(View.INVISIBLE);
         aCTVFrom.setVisibility(View.INVISIBLE);
         aCTVTo.setVisibility(View.INVISIBLE);
+        aboutCurrentMap.setVisibility(View.INVISIBLE);
+        aboutCurrentMap.setEnabled(false);
 
         //schowaj te do wpisywania sal
     }
@@ -1108,6 +1156,7 @@ public class BuildingActivity extends AppCompatActivity {
             //sortowanie wg pięter
 
             Collections.sort(currentBuildingMaps);
+
 
         }
     }

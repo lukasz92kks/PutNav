@@ -13,7 +13,8 @@
         android:layout_alignParentTop="true"
         android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true"
-        android:layout_marginTop="50dp">
+        android:layout_marginTop="0dp">
+
 
     </FrameLayout>
 
@@ -28,41 +29,13 @@
             style="?android:attr/buttonStyleSmall"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="5dp"
-            android:layout_marginLeft="5dp"
+            android:layout_marginTop="0dp"
+            android:layout_marginLeft="0dp"
+            android:layout_marginRight="50dp"
             android:background="#FFFFFF"
             android:text="@string/current_path"
-            android:id="@+id/textViewCurrentPath"
-            android:layout_marginRight="10dp" />
+            android:id="@+id/textViewCurrentPath" />
 
-        <TextView
-            android:layout_width="fill_parent"
-            android:layout_height="23dp"
-            android:layout_marginTop="5dp"
-            android:layout_marginLeft="110dp"
-            android:layout_marginRight="50dp"
-            android:background="#FFFFFF"
-            android:id="@+id/textViewCurrentPathFrom" />
-
-        <TextView
-            android:layout_width="fill_parent"
-            android:layout_height="23dp"
-            android:layout_marginTop="30dp"
-            android:layout_marginLeft="110dp"
-            android:layout_marginRight="50dp"
-            android:background="#FFFFFF"
-            android:id="@+id/textViewCurrentPathTo" />
-
-        <ImageButton
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/buttonEscapeNavigationMode"
-            android:layout_gravity="end|top"
-            android:layout_marginTop="10dp"
-            android:layout_marginRight="5dp"
-            android:src="@drawable/krzyzyk"
-            android:background="@null"
-            android:onClick="escapeNavigation"/>
 
         <ImageButton
             android:layout_width="wrap_content"
@@ -84,13 +57,24 @@
             android:background="@null"
             android:onClick="nextMap"/>
 
+        <ImageButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/buttonEscapeNavigationMode"
+            android:layout_gravity="right|top"
+            android:layout_marginRight="7dp"
+            android:layout_marginTop="5dp"
+            android:src="@drawable/krzyzyk"
+            android:background="@null"
+            android:onClick="escapeNavigation" />
+
     </FrameLayout>
 
     <FrameLayout
         android:id="@+id/navigation_off_container"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
-        android:visibility="visible">
+        android:visibility="invisible">
 
         <pl.poznan.put.putnav.widgets.VerticalSeekBar
             android:id="@+id/verticalSeekBar"
@@ -145,7 +129,9 @@
             android:layout_marginTop="5dp"
             android:src="@drawable/lupa" />
 
+
     </FrameLayout>
+
 
     <RelativeLayout
         android:layout_width="150dp"
@@ -161,7 +147,7 @@
             android:id="@+id/deactivate_door"
             android:src="@drawable/x"
             android:background="@null"
-            android:onClick="deactivateDoor" />
+            android:onClick="deactivateMapPoint" />
 
         <ImageButton
             android:layout_width="wrap_content"
@@ -170,7 +156,7 @@
             android:id="@+id/activate_door"
             android:src="@drawable/ok"
             android:background="@null"
-            android:onClick="activateDoor" />
+            android:onClick="activateMapPoint" />
 
 
     </RelativeLayout>
@@ -242,18 +228,22 @@
             android:layout_height="50dp"
             android:background="@null"
             android:id="@+id/exitBuilding"
-            android:src="@drawable/drzwi" />
+            android:src="@drawable/drzwi"
+            android:onClick="goOutside" />
 
     </RelativeLayout>
 
     <TextView
-        style="?android:attr/buttonStyleSmall"
+
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="50dp"
         android:layout_alignParentBottom="true"
+        android:layout_marginRight="50dp"
         android:layout_marginLeft="50dp"
         android:background="#FFFFFF"
+        android:visibility="visible"
         android:text="Obecna mapa: "
+        android:gravity="center"
         android:id="@+id/textViewCurrentMap"
         android:layout_alignParentRight="true"
         android:layout_alignParentLeft="true"
@@ -261,3 +251,4 @@
 
 
 </RelativeLayout>
+
