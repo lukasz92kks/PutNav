@@ -1011,9 +1011,9 @@ public class BuildingActivity extends AppCompatActivity {
         }
         PointF a = imageView.getScrollPosition();
         Log.i(BuildingActivity.class.getSimpleName(), "x: " + a.x + " y: " + a.y);
-
-
         container.addView(imageView);
+
+
     }
 
     public void nextMap(View view) {
@@ -1225,6 +1225,16 @@ public class BuildingActivity extends AppCompatActivity {
             currentBuildingMaps.clear();
 
             verticalSeekBar.setMaximum(currentMap.getBuilding().getNumberOfFloors() - 1);
+
+            int diff = 0;
+            if (currentMap.getBuilding().getId() == 3) {
+                diff = 1;
+            } else if (currentMap.getBuilding().getId() == 4) {
+                diff = 2;
+            }
+            int tmp = currentMap.getFloor() + diff;
+            verticalSeekBar.setProgressAndThumb(tmp);
+
             Log.i(BuildingActivity.class.getSimpleName(), "ILOSC PIĘTER BUDYNKU: " + currentMap.getBuilding().getNumberOfFloors());
 
             for (Map map : maps) {
