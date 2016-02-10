@@ -17,7 +17,7 @@
         android:text="@string/settings"
         android:id="@+id/textView12"
         android:layout_marginTop="30dp"
-        android:layout_marginLeft="40dp" />
+        android:layout_marginLeft="50dp" />
 
     <CheckBox
         android:layout_width="wrap_content"
@@ -37,7 +37,7 @@
         android:text="@string/settings_language"
         android:id="@+id/textView11"
         android:layout_marginTop="20dp"
-        android:layout_marginLeft="40dp" />
+        android:layout_marginLeft="50dp" />
 
     <RadioGroup
         android:layout_width="wrap_content"
@@ -65,19 +65,29 @@
 
     </RadioGroup>
 
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="@string/settings_updates"
+        android:id="@+id/textView13"
+        android:layout_marginTop="20dp"
+        android:layout_marginLeft="50dp" />
+
     <EditText
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:inputType="textUri"
         android:id="@+id/serverAddress"
-        android:layout_marginTop="20dp" />
+        android:layout_marginTop="10dp" />
 
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Aktualizuj"
         android:id="@+id/buttonUpdate"
-        android:layout_gravity="center" />
+        android:layout_gravity="center"
+        android:layout_marginTop="10dp" />
 
     <LinearLayout
         android:orientation="horizontal"
@@ -89,7 +99,8 @@
             android:layout_height="wrap_content"
             android:text="@string/abort"
             android:id="@+id/button7"
-            android:layout_gravity="bottom" />
+            android:layout_gravity="bottom"
+            android:layout_marginLeft="20dp" />
 
         <Button
             android:layout_width="wrap_content"
