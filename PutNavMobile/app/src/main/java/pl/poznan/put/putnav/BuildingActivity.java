@@ -24,6 +24,7 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
@@ -109,6 +110,10 @@ public class BuildingActivity extends AppCompatActivity {
 
     MapPoint mapPointFrom;
     MapPoint mapPointTo;
+
+    int scrollX[] = {300, 250, 250, 700, 300, 200, 400, 400};
+    int scrollY[] = {0, 250, 150, 0, 0, 0, 0, 0};
+    int counter = 0;
 
     VerticalSeekBar verticalSeekBar = null;
     TouchImageView imageView = null;
@@ -251,6 +256,9 @@ public class BuildingActivity extends AppCompatActivity {
                         }
                     }
                 }
+                InputMethodManager in = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                in.hideSoftInputFromWindow(aCTVFrom.getApplicationWindowToken(), 0);
+                //imageView.setZoom(2.0f, 300, 0);
             }
         });
 
@@ -275,6 +283,9 @@ public class BuildingActivity extends AppCompatActivity {
                         }
                     }
                 }
+                InputMethodManager in = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                in.hideSoftInputFromWindow(aCTVTo.getApplicationWindowToken(), 0);
+                //imageView.setZoom(2.0f, 300, 0);
             }
         });
 
@@ -1006,12 +1017,14 @@ public class BuildingActivity extends AppCompatActivity {
 
         } else {
             Log.i(BuildingActivity.class.getSimpleName(), "centruję na 1000,1000");
+            //imageView.scrollTo(300,0);
             imageView.setZoom(2.0f, 1000, 1000);
 
         }
-        PointF a = imageView.getScrollPosition();
-        Log.i(BuildingActivity.class.getSimpleName(), "x: " + a.x + " y: " + a.y);
+
         container.addView(imageView);
+        //imageView.scrollTo(scrollX[counter],scrollY[counter]);
+        counter++;
 
 
     }
@@ -1194,6 +1207,16 @@ public class BuildingActivity extends AppCompatActivity {
         //funkcja czyszcząca trase
         lines.clear();
         drawMap();
+
+        int diff = 0;
+        if (currentMap.getBuilding().getId() == 3) {
+            diff = 1;
+        } else if (currentMap.getBuilding().getId() == 4) {
+            diff = 2;
+        }
+        int tmp = currentMap.getFloor() + diff;
+        verticalSeekBar.setProgressAndThumb(tmp);
+
         //TODO currentmapy ITP też wyczyścić!
     }
 
