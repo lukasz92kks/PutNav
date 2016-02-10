@@ -90,6 +90,7 @@ public class BuildingActivity extends AppCompatActivity {
     ImageButton exitBuilding;
 
     TextView currentPath;
+    TextView textViewFloorNumber;
 
     String appDir = new File(Environment.getExternalStorageDirectory().getAbsolutePath(), "putnavadmin").getAbsolutePath();
     String mapsDir = new File(Environment.getExternalStorageDirectory().getAbsolutePath(), "putnavadmin/maps").getAbsolutePath();
@@ -185,11 +186,11 @@ public class BuildingActivity extends AppCompatActivity {
         buttonDeactivate = (ImageButton) findViewById(R.id.deactivate_door);
         exitBuilding = (ImageButton) findViewById(R.id.exitBuilding);
         currentPath = (TextView) findViewById(R.id.textViewCurrentPath);
-        doorDeactivateContainer = (RelativeLayout) findViewById(R.id.door_deactivate_container);
+        textViewFloorNumber = (TextView) findViewById(R.id.textViewFloorNumber);
 
         exitBuilding.setVisibility(View.INVISIBLE);
         buttonActivate.setVisibility(View.INVISIBLE);
-        //buttonDeactivate.setVisibility(View.INVISIBLE);
+        buttonDeactivate.setVisibility(View.INVISIBLE);
 
 
         verticalSeekBar = (VerticalSeekBar) findViewById(R.id.verticalSeekBar);
@@ -203,12 +204,13 @@ public class BuildingActivity extends AppCompatActivity {
 
         navigationModeOff();
 
-        for (MapPoint m : mapPoints) {
-            lista.add(m);
-        }
 
         for (Room r : rooms) {
             lista.add(r);
+        }
+
+        for (Building b : buildings) {
+            lista.add(b);
         }
 
 
@@ -233,9 +235,14 @@ public class BuildingActivity extends AppCompatActivity {
                             }
                         }
                     }
-                    //mapPointFrom = r.getFirstMapPoint();
-                } else if (arg0.getItemAtPosition(arg2) instanceof MapPoint) {
-                    mapPointFrom = (MapPoint) arg0.getItemAtPosition(arg2);
+
+                } else if (arg0.getItemAtPosition(arg2) instanceof Building) {
+                    Building b = (Building) arg0.getItemAtPosition(arg2);
+                    for (MapPoint m : mapPoints) {
+                        if (m.getBuilding() != null && m.getBuilding().getId() == b.getId()) {
+                            mapPointFrom = m;
+                        }
+                    }
                 }
             }
         });
@@ -253,8 +260,13 @@ public class BuildingActivity extends AppCompatActivity {
                             }
                         }
                     }
-                } else if (arg0.getItemAtPosition(arg2) instanceof MapPoint) {
-                    mapPointTo = (MapPoint) arg0.getItemAtPosition(arg2);
+                } else if (arg0.getItemAtPosition(arg2) instanceof Building) {
+                    Building b = (Building) arg0.getItemAtPosition(arg2);
+                    for (MapPoint m : mapPoints) {
+                        if (m.getBuilding() != null && m.getBuilding().getId() == b.getId()) {
+                            mapPointTo = m;
+                        }
+                    }
                 }
             }
         });
@@ -320,12 +332,14 @@ public class BuildingActivity extends AppCompatActivity {
                                         Log.i(BuildingActivity.class.getSimpleName(), "czy aktywny: " + m.getIsDeactivated());
                                         if (m.getIsDeactivated()) {
                                             Log.i(BuildingActivity.class.getSimpleName(), "pokazuje1...");
-                                            buttonActivate.setVisibility(View.VISIBLE);
                                             buttonActivate.setEnabled(true);
+                                            buttonActivate.setVisibility(View.VISIBLE);
+
                                         } else {
                                             Log.i(BuildingActivity.class.getSimpleName(), "pokazuje2...");
-                                            buttonDeactivate.setVisibility(View.VISIBLE);
                                             buttonDeactivate.setEnabled(true);
+                                            buttonDeactivate.setVisibility(View.VISIBLE);
+
                                         }
                                     }
                                 } else if (m.getType() == 2) {
@@ -376,6 +390,7 @@ public class BuildingActivity extends AppCompatActivity {
                 m.setIsDeactivated(true);
             }
         }
+        hideActivateButtons();
 
     }
 
@@ -385,12 +400,15 @@ public class BuildingActivity extends AppCompatActivity {
                 m.setIsDeactivated(false);
             }
         }
+        hideActivateButtons();
 
     }
 
     public void hideActivateButtons() {
-        doorDeactivateContainer.setVisibility(View.INVISIBLE);
-        doorDeactivateContainer.setEnabled(false);
+        buttonDeactivate.setEnabled(false);
+        buttonDeactivate.setVisibility(View.INVISIBLE);
+        buttonActivate.setVisibility(View.INVISIBLE);
+        buttonActivate.setEnabled(false);
     }
 
     private void CopyRAWtoSDCard(int id, String path) throws IOException {
@@ -588,59 +606,79 @@ public class BuildingActivity extends AppCompatActivity {
 
     }
 
+    public void findPointOnMap() {
+        MapPoint targetPoint;
+        if (mapPointFrom != null) {
+            targetPoint = mapPointFrom;
+        } else {
+            targetPoint = mapPointTo;
+        }
+        Map targetMap = new Map();
+        for (Map m : maps) {
+            if (targetPoint.getMap().getId() == m.getId()) {
+                targetMap = m;
+            }
+        }
+        changeMap(targetMap.getFileName());
+        drawMap();
+    }
+
     public void searchPath(View view) {
 
-        // null ewentialnie jakis obiekt ktory zwraca db jak nie znajdzie (jeśli to nie null)
-        if(mapPointFrom == null || mapPointTo == null) return;
+        if (mapPointFrom == null && mapPointTo == null) {
+            return;
+        } else if (mapPointFrom == mapPointTo || mapPointFrom == null || mapPointTo == null) {
+            findPointOnMap();
+        } else {
+            //mapPoints = new ArrayList<>(originMapPoints); //Złe!!!
 
-        //mapPoints = new ArrayList<>(originMapPoints); //Złe!!!
+
+            for (MapPoint m : mapPoints) {
+                m.setPrevious(null);
+                m.setDistance(Double.longBitsToDouble(0x7ff0000000000000L));
+            }
+
+            lines.clear();
+            routeFinder = new RouteFinder(mapPoints, mapPointsArcs);
+            pathMaps = new ArrayList<>();
+
+            // wyszukanie trasy
+            // route - cała trasa
+            route = routeFinder.findPath(mapPointFrom, mapPointTo);
+
+            if (route.isEmpty()) return;
+
+            // wypełnienie listy map na ktorych bedzie trasa
+            Map lastMap = null;
+            for (MapPoint mp : route) {
+                if (lastMap != null && lastMap.getFileName().equals(mp.getMap().getFileName()) || mp.getType() == 5)
+                    continue;
+
+                pathMaps.add(mp.getMap());
+                lastMap = mp.getMap();
+            }
+
+            currentPathMapId = 0;
+            Map a = pathMaps.get(currentPathMapId);
+            Log.i(BuildingActivity.class.getSimpleName(), "mapa: " + a.getId());
+            changeMap(a.getFileName());
 
 
-        for (MapPoint m : mapPoints){
-            m.setPrevious(null);
-            m.setDistance(Double.longBitsToDouble(0x7ff0000000000000L));
+            for (Map m : pathMaps) {
+                Log.i(BuildingActivity.class.getSimpleName(), "mapy: " + m.getId());
+            }
+
+            scale = 1.0;
+            fillLines();
+
+            drawMap();
+
+            navigationModeOn();
+            buttonPreviousMap.setVisibility(View.INVISIBLE);
+            buttonPreviousMap.setEnabled(false);
+            String sCurrentRoute = new String("Z: " + mapPointFrom + "\nDO: " + mapPointTo.toString());
+            currentPath.setText(sCurrentRoute);
         }
-
-        lines.clear();
-        routeFinder = new RouteFinder(mapPoints, mapPointsArcs);
-        pathMaps = new ArrayList<>();
-
-        // wyszukanie trasy
-        // route - cała trasa
-        route = routeFinder.findPath(mapPointFrom, mapPointTo);
-
-        if (route.isEmpty()) return;
-
-        // wypełnienie listy map na ktorych bedzie trasa
-        Map lastMap = null;
-        for (MapPoint mp : route) {
-            if (lastMap != null && lastMap.getFileName().equals(mp.getMap().getFileName()) || mp.getType() == 5)
-                continue;
-
-            pathMaps.add(mp.getMap());
-            lastMap = mp.getMap();
-        }
-
-        currentPathMapId = 0;
-        Map a = pathMaps.get(currentPathMapId);
-        Log.i(BuildingActivity.class.getSimpleName(), "mapa: " + a.getId());
-        changeMap(a.getFileName());
-
-
-        for (Map m : pathMaps) {
-            Log.i(BuildingActivity.class.getSimpleName(), "mapy: " + m.getId());
-        }
-
-        scale = 1.0;
-        fillLines();
-
-        drawMap();
-
-        navigationModeOn();
-        buttonPreviousMap.setVisibility(View.INVISIBLE);
-        buttonPreviousMap.setEnabled(false);
-        String sCurrentRoute = new String("Z: " + mapPointFrom + "\nDO: " + mapPointTo.toString());
-        currentPath.setText(sCurrentRoute);
     }
 
     private void fillLines(){
@@ -1280,15 +1318,18 @@ public class BuildingActivity extends AppCompatActivity {
     {
         @Override
         public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+            textViewFloorNumber.setText(Integer.toString(progress));
         }
 
         @Override
         public void onStartTrackingTouch(SeekBar seekBar) {
+            textViewFloorNumber.setVisibility(View.VISIBLE);
         }
 
         @Override
         public void onStopTrackingTouch(SeekBar seekBar) {
             //załadowanie nowego obrazka o ile nastąpiła zmiana piętra
+            textViewFloorNumber.setVisibility(View.INVISIBLE);
             changeMap(currentBuildingMaps.get(seekBar.getProgress()).getFileName());
             drawMap();
             Log.i(BuildingActivity.class.getSimpleName(), "Zmiana piętra na: " + seekBar.getProgress());

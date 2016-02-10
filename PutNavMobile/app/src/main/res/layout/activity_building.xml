@@ -136,15 +136,14 @@
     <RelativeLayout
         android:layout_width="150dp"
         android:layout_height="80dp"
-        android:id="@+id/door_deactivate_container"
-        android:layout_marginTop="50dp"
-        android:visibility="visible">
+        android:layout_marginTop="50dp">
 
         <ImageButton
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="20dp"
             android:id="@+id/deactivate_door"
+            android:layout_weight="0"
             android:src="@drawable/x"
             android:background="@null"
             android:onClick="deactivateMapPoint" />
@@ -209,6 +208,7 @@
             android:layout_height="match_parent"
             android:layout_marginRight="50dp"
             android:text="5"
+            android:id="@+id/textViewFloorNumber"
             android:gravity="center"
             android:visibility="invisible"
             android:textColor="#0000FF"
