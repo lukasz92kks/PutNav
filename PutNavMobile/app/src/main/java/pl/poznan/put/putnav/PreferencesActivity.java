@@ -102,7 +102,7 @@ public class PreferencesActivity extends AppCompatActivity {
         preferencesEditor.putBoolean(PREFERENCE_DISABLED, a);
         preferencesEditor.putBoolean("exists", true);
         preferencesEditor.putInt("language", language);
-        preferencesEditor.putString("serverAddress", "http://putnav.cba.pl/PutNavArchive.pna");
+        preferencesEditor.putString("serverAddress", "http://putnav.cba.pl");
         preferencesEditor.commit();
         finish();
     }
