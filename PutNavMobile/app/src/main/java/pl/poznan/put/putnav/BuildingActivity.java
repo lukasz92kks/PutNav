@@ -1319,7 +1319,9 @@ public class BuildingActivity extends AppCompatActivity {
         @Override
         public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
             int diff = 0;
-            if (currentMap.getBuilding().getId() == 3 || currentMap.getBuilding().getId() == 4) {
+            if (currentMap.getBuilding().getId() == 3) {
+                diff = 1;
+            } else if (currentMap.getBuilding().getId() == 4) {
                 diff = 2;
             }
             int curr = progress - diff;
