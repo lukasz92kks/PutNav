@@ -1,5 +1,6 @@
 package pl.poznan.put.putnav;
 
+import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
@@ -14,6 +15,7 @@ import android.graphics.Point;
 import android.graphics.PointF;
 import android.graphics.drawable.Drawable;
 import android.os.Environment;
+import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -144,23 +146,27 @@ public class BuildingActivity extends AppCompatActivity {
 
     TextView aboutCurrentMap;
 
+    Context context;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_building);
         aboutCurrentMap = (TextView) findViewById(R.id.textViewCurrentMap);
+        loadPreferences();
 
         imageView = new TouchImageView(this);
         loadDb();
         init();
         getWindow().setFormat(PixelFormat.RGB_565);
 
+
         Log.i(BuildingActivity.class.getSimpleName(), "ile budynkow: " + Integer.toString(buildings.size()));
     }
 
     public void loadPreferences() {
-        sharedPreferences = getSharedPreferences(PREFERENCES_NAME, AppCompatActivity.MODE_PRIVATE);
+        sharedPreferences = getSharedPreferences(PREFERENCES_NAME, 0);
         if (sharedPreferences.contains("exists")) {
             disabled = sharedPreferences.getBoolean(PREFERENCE_DISABLED, false);
         }
@@ -451,7 +457,7 @@ public class BuildingActivity extends AppCompatActivity {
             for (MapPointsArcs mpa : mapPointsArcs) {
                 mpa.setPoint1(mapPoints);
                 mpa.setPoint2(mapPoints);
-                mpa.calculateWeight(false);
+                mpa.calculateWeight(disabled);
             }
 
 
@@ -925,11 +931,11 @@ public class BuildingActivity extends AppCompatActivity {
             currentPathMapId--;
         else
             return;
-        buttonPreviousMap.setVisibility(View.VISIBLE);
-        buttonPreviousMap.setEnabled(true);
+        buttonNextMap.setVisibility(View.VISIBLE);
+        buttonNextMap.setEnabled(true);
         if (currentPathMapId == 0) {
-            buttonNextMap.setVisibility(View.INVISIBLE);
-            buttonNextMap.setEnabled(false);
+            buttonPreviousMap.setVisibility(View.INVISIBLE);
+            buttonPreviousMap.setEnabled(false);
         }
         changeMap(pathMaps.get(currentPathMapId).getFileName());
         fillLines(); //sprawdzic

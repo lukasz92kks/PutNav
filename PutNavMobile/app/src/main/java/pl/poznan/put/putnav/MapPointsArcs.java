@@ -1,5 +1,7 @@
 package pl.poznan.put.putnav;
 
+import android.util.Log;
+
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 
@@ -89,27 +91,53 @@ public class MapPointsArcs implements Serializable {
     }
 
     public void calculateWeight(boolean disabled) { //TODO inwalidzi oraz przejscia miedzy budynkami itd.
-        if (!disabled) {
+        int x1 = this.getPoint1().getX();
+        int y1 = this.getPoint1().getY();
+        int x2 = this.getPoint2().getX();
+        int y2 = this.getPoint2().getY();
+        int t1 = this.getPoint1().getType();
+        int t2 = this.getPoint2().getType();
 
-            if (this.getPoint1().getType() != this.getPoint2().getType()) {
-                weight = 30.0;
-            } else {
-                int x1 = this.getPoint1().getX();
-                int y1 = this.getPoint1().getY();
-                int x2 = this.getPoint2().getX();
-                int y2 = this.getPoint2().getY();
-                weight = Math.sqrt((double) ((x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2)));
+        /*
+        nav nav
+        nav door
+        nav outdoor
+        nav room
+        nav building
+
+        room room
+        */
+        if ((t1 == 1 && t2 == 1) ||
+                (t1 == 1 && t2 == 2) || (t1 == 2 && t2 == 1) ||
+                (t1 == 1 && t2 == 3) || (t1 == 3 && t2 == 1) ||
+                (t1 == 1 && t2 == 6) || (t1 == 6 && t2 == 1) ||
+                (t1 == 1 && t2 == 7) || (t1 == 7 && t2 == 1) ||
+
+                (t1 == 6 && t2 == 6)) {
+            weight = Math.sqrt((double) ((x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2)));
+
+        } else if ((t1 == 1 && t2 == 4) || (t1 == 4 && t2 == 1)) { //nav stairs
+            weight = 20;
+        } else if ((t1 == 1 && t2 == 5) || (t1 == 5 && t2 == 1)) { //nav lift
+            weight = 100;
+        } else if (t1 == 5 && t2 == 5) { // lift lift
+            weight = 5;
+        } else if (t1 == 2 && t2 == 2) { // door door
+            weight = 1;
+        } else if ((t1 == 3 && t2 == 7) || (t1 == 7 && t2 == 3)) { // outdoor building
+            weight = 300;
+        }
+
+        if (!disabled) {
+            if (t1 == 4 && t2 == 4) { // stairs stairs
+                weight = 60.0;
             }
         } else {
-            if (this.getPoint1().getType() != this.getPoint2().getType()) {
-                weight = 30.0;
-            } else {
-                int x1 = this.getPoint1().getX();
-                int y1 = this.getPoint1().getY();
-                int x2 = this.getPoint2().getX();
-                int y2 = this.getPoint2().getY();
-                weight = Math.sqrt((double) ((x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2)));
+            if (t1 == 4 && t2 == 4) { // stairs stairs
+                weight = 10000.0;
             }
+        }
+
 
             /*
             NAVIGATION = 1;
@@ -121,9 +149,5 @@ public class MapPointsArcs implements Serializable {
             BUILDING = 7;
              */
 
-
-
-
-        }
     }
 }

@@ -37,12 +37,13 @@ public class PreferencesActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_preferences);
-        sharedPreferences = getSharedPreferences(PREFERENCES_NAME, AppCompatActivity.MODE_PRIVATE);
+        sharedPreferences = getSharedPreferences(PREFERENCES_NAME, 0);
         init();
         loadPreferences();
     }
 
     public void loadPreferences() {
+
         if (sharedPreferences.contains("exists")) {
             boolean disabled = sharedPreferences.getBoolean(PREFERENCE_DISABLED, false);
             int language = 0;
