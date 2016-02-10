@@ -14,4 +14,19 @@
     <string name="title_activity_tips">TipsActivity</string>
     <string name="title_activity_about_building">aboutBuildingActivity</string>
     <string name="current_path">Obecna trasa:</string>
+    <string name="legend">Legenda</string>
+    <string name="instructions">Instrukcje</string>
+    <string name="functions">Funkcjonalność</string>
+    <string name="door_legend">Wejscie/wyjscie z budynku</string>
+    <string name="legend_door">Wejście oraz wyjście z budynku</string>
+    <string name="legend_info">Wyświetlenie informacji o budynku</string>
+    <string name="legend_start">Ustawienie punktu startowego</string>
+    <string name="legend_pkt_off">Oznaczenie nieczynnego punktu</string>
+    <string name="legend_pkt_on">Oznaczenie punktu jako czynny</string>
+    <string name="legend_search">Wyszukanie trasy</string>
+    <string name="legend_switch">Zamiana punktu startowego z docelowym</string>
+    <string name="legend_wc">Toaleta</string>
+    <string name="legend_close_navigation">Anulowanie nawigacji</string>
+    <string name="legend_previous_map">Poprzednia mapa</string>
+    <string name="legend_next_map">Następna mapa</string>
 </resources>
