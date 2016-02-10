@@ -1318,11 +1318,19 @@ public class BuildingActivity extends AppCompatActivity {
     {
         @Override
         public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-            textViewFloorNumber.setText(Integer.toString(progress));
+            int diff = 0;
+            if (currentMap.getBuilding().getId() == 3 || currentMap.getBuilding().getId() == 4) {
+                diff = 2;
+            }
+            int curr = progress - diff;
+            textViewFloorNumber.setText(String.valueOf(curr));
         }
 
         @Override
         public void onStartTrackingTouch(SeekBar seekBar) {
+            int floor = currentMap.getFloor();
+            Log.i(BuildingActivity.class.getSimpleName(), "floor: " + floor);
+            textViewFloorNumber.setText(String.valueOf(floor));
             textViewFloorNumber.setVisibility(View.VISIBLE);
         }
 
