@@ -156,7 +156,7 @@ public class BuildingActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_building);
         aboutCurrentMap = (TextView) findViewById(R.id.textViewCurrentMap);
-        aboutCurrentMap.setVisibility(View.INVISIBLE);
+        aboutCurrentMap.setVisibility(View.VISIBLE);
         loadPreferences();
 
         imageView = new TouchImageView(this);
@@ -1127,8 +1127,8 @@ public class BuildingActivity extends AppCompatActivity {
         navigationModeOffContainer.setVisibility(View.INVISIBLE);
         aCTVFrom.setVisibility(View.INVISIBLE);
         aCTVTo.setVisibility(View.INVISIBLE);
-        aboutCurrentMap.setVisibility(View.INVISIBLE);
-        aboutCurrentMap.setEnabled(false);
+        //aboutCurrentMap.setVisibility(View.INVISIBLE);
+        //aboutCurrentMap.setEnabled(false);
 
         //schowaj te do wpisywania sal
     }
