@@ -202,7 +202,7 @@ public class BuildingActivity extends AppCompatActivity {
         verticalSeekBar = (VerticalSeekBar) findViewById(R.id.verticalSeekBar);
         verticalSeekBar.setOnSeekBarChangeListener(listenerSeekbar);
 
-        navigationModeOff();
+        startingSettings();
 
 
         for (Room r : rooms) {
@@ -676,9 +676,22 @@ public class BuildingActivity extends AppCompatActivity {
             navigationModeOn();
             buttonPreviousMap.setVisibility(View.INVISIBLE);
             buttonPreviousMap.setEnabled(false);
-            String sCurrentRoute = new String("Z: " + mapPointFrom + "\nDO: " + mapPointTo.toString());
+            String mp1 = getMapPointName(mapPointFrom);
+            String mp2 = getMapPointName(mapPointTo);
+            String sCurrentRoute = new String("Z: " + mp1 + "\nDO: " + mp2);
             currentPath.setText(sCurrentRoute);
         }
+    }
+
+    public String getMapPointName(MapPoint m) {
+        String s = new String();
+        if (m.getRoom() != null) {
+            s = m.getRoom().getName();
+        } else if (m.getBuilding() != null) {
+            s = m.getBuilding().getName();
+        }
+
+        return s;
     }
 
     private void fillLines(){
@@ -1133,6 +1146,15 @@ public class BuildingActivity extends AppCompatActivity {
         //schowaj te do wpisywania sal
     }
 
+    private void startingSettings() {
+        navigationMode = false;
+        navigationModeOffContainer.setVisibility(View.VISIBLE);
+        navigationModeOnContainer.setVisibility(View.INVISIBLE);
+        aCTVFrom.setVisibility(View.VISIBLE);
+        aCTVTo.setVisibility(View.VISIBLE);
+        path = null;
+    }
+
     private void navigationModeOff(){
         navigationMode = false;
         /*nextMapButton.setEnabled(false);
@@ -1148,9 +1170,13 @@ public class BuildingActivity extends AppCompatActivity {
         navigationModeOnContainer.setVisibility(View.INVISIBLE);
         aCTVFrom.setVisibility(View.VISIBLE);
         aCTVTo.setVisibility(View.VISIBLE);
+        path = null;
+        secondPointOnMap = null;
+        lastPointOnMap = null;
 
         //funkcja czyszcząca trase
         lines.clear();
+        drawMap();
         //TODO currentmapy ITP też wyczyścić!
     }
 
