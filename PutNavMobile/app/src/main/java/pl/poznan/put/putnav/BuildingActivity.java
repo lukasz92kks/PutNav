@@ -138,6 +138,7 @@ public class BuildingActivity extends AppCompatActivity {
     String currentMapFile;
     ArrayList<Map> pathMaps; // kolejne mapy wyznaczonej trasy
     ArrayList<MapPoint> currentMapPoints;
+    ArrayList<Room> rtmp;
 
     Map chosenMap;
     Building selectedBuilding;
@@ -204,8 +205,14 @@ public class BuildingActivity extends AppCompatActivity {
 
         startingSettings();
 
-
+        rtmp = new ArrayList<>();
         for (Room r : rooms) {
+            if (!checkIfRoomAlreadyOnList(r)) {
+                rtmp.add(r);
+            }
+        }
+
+        for (Room r : rtmp) {
             lista.add(r);
         }
 
@@ -382,6 +389,17 @@ public class BuildingActivity extends AppCompatActivity {
             }
         });
 
+    }
+
+    boolean checkIfRoomAlreadyOnList(Room r) {
+        boolean alreadyOnList = false;
+        for (Room current : rtmp) {
+            if (current.getName() != null && current.getName().equals(r.getName())) {
+                alreadyOnList = true;
+                break;
+            }
+        }
+        return alreadyOnList;
     }
 
     public void deactivateMapPoint(View view) {
