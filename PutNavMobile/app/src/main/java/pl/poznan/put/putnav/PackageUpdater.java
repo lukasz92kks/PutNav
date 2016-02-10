@@ -1,5 +1,6 @@
 package pl.poznan.put.putnav;
 
+import android.app.Activity;
 import android.app.ProgressDialog;
 import android.os.Environment;
 
@@ -16,7 +17,7 @@ class PackageUpdater extends AsyncTask<URL, Integer, Long> {
     private String packageFilename = "PutNavArchive.pna";
     private ProgressDialog dialog;
 
-    public PackageUpdater(PreferencesActivity activity) {
+    public PackageUpdater(Activity activity) {
         dialog = new ProgressDialog(activity);
     }
 

@@ -1,7 +1,11 @@
 package pl.poznan.put.putnav;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -11,6 +15,8 @@ import android.widget.Toast;
 
 import com.j256.ormlite.android.apptools.OpenHelperManager;
 
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
@@ -25,15 +31,19 @@ public class MainActivity extends Activity {
     RouteFinder routeFinder;
     ArrayList<MapPoint> route;
 
+    private static final String PREFERENCES_NAME = "appPreferences";
+    private SharedPreferences sharedPreferences;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        sharedPreferences = getSharedPreferences(PREFERENCES_NAME, 0);
+        update();
+
         //func();
         List<MapPoint> tmp = nn;
-
-
-
     }
 
     public void func() {
@@ -128,5 +138,23 @@ public class MainActivity extends Activity {
 
     public void openAuthorsActivity(View view) {
         startActivity(new Intent(this, AuthorsActivity.class));
+    }
+
+    private void update() {
+        ConnectivityManager connManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo mWifi = connManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
+
+        if (mWifi.isConnected()) {
+            Log.i(MainActivity.class.getSimpleName(), "WiFi connected");
+
+            PackageUpdater task = new PackageUpdater(MainActivity.this);
+            try {
+                SharedPreferences.Editor preferencesEditor = sharedPreferences.edit();
+                task.execute(new URL(sharedPreferences.getString("serverAddress", "brak")));
+            } catch (MalformedURLException e) {
+                e.printStackTrace();
+            }
+        }
+
     }
 }
