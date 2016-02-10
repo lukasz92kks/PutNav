@@ -7,6 +7,8 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.widget.SeekBar;
 
+import static java.lang.Math.round;
+
 public class VerticalSeekBar extends SeekBar {
 
     public VerticalSeekBar(Context context) {
@@ -44,7 +46,7 @@ public class VerticalSeekBar extends SeekBar {
         this.onChangeListener = onChangeListener;
     }
 
-    private int lastProgress = 0;
+    private float lastProgress = 0.0f;
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         if (!isEnabled()) {
@@ -59,16 +61,16 @@ public class VerticalSeekBar extends SeekBar {
                 break;
             case MotionEvent.ACTION_MOVE:
                 super.onTouchEvent(event);
-                int progress = getMax() - (int) (getMax() * event.getY() / getHeight());
+                float progress = getMax() - (getMax() * event.getY() / getHeight());
 
                 // Ensure progress stays within boundaries
-                if(progress < 0) {progress = 0;}
-                if(progress > getMax()) {progress = getMax();}
-                setProgress(progress);  // Draw progress
+                if(progress < 0.5f) {progress = 0;}
+                if(progress > getMax()-0.5f) {progress = getMax();}
+                setProgress(round(progress));  // Draw progress
                 if(progress != lastProgress) {
                     // Only enact listener if the progress has actually changed
-                    lastProgress = progress;
-                    onChangeListener.onProgressChanged(this, progress, true);
+                    lastProgress = round(progress);
+                    onChangeListener.onProgressChanged(this, round(progress), true);
                 }
 
                 onSizeChanged(getWidth(), getHeight() , 0, 0);
@@ -113,6 +115,6 @@ public class VerticalSeekBar extends SeekBar {
     }
 
     public synchronized int getLastProgress() {
-        return lastProgress;
+        return round(lastProgress);
     }
 }
