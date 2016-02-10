@@ -1014,7 +1014,6 @@ public class BuildingActivity extends AppCompatActivity {
 
 
         container.addView(imageView);
-
     }
 
     public void nextMap(View view) {
@@ -1142,11 +1141,11 @@ public class BuildingActivity extends AppCompatActivity {
 
     private void navigationModeOn(){
         navigationMode = true;
-        /*nextMapButton.setEnabled(true);
-        nextMapButton.setVisibility(View.VISIBLE);
-        previousMapButton.setEnabled(true);
-        previousMapButton.setVisibility(View.VISIBLE);
-        escapeNavigationModeButton.setEnabled(true);
+        buttonNextMap.setEnabled(true);
+        buttonNextMap.setVisibility(View.VISIBLE);
+        buttonPreviousMap.setEnabled(true);
+        buttonPreviousMap.setVisibility(View.VISIBLE);
+        /*escapeNavigationModeButton.setEnabled(true);
         escapeNavigationModeButton.setVisibility(View.VISIBLE);
         //chowamy pasek boczny
         if (getCurrentMap().getBuilding() != null && getCurrentMap().getBuilding().getNumberOfFloors() > 1) {
