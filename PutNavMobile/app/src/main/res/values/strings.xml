@@ -17,7 +17,6 @@
     <string name="legend">Legenda</string>
     <string name="instructions">Instrukcje</string>
     <string name="functions">Funkcjonalność</string>
-    <string name="door_legend">Wejscie/wyjscie z budynku</string>
     <string name="legend_door">Wejście oraz wyjście z budynku</string>
     <string name="legend_info">Wyświetlenie informacji o budynku</string>
     <string name="legend_start">Ustawienie punktu startowego</string>
@@ -29,4 +28,6 @@
     <string name="legend_close_navigation">Anulowanie nawigacji</string>
     <string name="legend_previous_map">Poprzednia mapa</string>
     <string name="legend_next_map">Następna mapa</string>
+    <string name="settings_language">Ustaw język</string>
+    <string name="settings">Ustawienia</string>
 </resources>
