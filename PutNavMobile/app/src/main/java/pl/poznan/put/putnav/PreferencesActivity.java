@@ -28,8 +28,6 @@ public class PreferencesActivity extends AppCompatActivity {
     private Button btn7;
     private Button buttonUpdate;
     private CheckBox checkBox;
-    private RadioButton radioButtonPolish;
-    private RadioButton radioButtonEnglish;
     private EditText textViewServer;
     private SharedPreferences sharedPreferences;
 
@@ -46,14 +44,7 @@ public class PreferencesActivity extends AppCompatActivity {
 
         if (sharedPreferences.contains("exists")) {
             boolean disabled = sharedPreferences.getBoolean(PREFERENCE_DISABLED, false);
-            int language = 0;
-            language = sharedPreferences.getInt("language", 0);
             checkBox.setChecked(disabled);
-            if (language == 1) {
-                radioButtonEnglish.setChecked(true);
-            } else {
-                radioButtonPolish.setChecked(true);
-            }
 
             textViewServer.setText(sharedPreferences.getString("serverAddress", "brak"));
         }
@@ -86,18 +77,12 @@ public class PreferencesActivity extends AppCompatActivity {
 
         checkBox = (CheckBox) findViewById(R.id.checkBox1);
 
-        radioButtonEnglish = (RadioButton) findViewById(R.id.radio_english);
-        radioButtonPolish = (RadioButton) findViewById(R.id.radio_polish);
-
         textViewServer = (EditText) findViewById(R.id.serverAddress);
     }
 
     public void saveChanges() {
         boolean a = checkBox.isChecked();
         int language = 0;
-        if (radioButtonEnglish.isChecked()) {
-            language = 1;
-        }
         SharedPreferences.Editor preferencesEditor = sharedPreferences.edit();
         preferencesEditor.putBoolean(PREFERENCE_DISABLED, a);
         preferencesEditor.putBoolean("exists", true);
