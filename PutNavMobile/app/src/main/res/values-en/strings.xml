@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="hello_world">Hello world!</string>
+    <string name="action_settings">Settings</string>
+    <string name="title_activity_preferences">PreferencesActivity</string>
+    <string name="disabled_person">Avoid stairs</string>
+    <string name="abort">Abort</string>
+    <string name="save">Save</string>
+    <string name="polish">Polish</string>
+    <string name="english">English</string>
+    <string name="title_activity_campus">CampusActivity</string>
+    <string name="title_activity_authors">AuthorsActivity</string>
+    <string name="title_activity_tips">TipsActivity</string>
+    <string name="title_activity_about_building">aboutBuildingActivity</string>
+    <string name="current_path">Current path:</string>
+    <string name="legend">Legend</string>
+    <string name="instructions">Instructions</string>
+    <string name="functions">Functions</string>
+    <string name="door_legend">Entrance and exit from the building</string>
+    <string name="legend_door">Entrance and exit from the building</string>
+    <string name="legend_info">Information about the building</string>
+    <string name="legend_start">Setting as a staring point</string>
+    <string name="legend_pkt_off">Setting the point to be inactive</string>
+    <string name="legend_pkt_on">Setting the point to be active</string>
+    <string name="legend_search">Searching the path</string>
+    <string name="legend_switch">Reversing starting point and goal point</string>
+    <string name="legend_wc">WC</string>
+    <string name="legend_close_navigation">Cancellation of navigation</string>
+    <string name="legend_previous_map">Previous Map</string>
+    <string name="legend_next_map">Next map</string>
+</resources>

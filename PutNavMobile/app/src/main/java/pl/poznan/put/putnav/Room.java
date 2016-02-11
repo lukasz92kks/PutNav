@@ -24,7 +24,7 @@ public class Room {
     @Override
     public String toString() {
         if (this.name == null) {
-            return "kibel";
+            return "WC";
         }
         return name;
     }

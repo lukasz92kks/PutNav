@@ -192,6 +192,7 @@
             android:layout_marginLeft="100dp"
             android:id="@+id/buttonStart"
             android:src="@drawable/start"
+            android:onClick="setStartPoint"
             android:background="@null"/>
 
     </RelativeLayout>

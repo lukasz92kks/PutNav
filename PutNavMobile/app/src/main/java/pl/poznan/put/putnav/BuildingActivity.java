@@ -680,7 +680,7 @@ public class BuildingActivity extends AppCompatActivity {
             // wypełnienie listy map na ktorych bedzie trasa
             Map lastMap = null;
             for (MapPoint mp : route) {
-                if (lastMap != null && lastMap.getFileName().equals(mp.getMap().getFileName()) || mp.getType() == 5)
+                if (lastMap != null && lastMap.getFileName().equals(mp.getMap().getFileName()) || mp.getType() == 5 || mp.getType() == 4)
                     continue;
 
                 pathMaps.add(mp.getMap());
@@ -1013,20 +1013,29 @@ public class BuildingActivity extends AppCompatActivity {
         }
         if (currentMapPoints != null) {
             Log.i(BuildingActivity.class.getSimpleName(), "X: " + currentMapPoints.get(0).getX() + " Y: " + currentMapPoints.get(0).getY());
-            imageView.setZoom(2.0f, currentMapPoints.get(0).getX(), currentMapPoints.get(0).getY());
+            //imageView.setZoom(2.0f, currentMapPoints.get(0).getX(), currentMapPoints.get(0).getY());
 
         } else {
             Log.i(BuildingActivity.class.getSimpleName(), "centruję na 1000,1000");
             //imageView.scrollTo(300,0);
-            imageView.setZoom(2.0f, 1000, 1000);
+            //imageView.setZoom(2.0f, 1000, 1000);
 
         }
-
+        imageView.setZoom(2.0f, 1000, 1000);
         container.addView(imageView);
         //imageView.scrollTo(scrollX[counter],scrollY[counter]);
         counter++;
 
 
+    }
+
+    public void setStartPoint(View view) {
+        for (MapPoint m : mapPoints) {
+            if (m.getBuilding() != null && m.getBuilding().getId() == chosenBuilding.getId()) {
+                mapPointFrom = m;
+                aCTVFrom.setText(chosenBuilding.getName());
+            }
+        }
     }
 
     public void nextMap(View view) {
@@ -1207,15 +1216,16 @@ public class BuildingActivity extends AppCompatActivity {
         //funkcja czyszcząca trase
         lines.clear();
         drawMap();
-
-        int diff = 0;
-        if (currentMap.getBuilding().getId() == 3) {
-            diff = 1;
-        } else if (currentMap.getBuilding().getId() == 4) {
-            diff = 2;
+        if (currentMap.getCampus() == 0) {
+            int diff = 0;
+            if (currentMap.getBuilding().getId() == 3) {
+                diff = 1;
+            } else if (currentMap.getBuilding().getId() == 4) {
+                diff = 2;
+            }
+            int tmp = currentMap.getFloor() + diff;
+            verticalSeekBar.setProgressAndThumb(tmp);
         }
-        int tmp = currentMap.getFloor() + diff;
-        verticalSeekBar.setProgressAndThumb(tmp);
 
         //TODO currentmapy ITP też wyczyścić!
     }
