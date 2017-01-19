@@ -61,7 +61,7 @@ public class TouchImageView extends ImageView {
     // MTRANS_X and MTRANS_Y are the other values used. prevMatrix is the matrix
     // saved prior to the screen rotating.
     //
-    private Matrix matrix, prevMatrix;
+    public Matrix matrix, prevMatrix;
 
     private static enum State { NONE, DRAG, ZOOM, FLING, ANIMATE_ZOOM };
     private State state;

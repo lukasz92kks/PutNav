@@ -3,14 +3,12 @@ package pl.poznan.put.putnav;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Environment;
-import android.util.Log;
 
 import com.j256.ormlite.android.apptools.OrmLiteSqliteOpenHelper;
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.support.ConnectionSource;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -19,8 +17,8 @@ import java.sql.SQLException;
 public class DatabaseHandler extends OrmLiteSqliteOpenHelper {
 
     private static final String DATABASE_NAME = "database.db";
-    private static int DATABASE_VERSION = 1;
-    private String appDir = new File(Environment.getExternalStorageDirectory().getAbsolutePath(), "putnavadmin").getAbsolutePath();
+    private static final int DATABASE_VERSION = 1;
+    private static final String appDir = new File(Environment.getExternalStorageDirectory().getAbsolutePath(), "putnavadmin").getAbsolutePath();
 
     private Dao<MapPoint, Integer> mapPointDao = null;
     private Dao<MapPointsArcs, Integer> mapPointsArcsDao = null;
@@ -30,20 +28,13 @@ public class DatabaseHandler extends OrmLiteSqliteOpenHelper {
     private Dao<Map, Integer> mapDao = null;
     private Dao<Photo, Integer> photoDao = null;
 
-
     public DatabaseHandler(Context context) throws SQLException {
 
-        super(context, ArchiveFileManager.getDatabasePath(),
-                //new File(Environment.getExternalStorageDirectory().getAbsolutePath(), "putnavadmin/database.db").getAbsolutePath(),
-                null, DATABASE_VERSION);
+        super(context, ArchiveFileManager.getDatabasePath(), null, DATABASE_VERSION);
 
         if(!new File(appDir).exists()) {
             File dir = new File(context.getDatabasePath(DATABASE_NAME).getPath());
-            dir.mkdirs(); //żeby nie wywalało błędu ENOENT
-
-            //File dir = new File(appDir);
-            //dir.mkdir();
-
+            dir.mkdirs();
             File mFile = context.getDatabasePath(DATABASE_NAME);
             if (mFile.exists()) {
                 mFile.delete();
@@ -53,8 +44,6 @@ public class DatabaseHandler extends OrmLiteSqliteOpenHelper {
             InputStream in = null;
             try {
                 String s = new File(appDir, DATABASE_NAME).getAbsolutePath();
-                //Log.i(DatabaseHandler.class.getName(), s);
-                //in = new FileInputStream(new File(appDir, DATABASE_NAME));
                 in = context.getAssets().open(DATABASE_NAME);
                 FileOutputStream out = null;
                 out = new FileOutputStream(fileName);

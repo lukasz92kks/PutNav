@@ -36,7 +36,7 @@ public class RouteFinder implements Serializable {
                 double newDistance = p.getDistance() + currentEdge.getWeight();
                 if (newDistance < currentEdge.getPoint2().getDistance()) {
                     MapPoint m = currentEdge.getPoint2();
-                    if (!m.getIsDeactivated()) {
+                    if (!m.isDeactivated()) {
                         toVisit.remove(m);
                         m.setDistance(newDistance);
                         m.setPrevious(p);

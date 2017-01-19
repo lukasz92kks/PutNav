@@ -3,16 +3,17 @@ package pl.poznan.put.putnav;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
 @DatabaseTable(tableName = "Departments")
-public class Department {
+public class Department implements Serializable{
 
     @DatabaseField(id = true, columnName = "Id")
     private int id;
     @DatabaseField(columnName = "Name")
     private String name;
-    private ArrayList<Building> buildings = new ArrayList<Building>();
+    private ArrayList<Building> buildings = new ArrayList<>();
 
     public Department() {}
 

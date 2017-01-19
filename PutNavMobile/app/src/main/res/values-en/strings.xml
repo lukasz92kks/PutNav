@@ -16,7 +16,6 @@
     <string name="legend">Legend</string>
     <string name="instructions">Instructions</string>
     <string name="functions">Functions</string>
-    <string name="door_legend">Entrance and exit from the building</string>
     <string name="legend_door">Entrance and exit from the building</string>
     <string name="legend_info">Information about the building</string>
     <string name="legend_start">Setting as a staring point</string>

@@ -1,7 +1,5 @@
 package pl.poznan.put.putnav;
 
-import android.util.Log;
-
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 
@@ -95,8 +93,8 @@ public class MapPointsArcs implements Serializable {
         int y1 = this.getPoint1().getY();
         int x2 = this.getPoint2().getX();
         int y2 = this.getPoint2().getY();
-        int t1 = this.getPoint1().getType();
-        int t2 = this.getPoint2().getType();
+        int t1 = this.getPoint1().getTypeId();
+        int t2 = this.getPoint2().getTypeId();
 
         /*
         nav nav

@@ -1,19 +1,11 @@
 package pl.poznan.put.putnav;
 
-import android.app.ProgressDialog;
-import android.content.Context;
 import android.content.SharedPreferences;
-import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
-import android.widget.RadioButton;
 import android.widget.EditText;
 
 import java.net.MalformedURLException;
@@ -86,6 +78,7 @@ public class PreferencesActivity extends AppCompatActivity {
         SharedPreferences.Editor preferencesEditor = sharedPreferences.edit();
         preferencesEditor.putBoolean(PREFERENCE_DISABLED, a);
         preferencesEditor.putBoolean("exists", true);
+        preferencesEditor.putBoolean("aaa", true);
         preferencesEditor.putInt("language", language);
         preferencesEditor.putString("serverAddress", "http://putnav.cba.pl");
         preferencesEditor.commit();

@@ -6,9 +6,11 @@ import com.j256.ormlite.table.DatabaseTable;
 import java.io.Serializable;
 import java.util.ArrayList;
 
+
+
 @DatabaseTable(tableName = "MapPoints")
 
-public class MapPoint implements Comparable<MapPoint>, Serializable {
+public class MapPoint implements Comparable<MapPoint>, Serializable{
 
     @DatabaseField(id = true, columnName = "Id")
     private int id;
@@ -17,7 +19,7 @@ public class MapPoint implements Comparable<MapPoint>, Serializable {
     @DatabaseField(columnName = "Y")
     private int y;
     @DatabaseField(columnName = "Type")
-    private int type;
+    private int typeId;
     @DatabaseField(foreign = true, columnName = "Map", foreignAutoRefresh = true, maxForeignAutoRefreshLevel = 3)
     private Map map;
     @DatabaseField (foreign = true, columnName = "Building", foreignAutoRefresh = true, maxForeignAutoRefreshLevel = 2)
@@ -28,10 +30,21 @@ public class MapPoint implements Comparable<MapPoint>, Serializable {
     private double distance;
     private MapPoint previous;
 
-    boolean isDeactivated;
+    private boolean deactivated;
+    private MapPointTypes type;
 
-    private ArrayList<MapPoint> successors = new ArrayList<MapPoint>();	  // lista nastepnikow
-    private ArrayList<MapPointsArcs> edges = new ArrayList<MapPointsArcs>(); //lista krawedzi wychodzacych z danego wierzcholka
+    enum MapPointTypes {
+        NAVIGATION,
+        DOOR,
+        OUTDOOR,
+        STAIRS,
+        LIFT,
+        ROOM,
+        BUILDING
+    }
+
+    private ArrayList<MapPoint> successors = new ArrayList<MapPoint>();	  // objects nastepnikow
+    private ArrayList<MapPointsArcs> edges = new ArrayList<MapPointsArcs>(); //objects krawedzi wychodzacych z danego wierzcholka
 
     @Override
     public String toString() {
@@ -45,23 +58,23 @@ public class MapPoint implements Comparable<MapPoint>, Serializable {
 
     public MapPoint() {
         this.distance = Double.longBitsToDouble(0x7ff0000000000000L);
-        isDeactivated = false;
+        deactivated = false;
     }
 
-    public MapPoint(int id, int x, int y, int type) {
+    public MapPoint(int id, int x, int y, int typeId) {
         this.id = id;
         this.x = x;
         this.y = y;
-        this.type = type;
+        this.typeId = typeId;
         this.distance = Double.longBitsToDouble(0x7ff0000000000000L);
     }
 
-    public boolean getIsDeactivated() {
-        return isDeactivated;
+    public boolean isDeactivated() {
+        return deactivated;
     }
 
-    public void setIsDeactivated(boolean isDeactivated) {
-        this.isDeactivated = isDeactivated;
+    public void setDeactivated(boolean isDeactivated) {
+        this.deactivated = isDeactivated;
     }
 
 
@@ -82,11 +95,10 @@ public class MapPoint implements Comparable<MapPoint>, Serializable {
     }
 
     public MapPoint findPointById(ArrayList<MapPoint> points, int id) {
-        MapPoint x = null;
         for (MapPoint m : points) {
-            if (m.getId() == id) x = m;
+            if (m.getId() == id) return m;
         }
-        return x;
+        return null;
     }
 
     public void removeSuccessor(MapPoint mapPoint) {
@@ -117,12 +129,12 @@ public class MapPoint implements Comparable<MapPoint>, Serializable {
         this.y = y;
     }
 
-    public int getType() {
-        return type;
+    public int getTypeId() {
+        return typeId;
     }
 
-    public void setType(int type) {
-        this.type = type;
+    public void setTypeId(int typeId) {
+        this.typeId = typeId;
     }
 
     public double getDistance() {
@@ -196,5 +208,34 @@ public class MapPoint implements Comparable<MapPoint>, Serializable {
 
     public void addSimpleEdge(MapPointsArcs arc) {
         edges.add(arc);
+    }
+
+    public void setType(){
+        switch (typeId){
+            case 1:
+                type = MapPointTypes.NAVIGATION;
+                break;
+            case 2:
+                type = MapPointTypes.DOOR;
+                break;
+            case 3:
+                type = MapPointTypes.OUTDOOR;
+                break;
+            case 4:
+                type = MapPointTypes.STAIRS;
+                break;
+            case 5:
+                type = MapPointTypes.LIFT;
+                break;
+            case 6:
+                type = MapPointTypes.ROOM;
+                break;
+            case 7:
+                type = MapPointTypes.BUILDING;
+                break;
+        }
+    }
+    public MapPointTypes getType(){
+        return type;
     }
 }

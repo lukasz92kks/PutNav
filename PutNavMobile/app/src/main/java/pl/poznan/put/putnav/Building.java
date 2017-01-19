@@ -5,11 +5,12 @@ import android.widget.ImageView;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
 @DatabaseTable(tableName = "Buildings")
 
-public class Building {
+public class Building implements Serializable{
 
     @DatabaseField(id = true, columnName = "Id")
     private int id;
@@ -19,11 +20,11 @@ public class Building {
     private String address;
     @DatabaseField(columnName = "NumberOfFloors")
     private int numberOfFloors;
-    private ArrayList<Department> departments = new ArrayList<Department>();
-    private ArrayList<Map> maps = new ArrayList<Map>();
-    private ArrayList<Room> rooms = new ArrayList<Room>();
-    private ArrayList<MapPoint> mapPoints = new ArrayList<MapPoint>();
-    private ArrayList<Photo> images = new ArrayList<Photo>();
+    private ArrayList<Department> departments = new ArrayList<>();
+    private ArrayList<Map> maps = new ArrayList<>();
+    private ArrayList<Room> rooms = new ArrayList<>();
+    private ArrayList<MapPoint> mapPoints = new ArrayList<>();
+    private ArrayList<Photo> images = new ArrayList<>();
 
     public Building() {}
 

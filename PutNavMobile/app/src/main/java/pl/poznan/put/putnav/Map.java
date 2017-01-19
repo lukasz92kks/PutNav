@@ -5,11 +5,12 @@ import android.widget.ImageView;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
 @DatabaseTable(tableName = "Maps")
 
-public class Map implements Comparable<Map> {
+public class Map implements Comparable<Map>, Serializable {
 
     @DatabaseField(id = true, columnName = "Id")
     private int id;
@@ -22,16 +23,13 @@ public class Map implements Comparable<Map> {
     @DatabaseField(columnName = "FileName")
     private String fileName;
 
-    private ImageView mapImage = null;
-
     private ArrayList<MapPoint> mapPoints = new ArrayList<MapPoint>();
 
     public Map() {}
 
-    public Map(int id, int floor, ImageView mapImage) {
+    public Map(int id, int floor) {
         this.id = id;
         this.floor = floor;
-        this.mapImage = mapImage;
     }
 
     public MapPoint addMapPoint(MapPoint point) {
@@ -46,14 +44,6 @@ public class Map implements Comparable<Map> {
 
     public void removeMapPoint(MapPoint point) {
         mapPoints.remove(point);
-    }
-
-    public ImageView getMapImage() {
-        return mapImage;
-    }
-
-    public void setMapImage(ImageView mapImage) {
-        this.mapImage = mapImage;
     }
 
     public ArrayList<MapPoint> getMapPoints() {
@@ -88,8 +78,12 @@ public class Map implements Comparable<Map> {
         this.building = building;
     }
 
-    public int getCampus() {
-        return campus;
+    public boolean isCampus() {
+        if(campus>0){
+            return true;
+        } else {
+            return false;
+        }
     }
 
     public void setCampus(int campus) {
@@ -98,5 +92,8 @@ public class Map implements Comparable<Map> {
 
     public String getFileName() {
         return fileName;
+    }
+    public String getDrawableName(){
+        return fileName.substring(0, fileName.length()-4);
     }
 }
