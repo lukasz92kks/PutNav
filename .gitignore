@@ -1,2 +1,6 @@
 *.class
 *.jar
+/putnav-webservice/nbproject/
+/putnav-webservice/target/
+/putnav-webservice/nb-configuration.xml
+/putnav-webservice/nbactions.xml
