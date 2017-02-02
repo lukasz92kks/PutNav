@@ -1,9 +1,12 @@
 package pl.putnav.webservice.modelbase;
 
+import javax.persistence.MappedSuperclass;
+
 /**
  *
  * @author Łukasz
  */
+@MappedSuperclass
 public class SoftwareBase {
     
     private String version;
