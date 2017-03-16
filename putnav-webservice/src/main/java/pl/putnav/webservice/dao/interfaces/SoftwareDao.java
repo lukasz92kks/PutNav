@@ -11,6 +11,8 @@ public interface SoftwareDao {
     
     SoftwareEntity findById(long id);
     
+    SoftwareEntity findActive();
+    
     SoftwareEntity save(SoftwareEntity entity);
     
     void delete(int id);

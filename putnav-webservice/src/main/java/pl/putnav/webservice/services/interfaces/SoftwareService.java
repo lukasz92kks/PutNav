@@ -14,6 +14,8 @@ public interface SoftwareService {
     
     SoftwareEntity findById(long id) throws EntityNotFoundException;
     
+    SoftwareEntity findActive() throws EntityNotFoundException;
+    
     SoftwaresList findAll(Pageable pageable);
     
     SoftwareEntity create(SoftwareEntity software);

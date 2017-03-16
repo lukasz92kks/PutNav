@@ -1,5 +1,6 @@
 package pl.putnav.webservice.dao.hibernateimplementation;
 
+import org.apache.tomcat.jni.SSLContext;
 import org.hibernate.Criteria;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
@@ -18,6 +19,14 @@ public class HibernateSoftwareDao extends AbstractDao<Long, SoftwareEntity> impl
     @Override
     public SoftwareEntity findById(long id) {
         SoftwareEntity software = getByKey(id);
+        return software;
+    }
+    
+    @Override
+    public SoftwareEntity findActive() {
+        Criteria criteria = createEntityCriteria();
+        criteria.add(Restrictions.eq("active", true));
+        SoftwareEntity software = (SoftwareEntity) criteria.uniqueResult();
         return software;
     }
 
@@ -41,5 +50,4 @@ public class HibernateSoftwareDao extends AbstractDao<Long, SoftwareEntity> impl
         SoftwaresList list = new SoftwaresList(criteria.list());
         return list;
     }
-    
 }

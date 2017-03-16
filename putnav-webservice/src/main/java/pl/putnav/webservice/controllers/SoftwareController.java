@@ -44,10 +44,11 @@ public class SoftwareController {
     }
     
     @PostMapping("/file/new")
-    public String uploadFile(@RequestParam String description, @RequestParam String version, @RequestParam MultipartFile file, RedirectAttributes redirectAttributes) throws IOException, EntityNotFoundException {
+    public String uploadFile(@RequestParam String description, @RequestParam String version, @RequestParam Boolean active, @RequestParam MultipartFile file, RedirectAttributes redirectAttributes) throws IOException, EntityNotFoundException {
         SoftwareEntity software = new SoftwareEntity();
         software.setDescription(description);
         software.setVersion(version);
+        software.setActive(active);
         software.setFile(file.getBytes());
         softwareService.create(software);
         redirectAttributes.addFlashAttribute("message", "You successfully uploaded " + file.getOriginalFilename() + "!");
@@ -57,8 +58,18 @@ public class SoftwareController {
     @GetMapping(value = "/file/{id}")
     public ResponseEntity<InputStreamResource> downloadFile(@PathVariable long id) throws SQLException, EntityNotFoundException {
         SoftwareEntity software = softwareService.findById(id);
-        byte[] file = software.getFile();
-        
+        ResponseEntity<InputStreamResource> response = fileToResponseEntity(software.getFile());
+        return response;
+    }
+    
+    @GetMapping(value = "/file")
+    public ResponseEntity<InputStreamResource> downloadActiveFile() throws SQLException, EntityNotFoundException {
+        SoftwareEntity software = softwareService.findActive();
+        ResponseEntity<InputStreamResource> response = fileToResponseEntity(software.getFile());
+        return response;
+    }
+    
+    private ResponseEntity<InputStreamResource> fileToResponseEntity(byte[] file) {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
         headers.setContentDispositionFormData("attachment", "putnav.pna");

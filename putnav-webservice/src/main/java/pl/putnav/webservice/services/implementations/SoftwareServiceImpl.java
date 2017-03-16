@@ -3,6 +3,7 @@ package pl.putnav.webservice.services.implementations;
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -12,6 +13,7 @@ import pl.putnav.webservice.entities.SoftwareEntity;
 import pl.putnav.webservice.entities.containers.SoftwaresList;
 import pl.putnav.webservice.exceptions.EntityNotFoundException;
 import pl.putnav.webservice.services.interfaces.SoftwareService;
+import pl.putnav.webservice.services.utils.SoftwareUtils;
 
 /**
  *
@@ -35,26 +37,58 @@ public class SoftwareServiceImpl implements SoftwareService {
         }
         return software;
     }
+    
+    @Override
+    public SoftwareEntity findActive() throws EntityNotFoundException {
+        SoftwareEntity software = softwareDao.findActive();
+        if (software == null) {
+            throw new EntityNotFoundException("Active software not found");
+        }
+        return software;
+    }
 
     @Override
     public SoftwaresList findAll(Pageable pageable) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        SoftwaresList list = softwareDao.findAll();
+        return list;
     }
 
     @Override
     public SoftwareEntity create(SoftwareEntity software) {
         software = softwareDao.save(software);
+        if (Boolean.TRUE.equals(software.isActive())) {
+            SoftwareUtils.switchActiveSoftware(software);
+        }
         return software;
     }
 
     @Override
-    public SoftwareEntity update(SoftwareEntity software) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public SoftwareEntity update(SoftwareEntity software) throws EntityNotFoundException {
+        SoftwareEntity updated = softwareDao.findById(software.getId());
+        if (updated == null) {
+            throw new EntityNotFoundException("Software entity identify by id #" + software.getId() + " not found");
+        }
+        if (Boolean.TRUE.equals(software.isActive())) {
+            SoftwareUtils.switchActiveSoftware(software);
+        }
+        if (StringUtils.isNotBlank(software.getDescription())) {
+            updated.setDescription(software.getDescription());
+        }
+        if (StringUtils.isNotBlank(software.getVersion())) {
+            updated.setVersion(software.getVersion());
+        }
+        updated = softwareDao.save(updated);
+        return updated;
     }
 
     @Override
-    public SoftwareEntity delete(long id) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public SoftwareEntity delete(long id) throws EntityNotFoundException {
+        SoftwareEntity software = softwareDao.findById(id);
+        if (software == null) {
+            throw new EntityNotFoundException("Software entity identify by id #" + id + " not found");
+        }
+        softwareDao.delete((int) id);
+        return software;
     }
 
     @Override
